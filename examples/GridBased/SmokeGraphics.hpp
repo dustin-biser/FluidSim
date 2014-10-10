@@ -20,7 +20,7 @@ const int kScreenHeight = 800;
 const int kViewWidth = 10;
 const int kViewHeight = 10;
 
-class SmokeGraphicsGPU {
+class SmokeGraphics {
 public:
     void init();
     void draw();

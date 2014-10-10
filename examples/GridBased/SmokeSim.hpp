@@ -6,13 +6,20 @@
 
 #pragma once
 
+#include "FluidSim/NumericTypes.hpp"
+#include "Grid.hpp"
+
 #include "Utils/GlfwOpenGlWindow.hpp"
+
+#include <glm/glm.hpp>
+
+using namespace FluidSim;
+using namespace glm;
 
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const int kGridWidth = 400;
-const int kGridHeight = 400;
+const float32 kDt = 1 / 60.0f;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -21,22 +28,27 @@ const int kGridHeight = 400;
 //----------------------------------------------------------------------------------------
 // Grid Parameters
 //----------------------------------------------------------------------------------------
+const int32 kGridWidth = 400;
+const int32 kGridHeight = 400;
+const float32 kDx = 0.01f; // Grid cell length in meters.
+const float32 inv_kDx = 1.0f / kDx;
 
-class SmokeSimGPU : public GlfwOpenGlWindow {
+
+
+class SmokeSim : public GlfwOpenGlWindow {
 
 public:
-    ~SmokeSimGPU() { }
+    ~SmokeSim() { }
 
     static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 
 private:
-    SmokeSimGPU(); // Singleton. Prevent direct construction.
+    SmokeSim(); // Singleton. Prevent direct construction.
 
-    GLuint tex2D_velocity;
-    GLuint tex2D_pressure;
-    GLuint tex2D_ink;
+    Grid<vec2> m_velocity;
+    Grid<float32> m_pressure;
 
-    GLuint fbo; // Framebuffer Object
+    GLuint m_tex2D_ink;
 
     virtual void init();
     virtual void logic();
@@ -45,5 +57,8 @@ private:
     virtual void cleanup();
 
     void createTextures();
-    void createFBO();
+
+    typedef float TimeStep;
+    template <typename U, typename V>
+    void advect(const Grid<U> & velocityField, TimeStep dt, Grid<V> & quantity);
 };
