@@ -15,6 +15,8 @@ class Grid {
 public:
     Grid(uint32 width, uint32 height);
 
+    Grid(const Grid<T> & other);
+
     Grid(Grid<T> && other); // move constructor
 
     ~Grid();

@@ -14,6 +14,18 @@ Grid<T>::Grid(uint32 width, uint32 height)
 
 //---------------------------------------------------------------------------------------
 template <typename T>
+Grid<T>::Grid(const Grid<T> & other)
+    : m_width(other.m_width),
+      m_height(other.m_height)
+{
+    //-- Perform deep copy:
+    uint32 num_elements = m_width * m_height;
+    data = new T [num_elements];
+    std::memcpy(data, other.data, sizeof(T)*num_elements);
+}
+
+//---------------------------------------------------------------------------------------
+template <typename T>
 Grid<T>::Grid(Grid<T> && other)
     : data(other.data),
       m_height(other.m_height),
