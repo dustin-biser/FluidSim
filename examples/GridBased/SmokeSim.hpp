@@ -7,7 +7,8 @@
 #pragma once
 
 #include "FluidSim/NumericTypes.hpp"
-#include "Grid.hpp"
+#include "FluidSim/Grid.hpp"
+#include "FluidSim/StaggeredGrid.hpp"
 
 #include "Utils/GlfwOpenGlWindow.hpp"
 
@@ -58,7 +59,4 @@ private:
 
     void createTextures();
 
-    typedef float TimeStep;
-    template <typename U, typename V>
-    void advect(const Grid<U> & velocityField, TimeStep dt, Grid<V> & quantity);
 };

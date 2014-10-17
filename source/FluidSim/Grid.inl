@@ -5,11 +5,21 @@ namespace FluidSim {
 
 //---------------------------------------------------------------------------------------
 template <typename T>
+Grid<T>::Grid()
+    : m_data(nullptr),
+      m_height(0),
+      m_width(0)
+{
+    
+}
+       
+//---------------------------------------------------------------------------------------
+template <typename T>
 Grid<T>::Grid(uint32 width, uint32 height)
     : m_height(height),
       m_width(width)
 {
-    data = new T[width * height];
+    m_data = new T[width * height];
 }
 
 //---------------------------------------------------------------------------------------
@@ -20,18 +30,18 @@ Grid<T>::Grid(const Grid<T> & other)
 {
     //-- Perform deep copy:
     uint32 num_elements = m_width * m_height;
-    data = new T [num_elements];
-    std::memcpy(data, other.data, sizeof(T)*num_elements);
+    m_data = new T [num_elements];
+    std::memcpy(m_data, other.m_data, sizeof(T)*num_elements);
 }
 
 //---------------------------------------------------------------------------------------
 template <typename T>
 Grid<T>::Grid(Grid<T> && other)
-    : data(other.data),
+    : m_data(other.m_data),
       m_height(other.m_height),
       m_width(other.m_width)
 {
-    other.data = nullptr;
+    other.m_data = nullptr;
     other.m_height = 0;
     other.m_width = 0;
 }
@@ -39,7 +49,7 @@ Grid<T>::Grid(Grid<T> && other)
 //---------------------------------------------------------------------------------------
 template <typename T>
 Grid<T>::~Grid() {
-    delete [] data;
+    delete [] m_data;
 }
 
 //---------------------------------------------------------------------------------------
@@ -57,17 +67,43 @@ uint32 Grid<T>::height() const {
 //---------------------------------------------------------------------------------------
 template <typename T>
 T & Grid<T>::operator () (uint32 col, uint32 row) const {
-    return data[m_width*row + col];
+    return m_data[m_width*row + col];
 }
 
 //---------------------------------------------------------------------------------------
 template <typename T>
-Grid<T> & Grid<T>::operator = (Grid<T> x) {
-    // Parameter x is copy constructed. If x is an rvalue, then the
-    // move constructor is called.
+Grid<T> & Grid<T>::operator = (Grid<T> && other) {
+    m_data = other.m_data;
+    other.m_data = nullptr;
 
-    std::swap(*this, x);  // Trade resources with x.
+    m_height = other.m_height;
+    other.m_height = 0;
+
+    m_width = other.m_width;
+    other.m_width = 0;
+
     return *this;
+}
+
+//---------------------------------------------------------------------------------------
+template <typename T>
+Grid<T> & Grid<T>::operator = (const Grid<T> & other) {
+    //-- Perform deep copy:
+    m_width = other.m_width;
+    m_height = other.m_height;
+    uint32 num_elements = m_width * m_height;
+    m_data = new T [num_elements];
+    std::memcpy(m_data, other.m_data, sizeof(T)*num_elements);
+
+    return *this;
+};
+
+//---------------------------------------------------------------------------------------
+template <typename T>
+void Grid<T>::setAll(const T & val) {
+    for(int i(0); i < m_height*m_width; ++i) {
+        m_data[i] = val;
+    }
 }
 
 } // end namespace FluidSim

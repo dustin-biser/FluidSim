@@ -37,6 +37,7 @@
 		0CC20F2419D4BF1D004B89EA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
 		0CC20F2519D4BF1D004B89EA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0CC20F2619D4BF1D004B89EA /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
+		EF66950833F9F32A96E1783C /* Advect_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6698CF7D4FAE3CB92BF3DE /* Advect_Test.cpp */; };
 		EF669ABCB88BC2FE1DB10942 /* SphSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66934D2184A1A79D28B3A2 /* SphSim.cpp */; };
 		EF669BD28D20AD04DAC97845 /* SphGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66946B1EF457943FE01D77 /* SphGraphics.cpp */; };
 		EF669F148925B683D6250C16 /* Grid_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669FC04A3FCFF46CBBAAA0 /* Grid_Test.cpp */; };
@@ -437,16 +438,21 @@
 		0CC20F1519D21547004B89EA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		0CC20F1719D21550004B89EA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0CC20F2B19D4BF1D004B89EA /* SphSim copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SphSim copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
 		EF6692E015CBD75DFB4E8B86 /* SphSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphSim.hpp; sourceTree = "<group>"; };
 		EF66934D2184A1A79D28B3A2 /* SphSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphSim.cpp; sourceTree = "<group>"; };
 		EF66937F116F0389F8DCAB61 /* Utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Utils.hpp; sourceTree = "<group>"; };
+		EF6694242A93F91435896E49 /* Interp.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Interp.inl; sourceTree = "<group>"; };
 		EF66946B1EF457943FE01D77 /* SphGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphGraphics.cpp; sourceTree = "<group>"; };
+		EF66946C542DEAF219D938BF /* Advect.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Advect.inl; sourceTree = "<group>"; };
+		EF6694DAED76CE967BF298D4 /* StaggeredGrid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = StaggeredGrid.inl; sourceTree = "<group>"; };
+		EF66957F168B082FB85E87C8 /* Grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Grid.hpp; sourceTree = "<group>"; };
 		EF669749A10E6448920C6AB8 /* SphGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphGraphics.hpp; sourceTree = "<group>"; };
-		EF6699DB84A165F690F9B83F /* Grid.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
+		EF6698CF7D4FAE3CB92BF3DE /* Advect_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Advect_Test.cpp; sourceTree = SOURCE_ROOT; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
-		EF669DFEAD34FACFC97CFBEB /* Interp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interp.hpp; sourceTree = "<group>"; };
-		EF669E8B14B61BAE53008995 /* Interp.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Interp.inl; sourceTree = "<group>"; };
-		EF669F3D2E224B2C4DD72CA5 /* Grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Grid.hpp; sourceTree = "<group>"; };
+		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
+		EF669D4246BCE5C5E6C9E189 /* StaggeredGrid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StaggeredGrid.hpp; sourceTree = "<group>"; };
+		EF669DFE3E21E8EFDAAB7108 /* Interp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interp.hpp; sourceTree = "<group>"; };
 		EF669FC04A3FCFF46CBBAAA0 /* Grid_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid_Test.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -608,6 +614,7 @@
 			children = (
 				0C6665BB19E773DD00F56EBC /* Interp_Test.cpp */,
 				EF669FC04A3FCFF46CBBAAA0 /* Grid_Test.cpp */,
+				EF6698CF7D4FAE3CB92BF3DE /* Advect_Test.cpp */,
 			);
 			name = tests;
 			sourceTree = "<group>";
@@ -1099,10 +1106,6 @@
 				0C66657919E306CB00F56EBC /* SmokeSim.cpp */,
 				0C66657A19E306CB00F56EBC /* SmokeSim.hpp */,
 				EF669DEFEA77F30B181F418A /* GPU_Impl */,
-				EF6699DB84A165F690F9B83F /* Grid.inl */,
-				EF669F3D2E224B2C4DD72CA5 /* Grid.hpp */,
-				EF669DFEAD34FACFC97CFBEB /* Interp.hpp */,
-				EF669E8B14B61BAE53008995 /* Interp.inl */,
 			);
 			path = GridBased;
 			sourceTree = "<group>";
@@ -1122,6 +1125,14 @@
 			isa = PBXGroup;
 			children = (
 				EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */,
+				EF669DFE3E21E8EFDAAB7108 /* Interp.hpp */,
+				EF6694242A93F91435896E49 /* Interp.inl */,
+				EF669B78AA7D0DA145AE2261 /* Advect.hpp */,
+				EF66946C542DEAF219D938BF /* Advect.inl */,
+				EF66957F168B082FB85E87C8 /* Grid.hpp */,
+				EF66903C00FB7EBDC0EC509E /* Grid.inl */,
+				EF669D4246BCE5C5E6C9E189 /* StaggeredGrid.hpp */,
+				EF6694DAED76CE967BF298D4 /* StaggeredGrid.inl */,
 			);
 			path = FluidSim;
 			sourceTree = "<group>";
@@ -1291,6 +1302,7 @@
 			files = (
 				0C6665C919E7748A00F56EBC /* Interp_Test.cpp in Sources */,
 				EF669F148925B683D6250C16 /* Grid_Test.cpp in Sources */,
+				EF66950833F9F32A96E1783C /* Advect_Test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

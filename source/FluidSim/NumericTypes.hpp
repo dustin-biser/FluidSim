@@ -7,6 +7,9 @@
 
 namespace FluidSim {
 
+//--------------------------------------------------------------------------------------
+// Basic Types
+//--------------------------------------------------------------------------------------
 typedef signed char byte;
 typedef unsigned char ubyte;
 
@@ -21,7 +24,9 @@ typedef unsigned int uint32;
 typedef float float32;
 typedef double float64;
 
-// GLM types
+//--------------------------------------------------------------------------------------
+// GLM Types
+//--------------------------------------------------------------------------------------
 typedef glm::vec2 vec2;
 typedef glm::vec3 vec3;
 typedef glm::vec4 vec4;
@@ -32,6 +37,25 @@ typedef glm::mat4 mat4;
 
 typedef glm::quat quat;
 
-}
+template <typename T>
+using tvec2 = glm::detail::tvec2<T, glm::highp>;
+
+template <typename T>
+using tvec3 = glm::detail::tvec3<T, glm::highp>;
+
+template <typename T>
+using tvec4 = glm::detail::tvec4<T, glm::highp>;
+
+template <typename T>
+using tmat2 = glm::detail::tmat2x2<T, glm::highp>;
+
+template <typename T>
+using tmat3 = glm::detail::tmat3x3<T, glm::highp>;
+
+template <typename T>
+using tmat4 = glm::detail::tmat4x4<T, glm::highp>;
+
+
+} // end namespace FluidSim
 
 #endif /* FLUIDSIM_NUMERIC_TYPES_HPP */

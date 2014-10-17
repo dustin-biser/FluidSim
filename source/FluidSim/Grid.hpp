@@ -13,6 +13,8 @@ namespace FluidSim {
 template <typename T>
 class Grid {
 public:
+    Grid();
+
     Grid(uint32 width, uint32 height);
 
     Grid(const Grid<T> & other);
@@ -27,13 +29,16 @@ public:
 
     T & operator () (uint32 col, uint32 row) const;
 
-    Grid<T> & operator = (Grid<T> x);
+    Grid<T> & operator = (Grid<T> && other);
+
+    Grid<T> & operator = (const Grid<T> & other);
+
+    void setAll(const T & val);
 
 private:
-    T * data;
+    T * m_data;
     uint32 m_height;
     uint32 m_width;
-
 };
 
 } // end namespace FluidSim.

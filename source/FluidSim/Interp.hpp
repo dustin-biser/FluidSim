@@ -15,6 +15,9 @@ namespace FluidSim {
     template <typename T>
     T bilinear(const Grid<T> & grid, const vec2 & coords);
 
+    template <typename T>
+    T bilinear(const Grid<T> & grid, float32 col, float32 row);
+
 }
 
 #include "Interp.inl"

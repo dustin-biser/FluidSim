@@ -5,7 +5,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "examples/GridBased/Interp.hpp"
+#include "FluidSim/Interp.hpp"
 
 using namespace FluidSim;
 

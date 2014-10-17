@@ -40,6 +40,11 @@ shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
 void SmokeSim::init() {
     cout << "\nInitializing Simulation." << endl;
 
+
+    // TODO Dustin - Create Grids:
+    // Create Staggered velocity grid
+    // Create pressure grid
+
     createTextures();
 }
 
@@ -72,45 +77,10 @@ void SmokeSim::createTextures() {
     CHECK_GL_ERRORS;
 }
 
-//----------------------------------------------------------------------------------------
-template <typename U, typename V>
-void SmokeSim::advect(const Grid<U> & velocityField, TimeStep dt, Grid<V> & quantity) {
-
-    const Grid<U> & u = velocityField;
-    Grid<V> & q = quantity;
-
-    assert( (u.width() == q.width()+1) &&
-             u.height() == q.height()+1 );
-
-
-    uint32 u_width = u.width();
-    uint32 u_height = u.height();
-
-
-    vec2 x_g; // Grid location to update.
-    vec2 x_p; // Grid location of the particle that will be at x_g in the next future time step.
-    vec2 x_mid; // Mid point to help aid in better backtracing of particle location.
-    Grid<V> q_new = quantity; // Deep copy.
-    for(uint32 row(0); row < u_height; ++row) {
-        for(uint32 col(0); col < u_width; ++col) {
-            //-- Two stage Runge-Kutta method:
-            {
-                x_g = vec2(row, col);
-                x_mid = x_g - inv_kDx * (0.5f * dt * u(row, col));
-                x_p = x_g - inv_kDx * (dt * u(x_mid.x, x_mid.y));
-            }
-
-           q_new(row,col) = bilinear(q, x_p);
-        }
-    }
-
-    // Move the advected grid data into q.
-    q = std::move(q_new);
-}
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::logic() {
-    advect(m_velocity, kDt, m_pressure);
+    advect(m_velocity, m_pressure, kDt);
 }
 
 //----------------------------------------------------------------------------------------
