@@ -19,10 +19,7 @@ int main() {
 }
 
 //---------------------------------------------------------------------------------------
-SmokeSim::SmokeSim()
-    : m_velocity(Grid<vec2>(kGridHeight+1, kGridWidth+1)),
-      m_pressure(Grid<float32>(kGridHeight, kGridWidth))
-{
+SmokeSim::SmokeSim() {
 
 }
 
@@ -40,12 +37,31 @@ shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
 void SmokeSim::init() {
     cout << "\nInitializing Simulation." << endl;
 
-
-    // TODO Dustin - Create Grids:
-    // Create Staggered velocity grid
-    // Create pressure grid
-
     createTextures();
+    initGrids();
+}
+
+//----------------------------------------------------------------------------------------
+void SmokeSim::initGrids() {
+    m_pressure = Grid<float32>(kGridWidth, kGridHeight, kDx, vec2(0,0));
+    m_pressure.setAll(0);
+
+
+    Grid<float32> u(m_pressure.width()+1,
+                    m_pressure.height(),
+                    kDx,
+                    vec2(0, 0.5*kDx));
+
+    Grid<float32> v(m_pressure.width(),
+                    m_pressure.height()+1,
+                    kDx,
+                    vec2(0.5f*kDx, 0));
+
+    m_velocity = StaggeredGrid<float32>(std::move(u), std::move(v));
+
+    // Set initial velocity components:
+    m_velocity.u.setAll(0);
+    m_velocity.v.setAll(0.01f);
 }
 
 //----------------------------------------------------------------------------------------
@@ -67,7 +83,7 @@ void SmokeSim::createTextures() {
         float initialInk [width][height];
         utils::fillArray(initialInk, 0.0f, height, width);
 
-        // Internally store texture as RG16 - two channels of half-floats:
+        // Internally store texture as R16 - one channel of half-floats:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, width, height, 0, GL_RED, GL_FLOAT, initialInk);
     }
 
@@ -80,7 +96,16 @@ void SmokeSim::createTextures() {
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::logic() {
-    advect(m_velocity, m_pressure, kDt);
+//    advect(m_velocity, m_pressure, kDt);
+
+
+    // Apply the first 3 operators in Equation 12.
+//    u = advect(u);
+//    u = diffuse(u);
+//    u = addForces(u);
+//// Now apply the projection operator to the result.
+//    p = computePressure(u);
+//    u = subtractPressureGradient(u, p);
 }
 
 //----------------------------------------------------------------------------------------

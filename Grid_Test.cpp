@@ -17,6 +17,8 @@ namespace {  // limit class visibility to this file.
 
 class Grid_Test : public ::testing::Test {
 protected:
+    static constexpr float32 kCellLength = 1.0f;
+
     // Ran before each test.
     virtual void SetUp() {
 
@@ -26,9 +28,10 @@ protected:
 
 } // end namespace
 
+
 //------------------------------------------------------------------------------
 TEST_F(Grid_Test, move_constructor) {
-    Grid<int32> a(2,2);
+    Grid<int32> a(2,2,kCellLength,vec2(0.0));
 
     a(0,0) = 1;
     a(0,1) = 2;
@@ -51,7 +54,7 @@ TEST_F(Grid_Test, move_constructor) {
 
 //------------------------------------------------------------------------------
 TEST_F(Grid_Test, move_assignment) {
-    Grid<int32> a(1,2);
+    Grid<int32> a(1,2,kCellLength,vec2(0.0));
 
     a(0,0) = 1;
     a(0,1) = 2;

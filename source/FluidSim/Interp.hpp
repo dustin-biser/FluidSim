@@ -8,15 +8,17 @@
 #define FLUIDSIM_INTERP_HPP
 
 #include "NumericTypes.hpp"
-#include "Grid.hpp"
+#include "FluidSim/Grid.hpp"
+#include "FluidSim/StaggeredGrid.hpp"
 
 namespace FluidSim {
 
     template <typename T>
-    T bilinear(const Grid<T> & grid, const vec2 & coords);
+    T bilinear(const Grid<T> & grid, const vec2 & worldPos);
+
 
     template <typename T>
-    T bilinear(const Grid<T> & grid, float32 col, float32 row);
+    tvec2<T> bilinear(const StaggeredGrid<T> & grid, const vec2 & worldPos);
 
 }
 

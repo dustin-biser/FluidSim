@@ -8,21 +8,31 @@
 
 #include "FluidSim/NumericTypes.hpp"
 #include "FluidSim/Grid.hpp"
-#include "FluidSim/Interp.hpp"
 
 namespace FluidSim {
 
+// Forward Declaration
 template <typename T>
-using interpFunc = T (*) (const Grid<T> &, float32, float32);
+T bilinear(const Grid<T> & grid, const vec2 & worldPos);
+
+template <typename T>
+using interpFunc = T (*) (const Grid<T> &, const vec2 &);
+
 
 template <typename T>
 class StaggeredGrid {
 public:
     StaggeredGrid();
 
-    StaggeredGrid(const Grid<T> & u, const Grid<T> & v, interpFunc<T> interp = &bilinear);
+    StaggeredGrid(
+        const Grid<T> & u,
+        const Grid<T> & v,
+        interpFunc<T> interp = &bilinear);
 
-    StaggeredGrid(Grid<T> && u, Grid<T> && v, interpFunc<T> interp = &bilinear);
+    StaggeredGrid(
+        Grid<T> && u,
+        Grid<T> && v,
+        interpFunc<T> interp = &bilinear);
 
     StaggeredGrid(const StaggeredGrid<T> & other);
 
@@ -39,8 +49,8 @@ public:
     tvec2<T> operator () (const vec2 & coords) const;
 
 
-    Grid<T> u; // half cell horizontal components
-    Grid<T> v; // half cell vertical components
+    Grid<T> u; // Horizontal component grid.
+    Grid<T> v; // Vertical component grid.
 
 private:
     interpFunc<T> m_interp;

@@ -15,7 +15,10 @@ class Grid {
 public:
     Grid();
 
-    Grid(uint32 width, uint32 height);
+    Grid(uint32 width,
+         uint32 height,
+         float32 cellLength,
+         vec2 origin);
 
     Grid(const Grid<T> & other);
 
@@ -26,6 +29,12 @@ public:
     uint32 width() const;
 
     uint32 height() const;
+
+    vec2 origin() const;
+
+    float32 cellLength() const;
+
+    vec2 getPosition(uint32 col, uint32 row);
 
     T & operator () (uint32 col, uint32 row) const;
 
@@ -39,6 +48,9 @@ private:
     T * m_data;
     uint32 m_height;
     uint32 m_width;
+    float32 m_cellLength;
+    vec2 m_origin;
+
 };
 
 } // end namespace FluidSim.

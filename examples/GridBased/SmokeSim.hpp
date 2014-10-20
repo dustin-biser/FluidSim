@@ -46,8 +46,9 @@ public:
 private:
     SmokeSim(); // Singleton. Prevent direct construction.
 
-    Grid<vec2> m_velocity;
+    StaggeredGrid<float32> m_velocity;
     Grid<float32> m_pressure;
+    Grid<float32> m_ink;
 
     GLuint m_tex2D_ink;
 
@@ -58,5 +59,6 @@ private:
     virtual void cleanup();
 
     void createTextures();
+    void initGrids();
 
 };

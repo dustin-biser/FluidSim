@@ -1,4 +1,5 @@
-#include "StaggeredGrid.hpp"
+#include "FluidSim/StaggeredGrid.hpp"
+#include "FluidSim/Interp.hpp"
 #include <utility>
 
 namespace FluidSim {
@@ -18,7 +19,7 @@ template <typename T>
 StaggeredGrid<T>::StaggeredGrid (
         const Grid<T> & u,
         const Grid<T> & v,
-        interpFunc<T> interp )
+        interpFunc<T> interp)
     : u(u),
       v(v),
       m_interp(interp)
@@ -28,7 +29,10 @@ StaggeredGrid<T>::StaggeredGrid (
 
 //----------------------------------------------------------------------------------------
 template <typename T>
-StaggeredGrid<T>::StaggeredGrid(Grid<T> && u, Grid<T> && v, interpFunc<T> interp)
+StaggeredGrid<T>::StaggeredGrid(
+        Grid<T> && u,
+        Grid<T> && v,
+        interpFunc<T> interp)
     : u(std::move(u)),
       v(std::move(v)),
       m_interp(interp)

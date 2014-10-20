@@ -14,29 +14,44 @@ namespace {  // limit class visibility to this file.
 
 class Interp_Test : public ::testing::Test {
 protected:
-    static Grid<vec2> vec2_grid;
     static Grid<float32> float_grid;
+    static StaggeredGrid<float32> staggered_grid;
+    static constexpr float32 kCellLength = 1.0f;
 
     // Ran before each test.
     virtual void SetUp() {
+        // Data layout in staggered_grid:
+        //
+        // v Grid
+        // 4 -- 5
+        // |    |
+        // 2 -- 3
+        // |    |
+        // 0 -- 1
+        //
+        // u Grid
+        // 3 -- 4 -- 5
+        // |    |    |
+        // 0 -- 1 -- 2
 
-        // Put data in vec2_grid:
-        // (0,2) -- (1,2) -- (2,2)
-        //   |        |        |
-        // (0,1) -- (1,1) -- (2,1)
-        //   |        |        |
-        // (0,0) -- (1,0) -- (2,0)
-        vec2_grid(0, 0) = vec2(0.0f, 0.0f);
-        vec2_grid(1, 0) = vec2(1.0f, 0.0f);
-        vec2_grid(2, 0) = vec2(2.0f, 0.0f);
+        Grid<float32> v(2,3, kCellLength, vec2(0.5*kCellLength, 0));
+        v(0,0) = 0;
+        v(1,0) = 1;
+        v(0,1) = 2;
+        v(1,1) = 3;
+        v(0,2) = 4;
+        v(1,2) = 5;
 
-        vec2_grid(0, 1) = vec2(0.0f, 1.0f);
-        vec2_grid(1, 1) = vec2(1.0f, 1.0f);
-        vec2_grid(2, 1) = vec2(2.0f, 1.0f);
+        Grid<float32> u(3,2, kCellLength, vec2(0, 0.5*kCellLength));
+        u(0,0) = 0;
+        u(1,0) = 1;
+        u(2,0) = 2;
+        u(0,1) = 3;
+        u(1,1) = 4;
+        u(2,1) = 5;
 
-        vec2_grid(0, 2) = vec2(0.0f, 2.0f);
-        vec2_grid(1, 2) = vec2(1.0f, 2.0f);
-        vec2_grid(2, 2) = vec2(2.0f, 2.0f);
+        staggered_grid = StaggeredGrid<float32>(std::move(u),std::move(v));
+
 
 
         // Put data in float_grid:
@@ -57,14 +72,16 @@ protected:
 
 } // end namespace
 
-Grid<vec2> Interp_Test::vec2_grid = Grid<vec2>(3,3);
-Grid<float32> Interp_Test::float_grid = Grid<float32>(2,3);
+Grid<float32> Interp_Test::float_grid = Grid<float32>(2,3, kCellLength, vec2(0,0));
+StaggeredGrid<float32> Interp_Test::staggered_grid;
 
 
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, test_setup) {
-    EXPECT_EQ(vec2_grid.width(), 3);
-    EXPECT_EQ(vec2_grid.height(), 3);
+    EXPECT_EQ(staggered_grid.u.width(), 3);
+    EXPECT_EQ(staggered_grid.u.height(), 2);
+    EXPECT_EQ(staggered_grid.v.width(), 2);
+    EXPECT_EQ(staggered_grid.v.height(), 3);
 
     EXPECT_EQ(float_grid.width(), 2);
     EXPECT_EQ(float_grid.height(), 3);
@@ -103,53 +120,26 @@ TEST_F(Interp_Test, bilinear_float_grid_midpoint) {
     EXPECT_FLOAT_EQ(2.5f, bilinear(float_grid, vec2(0.5f, 1.0f)) );
 }
 
-
-
 //------------------------------------------------------------------------------
-// Test vec2_grid
+// Test staggered_grid
 //------------------------------------------------------------------------------
-TEST_F(Interp_Test, bilinear_vec2_grid_cell_centers) {
-    vec2 result = bilinear(vec2_grid, vec2(0.5f, 0.5f));
-    EXPECT_FLOAT_EQ(0.5f, result.x);
-    EXPECT_FLOAT_EQ(0.5f, result.y);
-
-    result = bilinear(vec2_grid, vec2(1.5f, 0.5f));
-    EXPECT_FLOAT_EQ(1.5f, result.x);
-    EXPECT_FLOAT_EQ(0.5f, result.y);
-
-    result = bilinear(vec2_grid, vec2(0.5f, 1.5f));
-    EXPECT_FLOAT_EQ(0.5f, result.x);
-    EXPECT_FLOAT_EQ(1.5f, result.y);
-
-    result = bilinear(vec2_grid, vec2(1.5f, 1.5f));
-    EXPECT_FLOAT_EQ(1.5f, result.x);
-    EXPECT_FLOAT_EQ(1.5f, result.y);
+TEST_F(Interp_Test, bilinear_staggered_grid_origins) {
+    vec2 result = bilinear(staggered_grid, vec2(0,0));
+    EXPECT_FLOAT_EQ(0, result[0]);
+    EXPECT_FLOAT_EQ(0, result[1]);
 }
 
 //------------------------------------------------------------------------------
-TEST_F(Interp_Test, bilinear_vec2_grid_clamp_to_zero_zero) {
-    vec2 result = bilinear(vec2_grid, vec2(-0.5f, -0.5f));
-    EXPECT_FLOAT_EQ(0.0f, result.x);
-    EXPECT_FLOAT_EQ(0.0f, result.y);
+TEST_F(Interp_Test, bilinear_staggered_grid_half_half) {
+    vec2 result = bilinear(staggered_grid, vec2(0.5,0.5));
+    EXPECT_FLOAT_EQ(0.5f, result[0]);
+    EXPECT_FLOAT_EQ(1.0f, result[1]);
 }
 
 //------------------------------------------------------------------------------
-TEST_F(Interp_Test, bilinear_vec2_grid_clamp_to_two_two) {
-    vec2 result = bilinear(vec2_grid, vec2(2.1f, 2.2f));
-    EXPECT_FLOAT_EQ(2.0f, result.x);
-    EXPECT_FLOAT_EQ(2.0f, result.y);
+TEST_F(Interp_Test, bilinear_staggered_grid_one_one) {
+    vec2 result = bilinear(staggered_grid, vec2(1,1));
+    EXPECT_FLOAT_EQ(2.5f, result[0]);
+    EXPECT_FLOAT_EQ(2.5f, result[1]);
 }
 
-//------------------------------------------------------------------------------
-TEST_F(Interp_Test, bilinear_vec2_grid_clamp_to_two_three_halves) {
-    vec2 result = bilinear(vec2_grid, vec2(2.1f, 1.5f));
-    EXPECT_FLOAT_EQ(2.0f, result.x);
-    EXPECT_FLOAT_EQ(1.5f, result.y);
-}
-
-//------------------------------------------------------------------------------
-TEST_F(Interp_Test, bilinear_vec2_grid_midpoint) {
-    vec2 result = bilinear(vec2_grid, vec2(1.0f, 1.0f));
-    EXPECT_FLOAT_EQ(1.0f, result.x);
-    EXPECT_FLOAT_EQ(1.0f, result.y);
-}
