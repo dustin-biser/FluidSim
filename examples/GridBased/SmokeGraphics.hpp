@@ -6,34 +6,40 @@
 
 #pragma once
 
+#include "FluidSim/Grid.hpp"
+using namespace FluidSim;
+
 #include <Rigid3D/Rigid3D.hpp>
 using namespace Rigid3D;
 
-#include <vector>
-using std::vector;
 
 //----------------------------------------------------------------------------------------
 // Graphics Parameters
 //----------------------------------------------------------------------------------------
 const int kScreenWidth = 800;
 const int kScreenHeight = 800;
-const int kViewWidth = 10;
-const int kViewHeight = 10;
+const int attribIndex_position = 0;
+const int attribIndex_texCoord = 1;
 
 class SmokeGraphics {
 public:
-    void init();
+    void init(const Grid<float32> & inkGrid);
     void draw();
+    void cleanup();
 
-    void SetupShaders();
-    void SetupUniforms();
-    void SetupCamera();
-    void SetupVboData();
-    void UpdateGL();
+    void setupShaders();
+    void setupUniforms();
+    void setupVao();
+    void setupBufferData();
+    void uploadTextureData(const Grid<float32> & inkGrid);
+
+    void createInkTexture(const Grid<float32> & inkGrid);
 
 private:
     ShaderProgram shaderProgram;
-    Camera camera;
-    GLuint vao;
-    GLuint vbo;
+    GLuint vao; // vertex array object
+    GLuint vbo; // vertex buffer object
+    GLuint ebo; // element buffer object (indices)
+
+    GLuint tex2D_ink;
 };

@@ -9,14 +9,30 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Advect_Test.cpp"
-            timestampString = "435207804.422569"
+            filePath = "../Rigid3D/src/Rigid3D/Graphics/GlErrorCheck.cpp"
+            timestampString = "435477738.44641"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "TEST_F(Advect_Test, test_setup)"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "checkGLErrors(const string &amp;currentFileName, int currentLine)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "examples/GridBased/SmokeGraphics.cpp"
+            timestampString = "435478395.281101"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "SmokeGraphics::draw()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

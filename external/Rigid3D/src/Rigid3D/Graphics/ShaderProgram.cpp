@@ -180,10 +180,12 @@ using std::stringstream;
 
     void ShaderProgram::enable() {
         glUseProgram(programObject);
+        checkGLErrors;
     }
 
     void ShaderProgram::disable() {
         glUseProgram((GLuint)NULL);
+        checkGLErrors;
     }
 
     //------------------------------------------------------------------------------------
@@ -212,7 +214,7 @@ using std::stringstream;
      *
      * @return a \c GLuint representing the program object for this \c ShaderProgram
      */
-GLuint ShaderProgram::getProgramObject() const {
+    GLuint ShaderProgram::getProgramObject() const {
         return programObject;
     }
 

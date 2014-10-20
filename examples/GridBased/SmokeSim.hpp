@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "SmokeGraphics.hpp"
+
 #include "FluidSim/NumericTypes.hpp"
 #include "FluidSim/Grid.hpp"
 #include "FluidSim/StaggeredGrid.hpp"
@@ -20,7 +22,7 @@ using namespace glm;
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const float32 kDt = 1 / 60.0f;
+const float32 kDt = 1/60.0f;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -29,10 +31,10 @@ const float32 kDt = 1 / 60.0f;
 //----------------------------------------------------------------------------------------
 // Grid Parameters
 //----------------------------------------------------------------------------------------
-const int32 kGridWidth = 400;
-const int32 kGridHeight = 400;
+const int32 kGridWidth = 20;
+const int32 kGridHeight = 20;
 const float32 kDx = 0.01f; // Grid cell length in meters.
-const float32 inv_kDx = 1.0f / kDx;
+const float32 inv_kDx = 1.0f/kDx;
 
 
 
@@ -46,11 +48,12 @@ public:
 private:
     SmokeSim(); // Singleton. Prevent direct construction.
 
-    StaggeredGrid<float32> m_velocity;
-    Grid<float32> m_pressure;
-    Grid<float32> m_ink;
+    StaggeredGrid<float32> velocityGrid;
+    StaggeredGrid<float32> tmp_velocity;
+    Grid<float32> pressureGrid;
+    Grid<float32> inkGrid;
 
-    GLuint m_tex2D_ink;
+    SmokeGraphics smokeGraphics;
 
     virtual void init();
     virtual void logic();
@@ -58,7 +61,6 @@ private:
     virtual void keyInput(int key, int action, int mods);
     virtual void cleanup();
 
-    void createTextures();
-    void initGrids();
+    void initGridData();
 
 };

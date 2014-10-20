@@ -44,6 +44,8 @@ public:
 
     void setAll(const T & val);
 
+    const T * data() const;
+
 private:
     T * m_data;
     uint32 m_height;

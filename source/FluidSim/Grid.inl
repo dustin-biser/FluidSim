@@ -142,4 +142,10 @@ void Grid<T>::setAll(const T & val) {
     }
 }
 
+//---------------------------------------------------------------------------------------
+template <typename T>
+const T * Grid<T>::data() const {
+    return m_data;
+}
+
 } // end namespace FluidSim

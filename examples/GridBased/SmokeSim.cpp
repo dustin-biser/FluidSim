@@ -2,6 +2,7 @@
 #include "SmokeGraphics.hpp"
 #include "Utils.hpp"
 #include "Interp.hpp"
+#include "Advect.hpp"
 
 #include <cmath>
 
@@ -37,66 +38,53 @@ shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
 void SmokeSim::init() {
     cout << "\nInitializing Simulation." << endl;
 
-    createTextures();
-    initGrids();
+    initGridData();
+    
+    smokeGraphics.init(inkGrid);
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::initGrids() {
-    m_pressure = Grid<float32>(kGridWidth, kGridHeight, kDx, vec2(0,0));
-    m_pressure.setAll(0);
+void SmokeSim::initGridData() {
+    inkGrid = Grid<float32>(kGridWidth, kGridHeight, kDx, vec2(0,0));
+    inkGrid.setAll(0);
 
+    // Put data in inkGrid grid:
+    int start_row = 0;
+    int end_row = 4;
+    int start_col = 0;
+    int end_col = 4;
+    for(int row(start_row); row < end_row; ++row) {
+        for(int col(start_col); col < end_col; ++col) {
+            inkGrid(col,row) = 0.8f;
+        }
+    }
 
-    Grid<float32> u(m_pressure.width()+1,
-                    m_pressure.height(),
+    Grid<float32> u(inkGrid.width()+1,
+                    inkGrid.height(),
                     kDx,
                     vec2(0, 0.5*kDx));
 
-    Grid<float32> v(m_pressure.width(),
-                    m_pressure.height()+1,
+    Grid<float32> v(inkGrid.width(),
+                    inkGrid.height()+1,
                     kDx,
                     vec2(0.5f*kDx, 0));
 
-    m_velocity = StaggeredGrid<float32>(std::move(u), std::move(v));
+    velocityGrid = StaggeredGrid<float32>(std::move(u), std::move(v));
+    tmp_velocity = velocityGrid;
 
-    // Set initial velocity components:
-    m_velocity.u.setAll(0);
-    m_velocity.v.setAll(0.01f);
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::createTextures() {
-    //--Setup ink texture.
-    // The ink texture will represent a grid of size (kGridWidth, kGridHeight).
-    // Type: R16
-    // Red Channel - ink density/opacity
-    {
-        glGenTextures(1, &m_tex2D_ink);
-        glBindTexture(GL_TEXTURE_2D, m_tex2D_ink);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        int width = kGridWidth;
-        int height = kGridHeight;
-        float initialInk [width][height];
-        utils::fillArray(initialInk, 0.0f, height, width);
-
-        // Internally store texture as R16 - one channel of half-floats:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, width, height, 0, GL_RED, GL_FLOAT, initialInk);
-    }
-
-    // Unbind the GL_TEXTURE_2D target.
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    CHECK_GL_ERRORS;
+    // Set initial velocityGrid components:
+    velocityGrid.u.setAll(0);
+    velocityGrid.v.setAll(kDt);
 }
 
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::logic() {
-//    advect(m_velocity, m_pressure, kDt);
+    advect(velocityGrid, tmp_velocity.u, kDt);
+    advect(velocityGrid, tmp_velocity.v, kDt);
+    velocityGrid = tmp_velocity;
+
+    advect(velocityGrid, inkGrid, kDt);
 
 
     // Apply the first 3 operators in Equation 12.
@@ -104,12 +92,15 @@ void SmokeSim::logic() {
 //    u = diffuse(u);
 //    u = addForces(u);
 //// Now apply the projection operator to the result.
-//    p = computePressure(u);
-//    u = subtractPressureGradient(u, p);
+//    p = computepressureGrid(u);
+//    u = subtractpressureGridGradient(u, p);
+
+    smokeGraphics.uploadTextureData(inkGrid);
 }
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::draw() {
+    smokeGraphics.draw();
 }
 
 //----------------------------------------------------------------------------------------
@@ -120,10 +111,6 @@ void SmokeSim::keyInput(int key, int action, int mods) {
 //----------------------------------------------------------------------------------------
 void SmokeSim::cleanup() {
     cout << "Simulation Clean Up" << endl;
-
-    //-- Delete Textures:
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, &m_tex2D_ink);
 
     cout << " ... Good Bye." << endl;
 }
