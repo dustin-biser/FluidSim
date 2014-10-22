@@ -2,17 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a55395b3-931e-44fd-9c01-5ebeca3b9419" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FluidSim.xcodeproj/project.xcworkspace/xcuserdata/dustinbiser.xcuserdatad/UserInterfaceState.xcuserstate" afterPath="$PROJECT_DIR$/FluidSim.xcodeproj/project.xcworkspace/xcuserdata/dustinbiser.xcuserdatad/UserInterfaceState.xcuserstate" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FluidSim.xcodeproj/xcuserdata/dustinbiser.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" afterPath="$PROJECT_DIR$/FluidSim.xcodeproj/xcuserdata/dustinbiser.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/FluidSim/Grid.hpp" afterPath="$PROJECT_DIR$/source/FluidSim/Grid.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/FluidSim/Grid.inl" afterPath="$PROJECT_DIR$/source/FluidSim/Grid.inl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/Rigid3D/src/Rigid3D/Graphics/ShaderProgram.cpp" afterPath="$PROJECT_DIR$/external/Rigid3D/src/Rigid3D/Graphics/ShaderProgram.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs" afterPath="$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.cpp" afterPath="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp" afterPath="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/GridBased/SmokeSim.cpp" afterPath="$PROJECT_DIR$/examples/GridBased/SmokeSim.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp" afterPath="$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FluidSim.xcodeproj/xcuserdata/dustinbiser.xcuserdatad/xcschemes/SmokeSim.xcscheme" afterPath="$PROJECT_DIR$/FluidSim.xcodeproj/xcuserdata/dustinbiser.xcuserdatad/xcschemes/SmokeSim.xcscheme" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FluidSim.xcodeproj/project.pbxproj" afterPath="$PROJECT_DIR$/FluidSim.xcodeproj/project.pbxproj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="FluidSim.iws" />
@@ -39,24 +33,14 @@
     <favorites_list name="FluidSim" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.49630126">
+    <splitter split-orientation="horizontal" split-proportion="0.4623267">
       <split-first>
         <leaf>
-          <file leaf-file-name="SmokeSim.hpp" pinned="false" current="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.45735607" vertical-offset="47" max-vertical-offset="1008">
-                  <caret line="34" column="26" selection-start-line="34" selection-start-column="26" selection-end-line="34" selection-end-column="26" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="Grid.hpp" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/source/FluidSim/Grid.hpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="952">
-                  <caret line="30" column="25" selection-start-line="30" selection-start-column="25" selection-end-line="30" selection-end-column="25" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="14" max-vertical-offset="952">
+                  <caret line="20" column="6" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
                   <folding />
                 </state>
               </provider>
@@ -72,11 +56,21 @@
               </provider>
             </entry>
           </file>
+          <file leaf-file-name="SmokeSim.hpp" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.36468884" vertical-offset="84" max-vertical-offset="1022">
+                  <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
           <file leaf-file-name="SmokeGraphics.hpp" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="714">
-                  <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="728">
+                  <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -102,21 +96,21 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ShaderProgram.hpp" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/external/Rigid3D/src/Rigid3D/Graphics/ShaderProgram.hpp">
+          <file leaf-file-name="Smoke2DAdvect.vs" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.vs">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="378" max-vertical-offset="1666">
-                  <caret line="39" column="21" selection-start-line="39" selection-start-column="21" selection-end-line="39" selection-end-column="21" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="252">
+                  <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Smoke2DAdvect.vs" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.vs">
+          <file leaf-file-name="Smoke2DAdvect.fs" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="140" max-vertical-offset="252">
-                  <caret line="10" column="32" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="280">
+                  <caret line="10" column="68" selection-start-line="10" selection-start-column="68" selection-end-line="10" selection-end-column="68" />
                   <folding />
                 </state>
               </provider>
@@ -129,38 +123,8 @@
           <file leaf-file-name="Grid.inl" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/source/FluidSim/Grid.inl">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="1176" max-vertical-offset="2198">
-                  <caret line="131" column="19" selection-start-line="131" selection-start-column="19" selection-end-line="131" selection-end-column="19" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="StaggeredGrid.inl" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/source/FluidSim/StaggeredGrid.inl">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="490" max-vertical-offset="2254">
-                  <caret line="69" column="37" selection-start-line="69" selection-start-column="37" selection-end-line="69" selection-end-column="37" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Advect_Test.cpp" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Advect_Test.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="728" max-vertical-offset="1960">
-                  <caret line="52" column="20" selection-start-line="52" selection-start-column="20" selection-end-line="52" selection-end-column="20" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="SmokeSim.cpp" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.6812367" vertical-offset="509" max-vertical-offset="1708">
-                  <caret line="82" column="18" selection-start-line="82" selection-start-column="18" selection-end-line="82" selection-end-column="18" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="1260" max-vertical-offset="2198">
+                  <caret line="102" column="33" selection-start-line="102" selection-start-column="33" selection-end-line="102" selection-end-column="33" />
                   <folding />
                 </state>
               </provider>
@@ -169,8 +133,18 @@
           <file leaf-file-name="Advect.inl" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/source/FluidSim/Advect.inl">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="117" max-vertical-offset="672">
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="672">
                   <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="SmokeSim.cpp" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.46599132" vertical-offset="602" max-vertical-offset="1806">
+                  <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -180,17 +154,7 @@
             <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeGraphics.cpp">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0" vertical-offset="1750" max-vertical-offset="2688">
-                  <caret line="164" column="0" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="GlErrorCheck.hpp" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/external/Rigid3D/src/Rigid3D/Graphics/GlErrorCheck.hpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="196" max-vertical-offset="476">
-                  <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+                  <caret line="162" column="37" selection-start-line="162" selection-start-column="37" selection-end-line="162" selection-end-column="37" />
                   <folding />
                 </state>
               </provider>
@@ -201,16 +165,6 @@
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0" vertical-offset="5708" max-vertical-offset="7350">
                   <caret line="431" column="17" selection-start-line="431" selection-start-column="17" selection-end-line="431" selection-end-column="17" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Smoke2DAdvect.fs" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="196" max-vertical-offset="280">
-                  <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -231,7 +185,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/examples/Utils/GlfwOpenGlWindow.cpp" />
         <option value="$PROJECT_DIR$/examples/GridBased/SmokeGraphicsGPU.cpp" />
         <option value="$PROJECT_DIR$/examples/GridBased/SmokeGraphicsGPU.hpp" />
         <option value="$PROJECT_DIR$/examples/GridBased/SmokeSimGPU.hpp" />
@@ -260,12 +213,14 @@
         <option value="$PROJECT_DIR$/source/FluidSim/Grid.hpp" />
         <option value="$PROJECT_DIR$/source/FluidSim/Grid.inl" />
         <option value="$PROJECT_DIR$/examples/SPH/SphGraphics.cpp" />
-        <option value="$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs" />
-        <option value="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp" />
         <option value="$PROJECT_DIR$/external/Rigid3D/src/Rigid3D/Graphics/ShaderProgram.cpp" />
         <option value="$PROJECT_DIR$/data/shaders/Smoke2DAdvect.vs" />
-        <option value="$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp" />
+        <option value="$PROJECT_DIR$/examples/Utils/GlfwOpenGlWindow.hpp" />
+        <option value="$PROJECT_DIR$/examples/Utils/GlfwOpenGlWindow.cpp" />
+        <option value="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp" />
+        <option value="$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs" />
         <option value="$PROJECT_DIR$/examples/GridBased/SmokeGraphics.cpp" />
+        <option value="$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp" />
         <option value="$PROJECT_DIR$/examples/GridBased/SmokeSim.cpp" />
       </list>
     </option>
@@ -425,88 +380,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeRootNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="external" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Rigid3D" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Rigid3D" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeRootNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="external" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Rigid3D" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Rigid3D" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Graphics" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeRootNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FluidSim" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="external" />
               <option name="myItemType" value="com.jetbrains.cidr.projectView.XcodeViewNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -723,6 +596,7 @@
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32905984" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32799146" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39648032" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
@@ -730,14 +604,13 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3146998" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32905984" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.11383109" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21077909" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26708075" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17129135" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39958593" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25569358" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32815734" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
     </layout>
   </component>
@@ -966,6 +839,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="644">
           <caret line="0" column="21" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1045,34 +919,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/Utils/GlfwOpenGlWindow.hpp">
+    <entry file="file://$PROJECT_DIR$/examples/SPH/SphGraphics.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.17910448" vertical-offset="182" max-vertical-offset="1540">
-          <caret line="25" column="6" selection-start-line="25" selection-start-column="6" selection-end-line="25" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="546">
+          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/Utils/GlfwOpenGlWindow.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.67164177" vertical-offset="1274" max-vertical-offset="7140">
-          <caret line="136" column="4" selection-start-line="136" selection-start-column="4" selection-end-line="136" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.6784141" vertical-offset="2702" max-vertical-offset="7770">
+          <caret line="237" column="4" selection-start-line="237" selection-start-column="4" selection-end-line="237" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/FluidSim/Grid.hpp">
+    <entry file="file://$PROJECT_DIR$/examples/Utils/GlfwOpenGlWindow.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="14" max-vertical-offset="952">
-          <caret line="30" column="25" selection-start-line="30" selection-start-column="25" selection-end-line="30" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.39867842" vertical-offset="240" max-vertical-offset="1694">
+          <caret line="43" column="20" selection-start-line="43" selection-start-column="20" selection-end-line="43" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/SPH/SphGraphics.hpp">
+    <entry file="file://$PROJECT_DIR$/source/FluidSim/Advect.inl">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="546">
-          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="672">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1085,18 +959,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs">
+    <entry file="file://$PROJECT_DIR$/source/FluidSim/Grid.inl">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="280">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
-          <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1260" max-vertical-offset="2198">
+          <caret line="102" column="33" selection-start-line="102" selection-start-column="33" selection-end-line="102" selection-end-column="33" />
           <folding />
         </state>
       </provider>
@@ -1104,31 +970,15 @@
     <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.vs">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="252">
-          <caret line="10" column="32" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/FluidSim/Advect.inl">
+    <entry file="file://$PROJECT_DIR$/data/shaders/Smoke2DAdvect.fs">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="117" max-vertical-offset="672">
-          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/FluidSim/Grid.inl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1176" max-vertical-offset="2198">
-          <caret line="131" column="19" selection-start-line="131" selection-start-column="19" selection-end-line="131" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45735607" vertical-offset="47" max-vertical-offset="1008">
-          <caret line="34" column="26" selection-start-line="34" selection-start-column="26" selection-end-line="34" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="280">
+          <caret line="10" column="68" selection-start-line="10" selection-start-column="68" selection-end-line="10" selection-end-column="68" />
           <folding />
         </state>
       </provider>
@@ -1136,15 +986,39 @@
     <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeGraphics.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1750" max-vertical-offset="2688">
-          <caret line="164" column="0" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+          <caret line="162" column="37" selection-start-line="162" selection-start-column="37" selection-end-line="162" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeGraphics.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="728">
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/FluidSim/Grid.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="14" max-vertical-offset="952">
+          <caret line="20" column="6" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6812367" vertical-offset="509" max-vertical-offset="1708">
-          <caret line="82" column="18" selection-start-line="82" selection-start-column="18" selection-end-line="82" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.46599132" vertical-offset="602" max-vertical-offset="1806">
+          <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/GridBased/SmokeSim.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.36468884" vertical-offset="84" max-vertical-offset="1022">
+          <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
           <folding />
         </state>
       </provider>

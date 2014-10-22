@@ -59,10 +59,10 @@ void SmokeGraphics::setupBufferData() {
             //  Position      Texcoords
             -1.0f,  1.0f,    0.0f, 1.0f, // Top-left
              1.0f,  1.0f,    1.0f, 1.0f, // Top-right
-             1.0f, -1.0f,    0.0f, 1.0f, // Bottom-right
+             1.0f, -1.0f,    1.0f, 0.0f, // Bottom-right
             -1.0f, -1.0f,    0.0f, 0.0f  // Bottom-left
         };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_DYNAMIC_DRAW);
 
         uint32 elementsPerVertex;
         uint32 stride;
@@ -101,7 +101,7 @@ void SmokeGraphics::setupBufferData() {
 
 //----------------------------------------------------------------------------------------
 void SmokeGraphics::setupUniforms() {
-    shaderProgram.setUniform("u_inkColor", vec3(0.4f, 0.1f, 0.1f));
+    shaderProgram.setUniform("u_inkColor", inkColor);
 
     // sampler2D texInk will use TextureUnit 0
     shaderProgram.setUniform("u_tex2DInk", 0);

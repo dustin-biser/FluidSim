@@ -1,20 +1,23 @@
 #include "SmokeSim.hpp"
 #include "SmokeGraphics.hpp"
-#include "Utils.hpp"
-#include "Interp.hpp"
-#include "Advect.hpp"
+
+#include "FluidSim/Interp.hpp"
+#include "FluidSim/Advect.hpp"
 
 #include <cmath>
+#include <iostream>
+using namespace std;
 
 #include <glm/glm.hpp>
 
-#include <iostream>
-using namespace std;
 
 //----------------------------------------------------------------------------------------
 int main() {
     shared_ptr<GlfwOpenGlWindow> smokeDemo = SmokeSim::getInstance();
-    smokeDemo->create(kScreenWidth, kScreenHeight, "2D Smoke Simulation");
+    smokeDemo->create(kScreenWidth,
+                      kScreenHeight,
+                      "2D Smoke Simulation",
+                      1/60.f);
 
     return 0;
 }
@@ -44,20 +47,23 @@ void SmokeSim::init() {
 }
 
 //----------------------------------------------------------------------------------------
+static void fillGrid(const Grid<float32> & grid, int start_col, int col_span,
+    int start_row, int row_span, float32 value) {
+
+    for(int row(start_row); row < start_row + row_span; ++row) {
+        for(int col(start_col); col < start_col + col_span; ++col) {
+            grid(col,row) = value;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------
 void SmokeSim::initGridData() {
     inkGrid = Grid<float32>(kGridWidth, kGridHeight, kDx, vec2(0,0));
     inkGrid.setAll(0);
 
-    // Put data in inkGrid grid:
-    int start_row = 0;
-    int end_row = 4;
-    int start_col = 0;
-    int end_col = 4;
-    for(int row(start_row); row < end_row; ++row) {
-        for(int col(start_col); col < end_col; ++col) {
-            inkGrid(col,row) = 0.8f;
-        }
-    }
+    // Put data into inkGrid grid:
+    fillGrid(inkGrid, 20, 40, 10, 2, 1.0);
 
     Grid<float32> u(inkGrid.width()+1,
                     inkGrid.height(),
@@ -70,11 +76,12 @@ void SmokeSim::initGridData() {
                     vec2(0.5f*kDx, 0));
 
     velocityGrid = StaggeredGrid<float32>(std::move(u), std::move(v));
-    tmp_velocity = velocityGrid;
 
     // Set initial velocityGrid components:
     velocityGrid.u.setAll(0);
-    velocityGrid.v.setAll(kDt);
+    velocityGrid.v.setAll(kDx);
+
+    tmp_velocity = velocityGrid;
 }
 
 

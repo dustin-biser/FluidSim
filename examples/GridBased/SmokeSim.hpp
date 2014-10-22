@@ -22,7 +22,7 @@ using namespace glm;
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const float32 kDt = 1/60.0f;
+const float32 kDt = 0.1; //1/60.0f;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -31,8 +31,9 @@ const float32 kDt = 1/60.0f;
 //----------------------------------------------------------------------------------------
 // Grid Parameters
 //----------------------------------------------------------------------------------------
-const int32 kGridWidth = 20;
-const int32 kGridHeight = 20;
+// Note: Keep KGridWidth a multiple of 4 so texture alignment is optimal.
+ const int32 kGridWidth = 80;
+const int32 kGridHeight = 80;
 const float32 kDx = 0.01f; // Grid cell length in meters.
 const float32 inv_kDx = 1.0f/kDx;
 
