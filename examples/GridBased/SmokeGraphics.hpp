@@ -20,7 +20,7 @@ const int kScreenWidth = 800;
 const int kScreenHeight = 800;
 const int attribIndex_position = 0;
 const int attribIndex_texCoord = 1;
-const vec3 inkColor(0.01, 1.0, 0.2);
+const vec3 inkColor(0.7, 0.7, 1.0);
 
 class SmokeGraphics {
 public:

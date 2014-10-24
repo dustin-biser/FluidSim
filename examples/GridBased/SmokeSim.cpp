@@ -43,7 +43,7 @@ void SmokeSim::init() {
 
     initGridData();
     
-    smokeGraphics.init(inkGrid);
+    smokeGraphics.init(densityGrid);
 }
 
 //----------------------------------------------------------------------------------------
@@ -59,40 +59,99 @@ static void fillGrid(const Grid<float32> & grid, int start_col, int col_span,
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::initGridData() {
-    inkGrid = Grid<float32>(kGridWidth, kGridHeight, kDx, vec2(0,0));
-    inkGrid.setAll(0);
 
-    // Put data into inkGrid grid:
-    fillGrid(inkGrid, 20, 40, 10, 2, 1.0);
+    //-- Density Grid
+    {
+        GridSpec gridSpec;
+        gridSpec.width = kGridWidth;
+        gridSpec.height = kGridHeight;
+        gridSpec.cellLength = kDx;
+        gridSpec.origin = vec2(0,0);
 
-    Grid<float32> u(inkGrid.width()+1,
-                    inkGrid.height(),
-                    kDx,
-                    vec2(0, 0.5*kDx));
+        densityGrid = Grid<float32>(gridSpec);
+        densityGrid.setAll(0);
+    }
 
-    Grid<float32> v(inkGrid.width(),
-                    inkGrid.height()+1,
-                    kDx,
-                    vec2(0.5f*kDx, 0));
+    //-- Temperature Grid
+    {
+        GridSpec gridSpec;
+        gridSpec.width = kGridWidth;
+        gridSpec.height = kGridHeight;
+        gridSpec.cellLength = kDx;
+        gridSpec.origin = vec2(0,0);
 
-    velocityGrid = StaggeredGrid<float32>(std::move(u), std::move(v));
+        temperatureGrid = Grid<float32>(gridSpec);
+        temperatureGrid.setAll(temp_0); // Set to ambient temperature
+    }
 
-    // Set initial velocityGrid components:
-    velocityGrid.u.setAll(0);
-    velocityGrid.v.setAll(kDx);
+    //-- Velocity Grid
+    {
 
-    tmp_velocity = velocityGrid;
+        GridSpec u_gridSpec;
+        u_gridSpec.width = densityGrid.width()+1;
+        u_gridSpec.height = densityGrid.height();
+        u_gridSpec.cellLength = kDx;
+        u_gridSpec.origin = vec2(0, 0.5*kDx);
+
+        Grid<float32> u(u_gridSpec);
+        u.setAll(0);
+
+
+        GridSpec v_gridSpec;
+        v_gridSpec.width = densityGrid.width();
+        v_gridSpec.height = densityGrid.height()+1;
+        v_gridSpec.cellLength = kDx;
+        v_gridSpec.origin = vec2(0.5f * kDx, 0);
+
+        Grid<float32> v(v_gridSpec);
+        v.setAll(kDx);
+
+        velocityGrid = StaggeredGrid<float32>(std::move(u), std::move(v));
+
+        tmp_velocity = velocityGrid;
+    }
+}
+
+//----------------------------------------------------------------------------------------
+void SmokeSim::advectQuantities() {
+    advect(tmp_velocity.u, velocityGrid, kDt);
+    advect(tmp_velocity.v, velocityGrid, kDt);
+    velocityGrid = tmp_velocity;
+
+    advect(densityGrid, velocityGrid, kDt);
+    advect(temperatureGrid, velocityGrid, kDt);
+}
+
+//----------------------------------------------------------------------------------------
+void SmokeSim::addForces() {
+   float32 force;
+   float32 density;
+   float32 temp;
+   for(uint32 row(0); row < kGridHeight; ++row) {
+       for(uint32 col(0); col < kGridWidth; ++col) {
+           density = densityGrid(col,row);
+           temp = temperatureGrid(col,row);
+           force = -kBuoyant_d * density + kBuoyant_t * (temp - temp_0);
+           velocityGrid.v(col,row) += kDt * force;
+       }
+   }
+
 }
 
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::logic() {
-    advect(velocityGrid, tmp_velocity.u, kDt);
-    advect(velocityGrid, tmp_velocity.v, kDt);
-    velocityGrid = tmp_velocity;
 
-    advect(velocityGrid, inkGrid, kDt);
+    static uint counter = 0;
+    if (counter < 60) {
+        // Smoke source:
+        fillGrid(densityGrid, 20, 40, 10, 2, 0.8);
+        fillGrid(temperatureGrid, 20, 40, 10, 2, 10*temp_0);
+        counter++;
+    }
 
+    advectQuantities();
+//    addForces();
 
     // Apply the first 3 operators in Equation 12.
 //    u = advect(u);
@@ -102,7 +161,7 @@ void SmokeSim::logic() {
 //    p = computepressureGrid(u);
 //    u = subtractpressureGridGradient(u, p);
 
-    smokeGraphics.uploadTextureData(inkGrid);
+    smokeGraphics.uploadTextureData(densityGrid);
 }
 
 //----------------------------------------------------------------------------------------

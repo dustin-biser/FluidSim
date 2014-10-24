@@ -8,31 +8,23 @@
          <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
+            condition = "(row &gt; 10) &amp;&amp; (col &gt; 20)"
             continueAfterRunningActions = "No"
-            filePath = "../Rigid3D/src/Rigid3D/Graphics/GlErrorCheck.cpp"
-            timestampString = "435477738.44641"
+            filePath = "examples/GridBased/SmokeSim.cpp"
+            timestampString = "435814858.86697"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
-            landmarkName = "checkGLErrors(const string &amp;currentFileName, int currentLine)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "examples/GridBased/SmokeGraphics.cpp"
-            timestampString = "435478395.281101"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "152"
-            endingLineNumber = "152"
-            landmarkName = "SmokeGraphics::draw()"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "SmokeSim::addForces()"
             landmarkType = "5">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent>
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
