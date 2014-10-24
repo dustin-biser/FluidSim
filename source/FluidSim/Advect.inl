@@ -8,8 +8,8 @@ namespace FluidSim {
 * Semi-Lagrangian advection of \c quantity, based on \c velocityField.
 */
 template<typename U, typename V>
-void advect(const StaggeredGrid<U> & velocity,
-            Grid<V> & quantity,
+void advect(Grid<V> & quantity,
+            const StaggeredGrid<U> & velocity,
             TimeStep dt)
 {
     Grid<V> & q = quantity;

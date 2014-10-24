@@ -15,8 +15,8 @@ namespace FluidSim {
 typedef float32 TimeStep;
 
 template<typename U, typename V>
-void advect(const StaggeredGrid<U> & velocity,
-            Grid<V> & quantity,
+void advect(Grid<V> & quantity,
+            const StaggeredGrid<U> & velocity,
             TimeStep dt);
 
 } // end namespace FluidSim

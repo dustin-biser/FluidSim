@@ -62,7 +62,7 @@ TEST_F(Advect_Test, advect_up) {
 
     velocity.u.setAll(0);
     velocity.v.setAll(kCellLength);
-    advect(velocity, q, kDt);
+    advect(q, velocity, kDt);
 
     EXPECT_FLOAT_EQ(1, q(0,0));
     EXPECT_FLOAT_EQ(1, q(1,0));
@@ -83,7 +83,7 @@ TEST_F(Advect_Test, advect_down) {
 
     velocity.u.setAll(0);
     velocity.v.setAll(-kCellLength);
-    advect(velocity, q, kDt);
+    advect(q, velocity, kDt);
 
     EXPECT_FLOAT_EQ(1, q(0,0));
     EXPECT_FLOAT_EQ(1, q(1,0));
@@ -123,7 +123,7 @@ TEST_F(Advect_Test, advect_velocity_u) {
     StaggeredGrid<float32> staggered_grid =
             StaggeredGrid<float32>(std::move(u), std::move(v));
 
-    advect(staggered_grid, staggered_grid.u, kDt);
+    advect(staggered_grid.u, staggered_grid, kDt);
 
     EXPECT_FLOAT_EQ(0, staggered_grid.u(0,0));
     EXPECT_FLOAT_EQ(0.5f, staggered_grid.u(1,0));
