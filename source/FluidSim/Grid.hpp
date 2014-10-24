@@ -10,6 +10,13 @@
 
 namespace FluidSim {
 
+struct GridSpec {
+    uint32 width;
+    uint32 height;
+    float32 cellLength;
+    vec2 origin;
+};
+
 template <typename T>
 class Grid {
 public:
@@ -19,6 +26,8 @@ public:
          uint32 height,
          float32 cellLength,
          vec2 origin);
+
+    Grid(const GridSpec & spec);
 
     Grid(const Grid<T> & other);
 

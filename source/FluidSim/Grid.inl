@@ -33,6 +33,17 @@ Grid<T>::Grid(
 
 //---------------------------------------------------------------------------------------
 template <typename T>
+Grid<T>::Grid(const GridSpec & spec)
+    : m_height(spec.height),
+      m_width(spec.width),
+      m_cellLength(spec.cellLength),
+      m_origin(spec.origin)
+{
+    m_data = new T[m_width * m_height];
+}
+
+//---------------------------------------------------------------------------------------
+template <typename T>
 Grid<T>::Grid(const Grid<T> & other)
     : m_width(other.m_width),
       m_height(other.m_height),
@@ -137,7 +148,7 @@ Grid<T> & Grid<T>::operator = (const Grid<T> & other) {
 //---------------------------------------------------------------------------------------
 template <typename T>
 void Grid<T>::setAll(const T & val) {
-    for(int i(0); i < m_height*m_width; ++i) {
+    for(int i(0); i < (m_height * m_width); ++i) {
         m_data[i] = val;
     }
 }
