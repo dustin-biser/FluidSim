@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 #include <glm/glm.hpp>
@@ -17,14 +18,9 @@ int main() {
     smokeDemo->create(kScreenWidth,
                       kScreenHeight,
                       "2D Smoke Simulation",
-                      1/60.f);
+                      1/60.0f);
 
     return 0;
-}
-
-//---------------------------------------------------------------------------------------
-SmokeSim::SmokeSim() {
-
 }
 
 //---------------------------------------------------------------------------------------
@@ -104,7 +100,7 @@ void SmokeSim::initGridData() {
         v_gridSpec.origin = vec2(0.5f * kDx, 0);
 
         Grid<float32> v(v_gridSpec);
-        v.setAll(kDx);
+        v.setAll(0.01*kDx);
 
         velocityGrid = StaggeredGrid<float32>(std::move(u), std::move(v));
 
@@ -114,6 +110,7 @@ void SmokeSim::initGridData() {
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::advectQuantities() {
+    tmp_velocity = velocityGrid;
     advect(tmp_velocity.u, velocityGrid, kDt);
     advect(tmp_velocity.v, velocityGrid, kDt);
     velocityGrid = tmp_velocity;
@@ -124,14 +121,20 @@ void SmokeSim::advectQuantities() {
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::addForces() {
+
+   //-- Buoyant Force:
    float32 force;
    float32 density;
    float32 temp;
+   vec2 worldPos;
    for(uint32 row(0); row < kGridHeight; ++row) {
        for(uint32 col(0); col < kGridWidth; ++col) {
-           density = densityGrid(col,row);
-           temp = temperatureGrid(col,row);
+           worldPos = velocityGrid.v.getPosition(col,row);
+           density = bilinear(densityGrid, worldPos);
+           temp = bilinear(temperatureGrid, worldPos);
+
            force = -kBuoyant_d * density + kBuoyant_t * (temp - temp_0);
+
            velocityGrid.v(col,row) += kDt * force;
        }
    }
@@ -145,13 +148,13 @@ void SmokeSim::logic() {
     static uint counter = 0;
     if (counter < 60) {
         // Smoke source:
-        fillGrid(densityGrid, 20, 40, 10, 2, 0.8);
-        fillGrid(temperatureGrid, 20, 40, 10, 2, 10*temp_0);
+        fillGrid(densityGrid, 20, 40, 10, 2, 1.0f);
+        fillGrid(temperatureGrid, 20, 40, 10, 2, temp_0 + 300);
         counter++;
     }
 
     advectQuantities();
-//    addForces();
+    addForces();
 
     // Apply the first 3 operators in Equation 12.
 //    u = advect(u);

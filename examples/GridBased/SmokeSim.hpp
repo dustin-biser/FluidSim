@@ -21,14 +21,14 @@ using namespace glm;
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const float32 kDt = 0.1; //1/60.0f;
+const float32 kDt = 0.01;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
 //----------------------------------------------------------------------------------------
 const float32 temp_0 = 273.0f; // Ambient Temperature in Kelvin
-const float32 kBuoyant_d = 100.0f; // Density coefficient for buoyant force.
-const float32 kBuoyant_t = 10.0f; // Temperature coefficient for buoyant force.
+const float32 kBuoyant_d = 0.2f; // Density coefficient for buoyant force.
+const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
 
 //----------------------------------------------------------------------------------------
 // Grid Parameters
@@ -49,7 +49,7 @@ public:
     static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 
 private:
-    SmokeSim(); // Singleton. Prevent direct construction.
+    SmokeSim() = default; // Singleton. Prevent direct construction.
 
     StaggeredGrid<float32> velocityGrid;
     StaggeredGrid<float32> tmp_velocity;
