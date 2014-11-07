@@ -55,6 +55,7 @@ private:
     StaggeredGrid<float32> tmp_velocity;
     Grid<float32> densityGrid;
     Grid<float32> temperatureGrid;
+    Grid<float32> pressureGrid;
 
     SmokeGraphics smokeGraphics;
 

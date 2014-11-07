@@ -62,7 +62,7 @@ void SmokeSim::initGridData() {
         gridSpec.width = kGridWidth;
         gridSpec.height = kGridHeight;
         gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(0,0);
+        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
 
         densityGrid = Grid<float32>(gridSpec);
         densityGrid.setAll(0);
@@ -74,10 +74,22 @@ void SmokeSim::initGridData() {
         gridSpec.width = kGridWidth;
         gridSpec.height = kGridHeight;
         gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(0,0);
+        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
 
         temperatureGrid = Grid<float32>(gridSpec);
         temperatureGrid.setAll(temp_0); // Set to ambient temperature
+    }
+
+    //-- Pressure Grid
+    {
+        GridSpec gridSpec;
+        gridSpec.width = kGridWidth;
+        gridSpec.height = kGridHeight;
+        gridSpec.cellLength = kDx;
+        gridSpec.origin = vec2(kDx,kDx) * 0.5f;
+
+        pressureGrid = Grid<float32>(gridSpec);
+        pressureGrid.setAll(0);
     }
 
     //-- Velocity Grid
@@ -110,11 +122,13 @@ void SmokeSim::initGridData() {
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::advectQuantities() {
+    //-- Advect the velocity field
     tmp_velocity = velocityGrid;
     advect(tmp_velocity.u, velocityGrid, kDt);
     advect(tmp_velocity.v, velocityGrid, kDt);
     velocityGrid = tmp_velocity;
 
+    //-- Advect other quantities
     advect(densityGrid, velocityGrid, kDt);
     advect(temperatureGrid, velocityGrid, kDt);
 }
