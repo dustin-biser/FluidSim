@@ -22,6 +22,7 @@ using namespace glm;
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
 const float32 kDt = 0.01;
+const int32 solver_iterations = 100;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -29,6 +30,7 @@ const float32 kDt = 0.01;
 const float32 temp_0 = 273.0f; // Ambient Temperature in Kelvin
 const float32 kBuoyant_d = 0.2f; // Density coefficient for buoyant force.
 const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
+const float32 kDensity = 2.0f;
 
 //----------------------------------------------------------------------------------------
 // Grid Parameters
@@ -38,7 +40,8 @@ const int32 kGridWidth = 80;
 const int32 kGridHeight = 80;
 const float32 kDx = 0.01f; // Grid cell length in meters.
 const float32 inv_kDx = 1.0f/kDx;
-
+const float32 u_solid = 0.0f; // horizontal velocity of solid boundaries.
+const float32 v_solid = 0.0f; // vertical velocity of solid boundaries.
 
 
 class SmokeSim : public GlfwOpenGlWindow {
@@ -56,6 +59,7 @@ private:
     Grid<float32> densityGrid;
     Grid<float32> temperatureGrid;
     Grid<float32> pressureGrid;
+    Grid<float32> divergenceGrid; // rhs of Ap = b
 
     SmokeGraphics smokeGraphics;
 
@@ -68,5 +72,8 @@ private:
     void initGridData();
     void advectQuantities();
     void addForces();
+    void computeDivergence();
+    void computePressure();
+    void subtractPressureGradient();
 
 };
