@@ -22,7 +22,7 @@ using namespace glm;
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
 const float32 kDt = 0.01;
-const int32 solver_iterations = 100;
+const int32 solver_iterations = 80;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -30,14 +30,14 @@ const int32 solver_iterations = 100;
 const float32 temp_0 = 273.0f; // Ambient Temperature in Kelvin
 const float32 kBuoyant_d = 0.2f; // Density coefficient for buoyant force.
 const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
-const float32 kDensity = 2.0f;
+const float32 kDensity = 1.0f;
 
 //----------------------------------------------------------------------------------------
 // Grid Parameters
 //----------------------------------------------------------------------------------------
 // Note: Keep KGridWidth a multiple of 4 so texture alignment is optimal.
-const int32 kGridWidth = 80;
-const int32 kGridHeight = 80;
+const int32 kGridWidth = 100;
+const int32 kGridHeight = 100;
 const float32 kDx = 0.01f; // Grid cell length in meters.
 const float32 inv_kDx = 1.0f/kDx;
 const float32 u_solid = 0.0f; // horizontal velocity of solid boundaries.
@@ -59,7 +59,7 @@ private:
     Grid<float32> densityGrid;
     Grid<float32> temperatureGrid;
     Grid<float32> pressureGrid;
-    Grid<float32> divergenceGrid; // rhs of Ap = b
+    Grid<float32> rhsGrid; // rhs of Ap = b
 
     SmokeGraphics smokeGraphics;
 
@@ -72,7 +72,7 @@ private:
     void initGridData();
     void advectQuantities();
     void addForces();
-    void computeDivergence();
+    void computeRHS();
     void computePressure();
     void subtractPressureGradient();
 

@@ -133,7 +133,6 @@ void SmokeGraphics::createInkTexture(const Grid<float32> & inkGrid) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, inkGrid.width(), inkGrid.height(),
                      0, GL_RED, GL_FLOAT, inkGrid.data());
 
-        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     // Unbind the GL_TEXTURE_2D target.
