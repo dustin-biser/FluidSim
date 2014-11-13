@@ -21,8 +21,8 @@ using namespace glm;
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const float32 kDt = 0.01;
-const int32 solver_iterations = 80;
+const float32 kDt = 0.008;
+const int32 solver_iterations = 50;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -63,6 +63,8 @@ private:
 
     SmokeGraphics smokeGraphics;
 
+    vec2 max_vel;
+
     virtual void init();
     virtual void logic();
     virtual void draw();
@@ -75,5 +77,7 @@ private:
     void computeRHS();
     void computePressure();
     void subtractPressureGradient();
+    void computeMaxVelocity();
+    void clampMaxVelocity();
 
 };

@@ -43,7 +43,7 @@ public:
 
     float32 cellLength() const;
 
-    vec2 getPosition(uint32 col, uint32 row);
+    vec2 getPosition(uint32 col, uint32 row) const;
 
     T & operator () (uint32 col, uint32 row) const;
 

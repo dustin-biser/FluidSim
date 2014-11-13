@@ -37,17 +37,23 @@ shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
 void SmokeSim::init() {
     cout << "\nInitializing Simulation." << endl;
 
+    max_vel = vec2(0,0);
+
     initGridData();
     
     smokeGraphics.init(densityGrid);
 }
 
 //----------------------------------------------------------------------------------------
-static void fillGrid(const Grid<float32> & grid, int start_col, int col_span,
-    int start_row, int row_span, float32 value) {
-
-    for(int row(start_row); row < start_row + row_span; ++row) {
-        for(int col(start_col); col < start_col + col_span; ++col) {
+static void fillGrid(Grid<float32> & grid,
+                     int32 start_col,
+                     int32 col_span,
+                     int32 start_row,
+                     int32 row_span,
+                     float32 value)
+{
+    for(int32 row(start_row); row < start_row + row_span; ++row) {
+        for(int32 col(start_col); col < start_col + col_span; ++col) {
             grid(col,row) = value;
         }
     }
@@ -206,8 +212,6 @@ void SmokeSim::computeRHS() {
 }
 //----------------------------------------------------------------------------------------
 void SmokeSim::computePressure() {
-    computeRHS();
-
     // Want to solve the system Ap = b
     Grid<float32> & p = pressureGrid;
 
@@ -281,7 +285,7 @@ void SmokeSim::subtractPressureGradient() {
 
     //-- Update horizontal velocity:
     for(int32 row(0); row < u.height(); ++row) {
-        for(int32 col(0); col < u.width(); ++col) {
+        for(int32 col(0); col < u.width()-1; ++col) {
             value = scale * p(col+1,row+1);
             u(col,row) += value;
             u(col+1,row) -= value;
@@ -289,7 +293,7 @@ void SmokeSim::subtractPressureGradient() {
     }
 
     //-- Update vertical velocity:
-    for(int32 row(0); row < v.height(); ++row) {
+    for(int32 row(0); row < v.height()-1; ++row) {
         for(int32 col(0); col < v.width(); ++col) {
             value = scale * p(col+1,row+1);
             v(col,row) += value;
@@ -321,6 +325,46 @@ void SmokeSim::subtractPressureGradient() {
     }
 }
 
+//----------------------------------------------------------------------------------------
+void SmokeSim::computeMaxVelocity() {
+    Grid<float32> & u = velocityGrid.u;
+    Grid<float32> & v = velocityGrid.v;
+
+    for(int32 row(0); row < u.height(); ++row) {
+        for(int32 col(0); col < u.width(); ++col) {
+            max_vel.x = std::max(u(col,row), max_vel.x);
+        }
+    }
+
+    for(int32 row(0); row < v.height(); ++row) {
+        for(int32 col(0); col < v.width(); ++col) {
+            max_vel.y = std::max(v(col,row), max_vel.y);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------
+void SmokeSim::clampMaxVelocity() {
+    Grid<float32> & u = velocityGrid.u;
+    Grid<float32> & v = velocityGrid.v;
+
+    float32 max_cfl_velocity = 2.5f * kDx / kDt;
+
+    float32 value;
+    for(int32 row(0); row < u.height(); ++row) {
+        for(int32 col(0); col < u.width(); ++col) {
+            value =  u(col,row);
+            u(col,row) = std::min(value, max_cfl_velocity);
+        }
+    }
+    for(int32 row(0); row < v.height(); ++row) {
+        for(int32 col(0); col < v.width(); ++col) {
+            value =  v(col,row);
+            v(col,row) = std::min(value, max_cfl_velocity);
+        }
+    }
+
+}
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::logic() {
@@ -328,15 +372,20 @@ void SmokeSim::logic() {
     //-- Inject density and temperature:
     static uint counter = 0;
     if (counter < 60) {
-        fillGrid(densityGrid, 20, 40, 10, 2, 1.0f);
-        fillGrid(temperatureGrid, 20, 40, 10, 2, temp_0 + 500);
+        fillGrid(densityGrid, 35, 10, 2, 6, 1.0f);
+        fillGrid(temperatureGrid, 35, 10, 2, 6, temp_0 + 500);
         counter++;
     }
 
     advectQuantities();
     addForces();
+
+    computeRHS();
     computePressure();
     subtractPressureGradient();
+
+    clampMaxVelocity();
+    computeMaxVelocity();
 
     smokeGraphics.uploadTextureData(densityGrid);
 }
@@ -353,6 +402,11 @@ void SmokeSim::keyInput(int key, int action, int mods) {
 
 //----------------------------------------------------------------------------------------
 void SmokeSim::cleanup() {
+    cout << "max_u: " << max_vel.x << endl;
+    cout << "max_v: " << max_vel.y << endl;
+    cout << "CFL Condtion, max(velocity) <= " << 5 * kDx / kDt << endl;
+    cout << endl;
+
     cout << "Simulation Clean Up" << endl;
 
     smokeGraphics.cleanup();

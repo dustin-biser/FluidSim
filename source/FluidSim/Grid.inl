@@ -102,7 +102,7 @@ float32 Grid<T>::cellLength() const {
 
 //---------------------------------------------------------------------------------------
 template <typename T>
-vec2 Grid<T>::getPosition(uint32 col, uint32 row) {
+vec2 Grid<T>::getPosition(uint32 col, uint32 row) const {
     vec2 coords(col,row);
     coords *= m_cellLength;
     return m_origin + coords;
@@ -117,6 +117,13 @@ T & Grid<T>::operator () (uint32 col, uint32 row) const {
 //---------------------------------------------------------------------------------------
 template <typename T>
 Grid<T> & Grid<T>::operator = (Grid<T> && other) {
+    if (this == &other)
+        return *this;
+
+    if(m_data != nullptr) {
+        delete [] m_data;
+    }
+
     m_data = other.m_data;
     m_height = other.m_height;
     m_width = other.m_width;
@@ -133,6 +140,13 @@ Grid<T> & Grid<T>::operator = (Grid<T> && other) {
 //---------------------------------------------------------------------------------------
 template <typename T>
 Grid<T> & Grid<T>::operator = (const Grid<T> & other) {
+    if (this == &other)
+        return *this;
+
+    if(m_data != nullptr) {
+        delete [] m_data;
+    }
+
     m_width = other.m_width;
     m_height = other.m_height;
     m_cellLength = other.m_cellLength;
