@@ -22,13 +22,13 @@ using namespace glm;
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
 const float32 kDt = 0.008;
-const int32 solver_iterations = 50;
+const int32 solver_iterations = 80;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
 //----------------------------------------------------------------------------------------
 const float32 temp_0 = 273.0f; // Ambient Temperature in Kelvin
-const float32 kBuoyant_d = 1.8f;// Density coefficient for buoyant force.
+const float32 kBuoyant_d = 0.8f;// Density coefficient for buoyant force.
 const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
 const float32 kDensity = 1.0f;
 
@@ -43,6 +43,10 @@ const float32 inv_kDx = 1.0f/kDx;
 const float32 u_solid = 0.0f; // horizontal velocity of solid boundaries.
 const float32 v_solid = 0.0f; // vertical velocity of solid boundaries.
 
+
+enum class CellType : bool {
+    Fluid, Solid
+};
 
 class SmokeSim : public GlfwOpenGlWindow {
 
@@ -60,6 +64,7 @@ private:
     Grid<float32> temperatureGrid;
     Grid<float32> pressureGrid;
     Grid<float32> rhsGrid; // rhs of Ap = b
+    Grid<CellType> cellGrid;
 
     SmokeGraphics smokeGraphics;
 

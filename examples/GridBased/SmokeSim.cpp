@@ -86,13 +86,35 @@ void SmokeSim::initGridData() {
         temperatureGrid.setAll(temp_0); // Set to ambient temperature
     }
 
+    //-- Cell Grid
+    {
+        GridSpec gridSpec;
+        gridSpec.width = kGridWidth + 2;
+        gridSpec.height = kGridHeight + 2;
+        gridSpec.cellLength = kDx;
+        gridSpec.origin = vec2(-kDx,-kDx) * 0.5f; // Store values at grid centers.
+
+        cellGrid = Grid<CellType>(gridSpec);
+        cellGrid.setAll(CellType::Fluid);
+
+        //-- Set Location of Solid Cells:
+        for(int32 row(0); row < cellGrid.height(); ++row) {
+            cellGrid(0,row) = CellType::Solid;
+            cellGrid(cellGrid.width()-1, row) = CellType::Solid;
+        }
+        for(int32 col(0); col < cellGrid.width(); ++col) {
+            cellGrid(col,0) = CellType::Solid;
+            cellGrid(col, cellGrid.height()-1) = CellType::Solid;
+        }
+    }
+
     //-- Pressure Grid
     // Pad the pressure grid by one cell around border to allow for ghost values for
     // enforcing Neumann boundary condition dp/dn = 0.
     {
         GridSpec gridSpec;
-        gridSpec.width = kGridWidth + 2;
-        gridSpec.height = kGridHeight + 2;
+        gridSpec.width = kGridWidth;
+        gridSpec.height = kGridHeight;
         gridSpec.cellLength = kDx;
         gridSpec.origin = vec2(-kDx,-kDx) * 0.5f; // Store values at grid centers.
 
@@ -218,55 +240,54 @@ void SmokeSim::computePressure() {
     //-- Set pressure to all zeros for initial guess
     p.setAll(0);
 
-    float64 value;
+    float32 numFluidNeighbors;
+    float32 neighborPressureSum;
+
     //-- Apply Gauss-Seidel iterations to Poisson-pressure problem:
     for(int32 iteration(0); iteration < solver_iterations; ++iteration) {
 
-        // Apply update only to interior cells of pressure grid.
-        for(int32 row(1); row < kGridHeight+1; ++row) {
-            for(int32 col(1); col < kGridWidth+1; ++col) {
+        for (int32 row(0); row < pressureGrid.height(); ++row) {
+            for (int32 col(0); col < pressureGrid.width(); ++col) {
 
-                if ( row == 1 && col == 1 )
+                if (row == 0 && col == 0)
                     continue;
 
-                value = rhsGrid(col-1,row-1)
-                        - p(col+1,row)
-                        - p(col-1,row)
-                        - p(col,row+1)
-                        - p(col,row-1);
+                numFluidNeighbors = 0;
+                neighborPressureSum = 0;
 
-                p(col,row) = -0.25 * value;
+                // To go from pressureGrid coords, to cellGrid coords, add 1 to both
+                // col and row of cellGrid since cellGrid is larger by 2 in both
+                // horizontal and vertical directions.
+
+                // Left Neighbor
+                if (cellGrid(col,row+1) == CellType::Fluid) {
+                    ++numFluidNeighbors;
+                    neighborPressureSum += p(col-1,row);
+                }
+                // Right Neighbor
+                if (cellGrid(col+2,row+1) == CellType::Fluid) {
+                    ++numFluidNeighbors;
+                    neighborPressureSum += p(col+1,row);
+                }
+                // Bottom Neighbor
+                if (cellGrid(col+1,row) == CellType::Fluid) {
+                    ++numFluidNeighbors;
+                    neighborPressureSum += p(col,row-1);
+                }
+                // Top Neighbor
+                if (cellGrid(col+1,row+2) == CellType::Fluid) {
+                    ++numFluidNeighbors;
+                    neighborPressureSum += p(col,row+1);
+                }
+
+                p(col,row) = -1/numFluidNeighbors *
+                        (rhsGrid(col,row) - neighborPressureSum);
+
             }
         }
 
-        //-- Apply Neumann Boundary condition for pressure dp/dn = 0:
-        {
-            int32 p_width = p.width();
-            int32 p_height = p.height();
-
-            for (int32 row(0); row < p_height; ++row) {
-                // Left solid boundary
-                // Set equal to right cell neighbor.
-                p(0, row) = p(1, row);
-
-                // Right solid boundary
-                // Set equal to left cell neighbor.
-                p(p_width-1, row) = p(p_width-2, row);
-            }
-
-            for (int32 col(0); col < p_width; ++col) {
-                // Bottom solid boundary
-                // Set equal to top cell neighbor.
-                p(col, 0) = p(col, 1);
-
-                // Top solid boundary
-                // Set equal to bottom cell neighbor.
-                p(col, p_height-1) = p(col, p_height-2);
-            }
-        }
-
-        // Dirichlet boundary condition, set one pressure cell to a constant.
-        p(1,1) = 0;
+        // Force Dirichlet boundary condition for one pressure cell:
+        pressureGrid(0,0) = 0;
 
     }
 }
@@ -286,7 +307,7 @@ void SmokeSim::subtractPressureGradient() {
     //-- Update horizontal velocity:
     for(int32 row(0); row < u.height(); ++row) {
         for(int32 col(0); col < u.width()-1; ++col) {
-            value = scale * p(col+1,row+1);
+            value = scale * p(col,row);
             u(col,row) += value;
             u(col+1,row) -= value;
         }
@@ -295,7 +316,7 @@ void SmokeSim::subtractPressureGradient() {
     //-- Update vertical velocity:
     for(int32 row(0); row < v.height()-1; ++row) {
         for(int32 col(0); col < v.width(); ++col) {
-            value = scale * p(col+1,row+1);
+            value = scale * p(col,row);
             v(col,row) += value;
             v(col,row+1) -= value;
         }
@@ -308,19 +329,10 @@ void SmokeSim::subtractPressureGradient() {
             u(0,row) = u_solid;
             u(u.width()-1,row) = u_solid;
         }
-        for (int32 row(0); row < v.height(); ++row) {
-            v(0,row) = v_solid;
-            v(v.width()-1,row) = v_solid;
-        }
-
         //-- Top and Bottom boundary velocities:
         for (int32 col(0); col < v.width(); ++col) {
             v(col,0) = v_solid;
             v(col,v.height()-1) = v_solid;
-        }
-        for (int32 col(0); col < u.width(); ++col) {
-            u(col,0) = u_solid;
-            u(col,u.height()-1) = u_solid;
         }
     }
 }
@@ -372,8 +384,8 @@ void SmokeSim::logic() {
     //-- Inject density and temperature:
     static uint counter = 0;
     if (counter < 60) {
-        fillGrid(densityGrid, 25, 10, 2, 6, 1.0f);
-        fillGrid(temperatureGrid, 25, 10, 2, 6, temp_0 + 80);
+        fillGrid(densityGrid, 35, 10, 2, 6, 1.0f);
+        fillGrid(temperatureGrid, 35, 10, 2, 6, temp_0 + 100);
         counter++;
     }
 
