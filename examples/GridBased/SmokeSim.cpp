@@ -372,8 +372,8 @@ void SmokeSim::logic() {
     //-- Inject density and temperature:
     static uint counter = 0;
     if (counter < 60) {
-        fillGrid(densityGrid, 35, 10, 2, 6, 1.0f);
-        fillGrid(temperatureGrid, 35, 10, 2, 6, temp_0 + 500);
+        fillGrid(densityGrid, 25, 10, 2, 6, 1.0f);
+        fillGrid(temperatureGrid, 25, 10, 2, 6, temp_0 + 80);
         counter++;
     }
 
