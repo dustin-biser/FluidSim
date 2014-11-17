@@ -40,8 +40,9 @@ void SmokeSim::init() {
     max_vel = vec2(0,0);
 
     initGridData();
-    
+
     smokeGraphics.init(densityGrid);
+    smokeGraphics.uploadSolidCellData(cellGrid);
 }
 
 //----------------------------------------------------------------------------------------
@@ -103,10 +104,12 @@ void SmokeSim::initGridData() {
             for (int32 row(0); row < cellGrid.height(); ++row) {
                 cellGrid(0, row) = CellType::Solid;
                 cellGrid(cellGrid.width() - 1, row) = CellType::Solid;
+
             }
             for (int32 col(0); col < cellGrid.width(); ++col) {
                 cellGrid(col, 0) = CellType::Solid;
                 cellGrid(col, cellGrid.height() - 1) = CellType::Solid;
+
             }
 
             // Create a Solid Box near center of grid
@@ -115,9 +118,11 @@ void SmokeSim::initGridData() {
             for (int32 j(-2); j < 2; ++j) {
                 for (int32 i(-10); i < 10; ++i) {
                     cellGrid(mid_col + i, mid_row + j) = CellType::Solid;
+
                 }
             }
         }
+
     }
 
     //-- Pressure Grid
@@ -394,8 +399,8 @@ void SmokeSim::logic() {
     //-- Inject density and temperature:
     static uint counter = 0;
     if (counter < 60) {
-        fillGrid(densityGrid, 35, 10, 2, 6, 1.0f);
-        fillGrid(temperatureGrid, 35, 10, 2, 6, temp_0 + 200);
+        fillGrid(densityGrid, 35, 10, 1, 6, 1.0f);
+        fillGrid(temperatureGrid, 35, 10, 1, 6, temp_0 + 200);
         counter++;
     }
 

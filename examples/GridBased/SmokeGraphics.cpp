@@ -28,18 +28,23 @@ void SmokeGraphics::init(const Grid<float32> & inkGrid) {
 
 //----------------------------------------------------------------------------------------
 void SmokeGraphics::setupShaders() {
-    shaderProgram.loadFromFile("data/shaders/Smoke2DAdvect.vs",
-                               "data/shaders/Smoke2DAdvect.fs");
+    screenQuad_shaderProgram.loadFromFile("data/shaders/Smoke2DAdvect.vs",
+                                          "data/shaders/Smoke2DAdvect.fs");
+
+    solidCell_shaderProgram.loadFromFile("data/shaders/SolidCell.vs",
+                                         "data/shaders/SolidCell.fs");
 }
 
 //----------------------------------------------------------------------------------------
 void SmokeGraphics::setupVao() {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
+        glEnableVertexAttribArray(position_attribIndex);
+        glEnableVertexAttribArray(texCoord_attribIndex);
+        glEnableVertexAttribArray(centerPosition_attribIndex);
 
-    glEnableVertexAttribArray(attribIndex_position);
-    glEnableVertexAttribArray(attribIndex_texCoord);
-
+        // Advance centerPosition attribute data once per instance.
+        glVertexAttribDivisor(centerPosition_attribIndex, 1);
     glBindVertexArray(0);
 
     CHECK_GL_ERRORS;
@@ -53,7 +58,7 @@ void SmokeGraphics::setupBufferData() {
     // Store vertexAttribute mappings, and bound element buffer
     glBindVertexArray(vao);
 
-    // Create vertex data for a two triangle quad that will fill the screen:
+    //-- Create vertex data for a two triangle quad
     {
         float32 vertexData[] = {
             //  Position      Texcoords
@@ -62,26 +67,28 @@ void SmokeGraphics::setupBufferData() {
              1.0f, -1.0f,    1.0f, 0.0f, // Bottom-right
             -1.0f, -1.0f,    0.0f, 0.0f  // Bottom-left
         };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
-        uint32 elementsPerVertex;
-        uint32 stride;
-        uint32 offsetToFirstElement;
+        int32 elementsPerVertex;
+        int32 stride;
+        int32 offsetToFirstElement;
 
+        //-- Position Data:
         elementsPerVertex = 2;
         stride = 4*sizeof(float32);
         offsetToFirstElement = 0;
-        glVertexAttribPointer(attribIndex_position, elementsPerVertex,
+        glVertexAttribPointer(position_attribIndex, elementsPerVertex,
                 GL_FLOAT, GL_FALSE, stride, (void *)offsetToFirstElement);
 
+        //-- Texture Coordinate Data:
         elementsPerVertex = 2;
         stride = 4*sizeof(float32);
         offsetToFirstElement = 2*sizeof(float32);
-        glVertexAttribPointer(attribIndex_texCoord, elementsPerVertex,
+        glVertexAttribPointer(texCoord_attribIndex, elementsPerVertex,
                 GL_FLOAT, GL_FALSE, stride, (void *)offsetToFirstElement);
     }
 
-    // Create element buffer data for indices:
+    //-- Create element buffer data for indices:
     {
         glGenBuffers(1, &ebo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -101,10 +108,13 @@ void SmokeGraphics::setupBufferData() {
 
 //----------------------------------------------------------------------------------------
 void SmokeGraphics::setupUniforms() {
-    shaderProgram.setUniform("u_inkColor", inkColor);
+    screenQuad_shaderProgram.setUniform("u_inkColor", inkColor);
 
     // sampler2D texInk will use TextureUnit 0
-    shaderProgram.setUniform("u_tex2DInk", 0);
+    screenQuad_shaderProgram.setUniform("u_tex2DInk", 0);
+
+    solidCell_shaderProgram.setUniform("u_solidCellColor", solidCellColor);
+    solidCell_shaderProgram.setUniform("u_cellLength", kDx);
     
     CHECK_GL_ERRORS;
 }
@@ -153,17 +163,62 @@ void SmokeGraphics::uploadTextureData(const Grid<float32> & inkGrid) {
 }
 
 //----------------------------------------------------------------------------------------
+void SmokeGraphics::uploadSolidCellData(const Grid<CellType> & cellGrid) {
+    glGenBuffers(1, &vbo_solidCellCenterPositions);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_solidCellCenterPositions);
+
+    glBindVertexArray(vao);
+
+    //-- Solid Cell Center Position Data:
+    num_solid_cells = 0;
+    vector<vec2> centerPositions;
+    for(int32 row(0); row < cellGrid.height(); ++row) {
+        for(int32 col(0); col < cellGrid.width(); ++col) {
+            if (cellGrid(col,row) == CellType::Solid) {
+                ++num_solid_cells;
+                centerPositions.push_back(cellGrid.getPosition(col,row));
+            }
+        }
+    }
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vec2)*centerPositions.size(),
+            centerPositions.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(centerPosition_attribIndex, 2, GL_FLOAT, GL_FALSE, 0,
+            (void *)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
 void SmokeGraphics::draw() {
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex2D_ink);
 
-    shaderProgram.enable();
+    glEnableVertexAttribArray(position_attribIndex);
+    glEnableVertexAttribArray(texCoord_attribIndex);
+    glDisableVertexAttribArray(centerPosition_attribIndex);
+
+    // Render ink texture as a screen quad:
+    screenQuad_shaderProgram.enable();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-    shaderProgram.disable();
+    screenQuad_shaderProgram.disable();
+
+    glEnableVertexAttribArray(position_attribIndex);
+    glDisableVertexAttribArray(texCoord_attribIndex);
+    glEnableVertexAttribArray(centerPosition_attribIndex);
+
+    // Render solid cells:
+    solidCell_shaderProgram.enable();
+        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0, num_solid_cells);
+    solidCell_shaderProgram.disable();
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
+
 
     CHECK_GL_ERRORS;
 }
@@ -176,6 +231,7 @@ void SmokeGraphics::cleanup() {
 
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
+    glDeleteBuffers(1, &vbo_solidCellCenterPositions);
     glDeleteVertexArrays(1, &vao);
 
     glBindTexture(GL_TEXTURE_2D, 0);

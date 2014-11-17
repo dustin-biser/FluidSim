@@ -12,15 +12,21 @@ using namespace FluidSim;
 #include <Rigid3D/Rigid3D.hpp>
 using namespace Rigid3D;
 
+enum class CellType : bool;
 
 //----------------------------------------------------------------------------------------
 // Graphics Parameters
 //----------------------------------------------------------------------------------------
 const int kScreenWidth = 800;
 const int kScreenHeight = 800;
-const int attribIndex_position = 0;
-const int attribIndex_texCoord = 1;
-const vec3 inkColor(0.7, 0.7, 1.0);
+
+// Vertex Attribute Indices
+const int position_attribIndex = 0;
+const int texCoord_attribIndex = 1;
+const int centerPosition_attribIndex = 2;
+
+const vec3 inkColor(0.5, 0.45, 1.0);
+const vec3 solidCellColor(0.8, 0.2, 0.2);
 
 class SmokeGraphics {
 public:
@@ -33,14 +39,22 @@ public:
     void setupVao();
     void setupBufferData();
     void uploadTextureData(const Grid<float32> & inkGrid);
+    void uploadSolidCellData(const Grid<CellType> & cellGrid);
 
     void createInkTexture(const Grid<float32> & inkGrid);
 
 private:
-    ShaderProgram shaderProgram;
+
+    ShaderProgram screenQuad_shaderProgram;
+    ShaderProgram solidCell_shaderProgram;
+
+    // Reuse vertex data for both screen quad, and solid cells:
     GLuint vao; // vertex array object
-    GLuint vbo; // vertex buffer object
+    GLuint vbo; // vertex buffer object (to store vertex position offsets in modelspace)
+    GLuint vbo_solidCellCenterPositions;
     GLuint ebo; // element buffer object (indices)
 
     GLuint tex2D_ink;
+
+    uint32 num_solid_cells;
 };

@@ -454,6 +454,8 @@
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
+		EF669C5B5525E27C8D74CABC /* SolidCell.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = SolidCell.vs; sourceTree = "<group>"; };
+		EF669CD588730852C5B43853 /* SolidCell.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = SolidCell.fs; sourceTree = "<group>"; };
 		EF669D4246BCE5C5E6C9E189 /* StaggeredGrid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StaggeredGrid.hpp; sourceTree = "<group>"; };
 		EF669DFE3E21E8EFDAAB7108 /* Interp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interp.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -532,6 +534,8 @@
 				0C66658019E3119D00F56EBC /* InstancedCircles.vs */,
 				EF66956B30FE952698BC6449 /* Smoke2DAdvect.vs */,
 				EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */,
+				EF669C5B5525E27C8D74CABC /* SolidCell.vs */,
+				EF669CD588730852C5B43853 /* SolidCell.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
