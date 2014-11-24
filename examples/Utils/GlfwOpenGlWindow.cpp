@@ -201,20 +201,27 @@ void GlfwOpenGlWindow::create(
 
     steady_clock::time_point frameStartTime;
 
-    while (!glfwWindowShouldClose(window)) {
-        frameStartTime = steady_clock::now();
+    try {
+        // Main Program Loop:
+        while (!glfwWindowShouldClose(window)) {
+            frameStartTime = steady_clock::now();
 
-        glfwPollEvents();
-        if (!paused) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            cameraController.updateCamera();
-            logic();
-            draw();
-            glfwSwapBuffers(window);
+            glfwPollEvents();
+            if (!paused) {
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                cameraController.updateCamera();
+                logic();
+                draw();
+                glfwSwapBuffers(window);
+            }
+            destroyPrevWindowCheck();
+
+            frameLimiter(secondsPerFrame, frameStartTime);
         }
-        destroyPrevWindowCheck();
-
-        frameLimiter(secondsPerFrame, frameStartTime);
+    } catch (const  std::exception & e) {
+        cout << e.what() << endl;
+    } catch (...) {
+        cout << "Uncaught exception thrown.  Terminating Program." << endl;
     }
 
     cleanup();
