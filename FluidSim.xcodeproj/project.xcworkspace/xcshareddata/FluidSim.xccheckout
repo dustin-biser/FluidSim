@@ -10,29 +10,29 @@
 	<string>FluidSim</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>AF79E265-41C3-4846-B9D9-DAC36E5CE6D1</key>
-		<string>https://github.com/dustin-biser/FluidSim.git</string>
+		<key>19EEC85CC48D961E755520B4794ECB334BEAC86B</key>
+		<string>github.com:dustin-biser/FluidSim.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>FluidSim.xcodeproj/project.xcworkspace</string>
+	<string>FluidSim.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>AF79E265-41C3-4846-B9D9-DAC36E5CE6D1</key>
+		<key>19EEC85CC48D961E755520B4794ECB334BEAC86B</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/dustin-biser/FluidSim.git</string>
+	<string>github.com:dustin-biser/FluidSim.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>AF79E265-41C3-4846-B9D9-DAC36E5CE6D1</string>
+	<string>19EEC85CC48D961E755520B4794ECB334BEAC86B</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>AF79E265-41C3-4846-B9D9-DAC36E5CE6D1</string>
+			<string>19EEC85CC48D961E755520B4794ECB334BEAC86B</string>
 			<key>IDESourceControlWCCName</key>
 			<string>FluidSim</string>
 		</dict>
