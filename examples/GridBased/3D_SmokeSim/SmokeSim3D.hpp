@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "SmokeGraphics.hpp"
+#include "SmokeGraphics3D.hpp"
 
 #include "FluidSim/NumericTypes.hpp"
 #include "FluidSim/Grid.hpp"
@@ -48,15 +48,15 @@ enum class CellType : bool {
     Fluid, Solid
 };
 
-class SmokeSim : public GlfwOpenGlWindow {
+class SmokeSim3D : public GlfwOpenGlWindow {
 
 public:
-    ~SmokeSim() { }
+    ~SmokeSim3D() { }
 
     static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 
 private:
-    SmokeSim() = default; // Singleton. Prevent direct construction.
+    SmokeSim3D() = default; // Singleton. Prevent direct construction.
 
     StaggeredGrid<float32> velocityGrid;
     StaggeredGrid<float32> tmp_velocity;
@@ -66,7 +66,7 @@ private:
     Grid<float32> rhsGrid; // rhs of Ap = b
     Grid<CellType> cellGrid;
 
-    SmokeGraphics smokeGraphics;
+    SmokeGraphics3D smokeGraphics;
 
     vec2 max_vel;
 

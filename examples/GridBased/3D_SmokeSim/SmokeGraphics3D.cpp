@@ -1,5 +1,5 @@
-#include "SmokeGraphics.hpp"
-#include "SmokeSim.hpp"
+#include "SmokeGraphics3D.hpp"
+#include "SmokeSim3D.hpp"
 
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>
@@ -7,13 +7,15 @@
 using namespace std;
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::init(const Grid<float32> & inkGrid) {
+void SmokeGraphics3D::init(Camera * camera) {
+    this->camera = camera;
+
     setupShaders();
     setupVao();
     setupBufferData();
+    setupCamera();
     setupUniforms();
 
-    createInkTexture(inkGrid);
 
     // Render only the front face of geometry.
     glEnable(GL_CULL_FACE);
@@ -22,83 +24,89 @@ void SmokeGraphics::init(const Grid<float32> & inkGrid) {
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LEQUAL);
 
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::setupShaders() {
-    screenQuad_shaderProgram.loadFromFile("data/shaders/Smoke2DAdvect.vs",
-                                          "data/shaders/Smoke2DAdvect.fs");
-
-    solidCell_shaderProgram.loadFromFile("data/shaders/SolidCell.vs",
-                                         "data/shaders/SolidCell.fs");
+void SmokeGraphics3D::setupCamera() {
+    camera->setFieldOfViewY(45.0f);
+    camera->setAspectRatio(1.0f);
+    camera->setNearZDistance(0.1f);
+    camera->setFarZDistance(100.0f);
+    camera->setPosition(1.0, 1.0, 2.0);
+    camera->lookAt(0, 0, 0);
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::setupVao() {
+void SmokeGraphics3D::setupShaders() {
+    shaderProgram.loadFromFile("data/shaders/LineRender.vs",
+                               "data/shaders/LineRender.fs");
+}
+
+//----------------------------------------------------------------------------------------
+void SmokeGraphics3D::setupVao() {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-        glEnableVertexAttribArray(position_attribIndex);
-        glEnableVertexAttribArray(texCoord_attribIndex);
-        glEnableVertexAttribArray(centerPosition_attribIndex);
 
-        // Advance centerPosition attribute data once per instance.
-        glVertexAttribDivisor(centerPosition_attribIndex, 1);
+    // Enable Vertex Position Attribute Array
+    glEnableVertexAttribArray(position_attribIndex);
+
     glBindVertexArray(0);
 
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::setupBufferData() {
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+void SmokeGraphics3D::setupBufferData() {
+
+    //  Cube vertex offsets in model-space
+    float32 cubeVertices[] = {
+        -0.5f, -0.5f, -0.5f,    // 0 Left Bottom Back
+         0.5f, -0.5f, -0.5f,    // 1 Right Bottom Back
+
+        -0.5f, -0.5f,  0.5f,    // 2 Left Bottom Front
+         0.5f, -0.5f,  0.5f,    // 3 Right Bottom Front
+
+        -0.5f,  0.5f, -0.5f,    // 4 Left Top Back
+         0.5f,  0.5f, -0.5f,    // 5 Right Top Back
+
+        -0.5f,  0.5f,  0.5f,    // 6 Left Top Front
+         0.5f,  0.5f,  0.5f,    // 7 Right Top Front
+    };
+
+    // Cube indices for GL_LINES
+    GLushort indices [] = {
+        2,3,3,1,1,0,0,2,   // Bottom Face
+        6,7,7,5,5,4,4,6,   // Top Face
+        2,6,    // Left Front Vertical
+        3,7,    // Right Front Vertical
+        0,4,    // Left Back Vertical
+        1,5,    // Right Back Vertical
+
+    };
 
     // Store vertexAttribute mappings, and bound element buffer
     glBindVertexArray(vao);
 
-    //-- Create vertex data for a two triangle quad
-    {
-        float32 vertexData[] = {
-            //  Position      Texcoords
-            -1.0f,  1.0f,    0.0f, 1.0f, // Top-left
-             1.0f,  1.0f,    1.0f, 1.0f, // Top-right
-             1.0f, -1.0f,    1.0f, 0.0f, // Bottom-right
-            -1.0f, -1.0f,    0.0f, 0.0f  // Bottom-left
-        };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+    // Upload Vertex Position Data:
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-        int32 elementsPerVertex;
-        int32 stride;
-        int32 offsetToFirstElement;
+    // Upload Index Data:
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-        //-- Position Data:
-        elementsPerVertex = 2;
-        stride = 4*sizeof(float32);
-        offsetToFirstElement = 0;
-        glVertexAttribPointer(position_attribIndex, elementsPerVertex,
-                GL_FLOAT, GL_FALSE, stride, (void *)offsetToFirstElement);
 
-        //-- Texture Coordinate Data:
-        elementsPerVertex = 2;
-        stride = 4*sizeof(float32);
-        offsetToFirstElement = 2*sizeof(float32);
-        glVertexAttribPointer(texCoord_attribIndex, elementsPerVertex,
-                GL_FLOAT, GL_FALSE, stride, (void *)offsetToFirstElement);
-    }
-
-    //-- Create element buffer data for indices:
-    {
-        glGenBuffers(1, &ebo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
-        GLushort indices [] = {
-            3,2,1, 0,3,1
-        };
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    }
+    //-- Vertex Position Attribute Mapping:
+    int32 elementsPerVertex = 3;
+    int32 stride = 0;
+    int32 offsetToFirstElement = 0;
+    glVertexAttribPointer(position_attribIndex, elementsPerVertex,
+            GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -107,135 +115,37 @@ void SmokeGraphics::setupBufferData() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::setupUniforms() {
-    screenQuad_shaderProgram.setUniform("u_inkColor", inkColor);
-
-    // sampler2D texInk will use TextureUnit 0
-    screenQuad_shaderProgram.setUniform("u_tex2DInk", 0);
-
-    solidCell_shaderProgram.setUniform("u_solidCellColor", solidCellColor);
-    solidCell_shaderProgram.setUniform("u_cellLength", kDx);
-    
-    CHECK_GL_ERRORS;
-}
-
-
-//----------------------------------------------------------------------------------------
-void SmokeGraphics::createInkTexture(const Grid<float32> & inkGrid) {
-    //--Setup ink texture.
-    // The ink texture will represent a grid of size (kGridWidth, kGridHeight).
-    // Type: R16
-    // Red Channel - ink density/opacity
-    {
-        glGenTextures(1, &tex2D_ink);
-
-        // tex2D_ink will be referenced via TextureUnit0 in the fragment shader.
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, tex2D_ink);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-        // Internally store texture as R16 - one channel of half-floats:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, inkGrid.width(), inkGrid.height(),
-                     0, GL_RED, GL_FLOAT, inkGrid.data());
-
-    }
-
-    // Unbind the GL_TEXTURE_2D target.
-    glBindTexture(GL_TEXTURE_2D, 0);
+void SmokeGraphics3D::setupUniforms() {
+    shaderProgram.setUniform("ModelViewMatrix", camera->getViewMatrix());
+    shaderProgram.setUniform("ProjectionMatrix", camera->getProjectionMatrix());
+    shaderProgram.setUniform("u_color", vec4(0.0, 0.0, 0.0, 1.0));
 
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::uploadTextureData(const Grid<float32> & inkGrid) {
-    glBindTexture(GL_TEXTURE_2D, tex2D_ink);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, inkGrid.width(), inkGrid.height(), GL_RED,
-            GL_FLOAT, inkGrid.data());
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    CHECK_GL_ERRORS;
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeGraphics::uploadSolidCellData(const Grid<CellType> & cellGrid) {
-    glGenBuffers(1, &vbo_solidCellCenterPositions);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_solidCellCenterPositions);
-
+void SmokeGraphics3D::draw() {
     glBindVertexArray(vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-    //-- Solid Cell Center Position Data:
-    num_solid_cells = 0;
-    vector<vec2> centerPositions;
-    for(int32 row(0); row < cellGrid.height(); ++row) {
-        for(int32 col(0); col < cellGrid.width(); ++col) {
-            if (cellGrid(col,row) == CellType::Solid) {
-                ++num_solid_cells;
-                centerPositions.push_back(cellGrid.getPosition(col,row));
-            }
-        }
-    }
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vec2)*centerPositions.size(),
-            centerPositions.data(), GL_STATIC_DRAW);
+    shaderProgram.enable();
+        glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
+    shaderProgram.disable();
 
-    glVertexAttribPointer(centerPosition_attribIndex, 2, GL_FLOAT, GL_FALSE, 0,
-            (void *)0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics::draw() {
-    glBindVertexArray(vao);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, tex2D_ink);
-
-    glEnableVertexAttribArray(position_attribIndex);
-    glEnableVertexAttribArray(texCoord_attribIndex);
-    glDisableVertexAttribArray(centerPosition_attribIndex);
-
-    // Render ink texture as a screen quad:
-    screenQuad_shaderProgram.enable();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-    screenQuad_shaderProgram.disable();
-
-    glEnableVertexAttribArray(position_attribIndex);
-    glDisableVertexAttribArray(texCoord_attribIndex);
-    glEnableVertexAttribArray(centerPosition_attribIndex);
-
-    // Render solid cells:
-    solidCell_shaderProgram.enable();
-        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0, num_solid_cells);
-    solidCell_shaderProgram.disable();
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindVertexArray(0);
-
-
-    CHECK_GL_ERRORS;
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeGraphics::cleanup() {
+void SmokeGraphics3D::cleanup() {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
-    glDeleteBuffers(1, &vbo_solidCellCenterPositions);
     glDeleteVertexArrays(1, &vao);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, &tex2D_ink);
 
     CHECK_GL_ERRORS;
 }

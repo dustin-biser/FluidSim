@@ -1,5 +1,5 @@
-#include "SmokeSim.hpp"
-#include "SmokeGraphics.hpp"
+#include "SmokeSim3D.hpp"
+#include "SmokeGraphics3D.hpp"
 
 #include "FluidSim/Interp.hpp"
 #include "FluidSim/Advect.hpp"
@@ -14,18 +14,18 @@ using namespace std;
 
 //----------------------------------------------------------------------------------------
 int main() {
-    shared_ptr<GlfwOpenGlWindow> smokeDemo = SmokeSim::getInstance();
+    shared_ptr<GlfwOpenGlWindow> smokeDemo = SmokeSim3D::getInstance();
     smokeDemo->create(kScreenWidth,
-                      kScreenHeight,
-                      "2D Smoke Simulation",
-                      1/60.0f);
+            kScreenHeight,
+            "3D Smoke Simulation",
+            1 / 60.0f);
 
     return 0;
 }
 
 //---------------------------------------------------------------------------------------
-shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
-    static GlfwOpenGlWindow * instance = new SmokeSim();
+shared_ptr<GlfwOpenGlWindow> SmokeSim3D::getInstance() {
+    static GlfwOpenGlWindow * instance = new SmokeSim3D();
     if (p_instance == nullptr) {
         p_instance = shared_ptr<GlfwOpenGlWindow>(instance);
     }
@@ -34,15 +34,14 @@ shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::init() {
+void SmokeSim3D::init() {
     cout << "\nInitializing Simulation." << endl;
 
     max_vel = vec2(0,0);
 
     initGridData();
 
-    smokeGraphics.init(densityGrid);
-    smokeGraphics.uploadSolidCellData(cellGrid);
+    smokeGraphics.init(&camera);
 }
 
 //----------------------------------------------------------------------------------------
@@ -61,7 +60,7 @@ static void fillGrid(Grid<float32> & grid,
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::initGridData() {
+void SmokeSim3D::initGridData() {
 
     //-- Density Grid
     {
@@ -177,7 +176,7 @@ void SmokeSim::initGridData() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::advectQuantities() {
+void SmokeSim3D::advectQuantities() {
     //-- Advect the velocity field
     tmp_velocity = velocityGrid;
     advect(tmp_velocity.u, velocityGrid, kDt);
@@ -190,7 +189,7 @@ void SmokeSim::advectQuantities() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::addForces() {
+void SmokeSim3D::addForces() {
 
    //-- Buoyant Force:
    float32 force;
@@ -212,7 +211,7 @@ void SmokeSim::addForces() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::computeRHS() {
+void SmokeSim3D::computeRHS() {
     Grid<float32> & u = velocityGrid.u;
     Grid<float32> & v = velocityGrid.v;
 
@@ -260,7 +259,7 @@ void SmokeSim::computeRHS() {
     }
 }
 //----------------------------------------------------------------------------------------
-void SmokeSim::computePressure() {
+void SmokeSim3D::computePressure() {
     // Want to solve the system Ap = b
     Grid<float32> & p = pressureGrid;
 
@@ -312,7 +311,7 @@ void SmokeSim::computePressure() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::subtractPressureGradient() {
+void SmokeSim3D::subtractPressureGradient() {
     // Here we update the velocity field by subtracting off the pressure gradient
     // making the field "divergence free"/incompressible.
 
@@ -353,7 +352,7 @@ void SmokeSim::subtractPressureGradient() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::computeMaxVelocity() {
+void SmokeSim3D::computeMaxVelocity() {
     Grid<float32> & u = velocityGrid.u;
     Grid<float32> & v = velocityGrid.v;
 
@@ -371,7 +370,7 @@ void SmokeSim::computeMaxVelocity() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::clampMaxVelocity() {
+void SmokeSim3D::clampMaxVelocity() {
     Grid<float32> & u = velocityGrid.u;
     Grid<float32> & v = velocityGrid.v;
 
@@ -394,41 +393,42 @@ void SmokeSim::clampMaxVelocity() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::logic() {
+void SmokeSim3D::logic() {
 
     //-- Inject density and temperature:
-    static uint counter = 0;
-    if (counter < 60) {
-        fillGrid(densityGrid, 35, 10, 1, 6, 1.0f);
-        fillGrid(temperatureGrid, 35, 10, 1, 6, temp_0 + 200);
-        counter++;
-    }
+//    static uint counter = 0;
+//    if (counter < 60) {
+//        fillGrid(densityGrid, 35, 10, 1, 6, 1.0f);
+//        fillGrid(temperatureGrid, 35, 10, 1, 6, temp_0 + 200);
+//        counter++;
+//    }
+//
+//    advectQuantities();
+//    addForces();
+//
+//    computeRHS();
+//    computePressure();
+//    subtractPressureGradient();
+//
+//    clampMaxVelocity();
+//    computeMaxVelocity();
 
-    advectQuantities();
-    addForces();
-
-    computeRHS();
-    computePressure();
-    subtractPressureGradient();
-
-    clampMaxVelocity();
-    computeMaxVelocity();
-
-    smokeGraphics.uploadTextureData(densityGrid);
+//    smokeGraphics.uploadTextureData(densityGrid);
+    smokeGraphics.setupUniforms();
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::draw() {
+void SmokeSim3D::draw() {
     smokeGraphics.draw();
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::keyInput(int key, int action, int mods) {
+void SmokeSim3D::keyInput(int key, int action, int mods) {
 
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::cleanup() {
+void SmokeSim3D::cleanup() {
     cout << "max_u: " << max_vel.x << endl;
     cout << "max_v: " << max_vel.y << endl;
     cout << "CFL Condtion, max(velocity) <= " << 5 * kDx / kDt << endl;
