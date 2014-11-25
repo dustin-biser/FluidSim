@@ -414,7 +414,7 @@ void SmokeSim3D::logic() {
 //    computeMaxVelocity();
 
 //    smokeGraphics.uploadTextureData(densityGrid);
-    smokeGraphics.setupUniforms();
+    smokeGraphics.updateShaderUniforms();
 }
 
 //----------------------------------------------------------------------------------------

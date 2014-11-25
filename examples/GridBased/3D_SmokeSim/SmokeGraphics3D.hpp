@@ -29,9 +29,10 @@ public:
 
     void setupCamera();
     void setupShaders();
-    void setupUniforms();
+    void setupShaderUniforms();
     void setupVao();
     void setupBufferData();
+    void updateShaderUniforms();
 
 
 private:

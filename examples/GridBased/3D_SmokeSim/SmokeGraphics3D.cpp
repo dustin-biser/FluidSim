@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ void SmokeGraphics3D::init(Camera * camera) {
     setupVao();
     setupBufferData();
     setupCamera();
-    setupUniforms();
+    setupShaderUniforms();
 
 
     // Render only the front face of geometry.
@@ -25,6 +26,7 @@ void SmokeGraphics3D::init(Camera * camera) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LEQUAL);
+    glClearColor(0.1, 0.1, 0.1, 1.0);
 
     CHECK_GL_ERRORS;
 }
@@ -35,7 +37,7 @@ void SmokeGraphics3D::setupCamera() {
     camera->setAspectRatio(1.0f);
     camera->setNearZDistance(0.1f);
     camera->setFarZDistance(100.0f);
-    camera->setPosition(1.0, 1.0, 2.0);
+    camera->setPosition(1.0, 1.5, 2.5);
     camera->lookAt(0, 0, 0);
 }
 
@@ -115,12 +117,17 @@ void SmokeGraphics3D::setupBufferData() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::setupUniforms() {
+void SmokeGraphics3D::setupShaderUniforms() {
     shaderProgram.setUniform("ModelViewMatrix", camera->getViewMatrix());
     shaderProgram.setUniform("ProjectionMatrix", camera->getProjectionMatrix());
-    shaderProgram.setUniform("u_color", vec4(0.0, 0.0, 0.0, 1.0));
+    shaderProgram.setUniform("u_LineColor", vec4(0.7, 0.7, 0.7, 1.0));
+}
 
-    CHECK_GL_ERRORS;
+//----------------------------------------------------------------------------------------
+void SmokeGraphics3D::updateShaderUniforms() {
+    // Scale bounding box to taller:
+    mat4 modelMatrix = glm::scale(mat4(), vec3(1.5,2.0,1.5));
+    shaderProgram.setUniform("ModelViewMatrix", camera->getViewMatrix()*modelMatrix);
 }
 
 //----------------------------------------------------------------------------------------

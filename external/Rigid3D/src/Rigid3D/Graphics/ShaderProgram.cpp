@@ -312,6 +312,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform1i(uniformLocation, b);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -327,6 +329,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform1i(uniformLocation, i);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -342,6 +346,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform1ui(uniformLocation, ui);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -357,6 +363,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform1f(uniformLocation, f);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -373,6 +381,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform2f(uniformLocation, x, y);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -390,6 +400,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform3f(uniformLocation, x, y, z);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -408,6 +420,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniform4f(uniformLocation, x, y, z, w);
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -456,6 +470,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniformMatrix2fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(m));
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -471,6 +487,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(m));
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -486,6 +504,8 @@ using std::stringstream;
         GLint uniformLocation = getUniformLocation(uniformName);
         glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(m));
         glUseProgram(activeProgram);
+
+        CHECK_GL_ERRORS;
     }
 
     //------------------------------------------------------------------------------------
@@ -513,7 +533,8 @@ using std::stringstream;
         glUseProgram(programObject);
         glUniformSubroutinesuiv(shaderType, 1, &index);
         glUseProgram(activeProgram);
-        checkGLErrors(__FILE__, __LINE__);
+
+        CHECK_GL_ERRORS;
     }
 
 } // end namespace GlUtils

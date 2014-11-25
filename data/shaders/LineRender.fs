@@ -3,8 +3,8 @@
 
 out vec4 outColor;
 
-uniform vec4 u_color;
+uniform vec4 u_LineColor;
 
 void main() {
-    outColor = u_color;
+    outColor = u_LineColor;
 }
