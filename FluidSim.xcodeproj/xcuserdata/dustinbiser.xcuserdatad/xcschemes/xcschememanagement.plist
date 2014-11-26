@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
+		<key>GPU_SmokeSim2D.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
 		<key>SmokeSim.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -68,6 +73,11 @@
 			<true/>
 		</dict>
 		<key>0CC20F1A19D4BF1D004B89EA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0CE5884F1A2583A3004F84AB</key>
 		<dict>
 			<key>primary</key>
 			<true/>

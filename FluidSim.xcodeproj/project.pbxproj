@@ -14,8 +14,6 @@
 		0C66656719E305DD00F56EBC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
 		0C66656819E305DD00F56EBC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0C66656919E305DD00F56EBC /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
-		0C66657519E306BA00F56EBC /* SmokeGraphicsGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C66657119E306BA00F56EBC /* SmokeGraphicsGPU.cpp */; };
-		0C66657619E306BA00F56EBC /* SmokeSimGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C66657319E306BA00F56EBC /* SmokeSimGPU.cpp */; };
 		0C6665B519E76C1400F56EBC /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0C6665AA19E76BCE00F56EBC /* gtest-all.cc */; };
 		0C6665B919E7732600F56EBC /* gtest_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0C6665B319E76BCE00F56EBC /* gtest_main.cc */; };
 		0C6665CA19E7749100F56EBC /* libpthread.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C6665B719E76D2E00F56EBC /* libpthread.dylib */; };
@@ -48,6 +46,15 @@
 		0CC20F2419D4BF1D004B89EA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
 		0CC20F2519D4BF1D004B89EA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0CC20F2619D4BF1D004B89EA /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
+		0CE588531A2583A3004F84AB /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CC20DCF19D214CD004B89EA /* GlfwOpenGlWindow.cpp */; };
+		0CE588551A2583A3004F84AB /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
+		0CE588561A2583A3004F84AB /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
+		0CE588571A2583A3004F84AB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
+		0CE588581A2583A3004F84AB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
+		0CE588591A2583A3004F84AB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
+		0CE5885A1A2583A3004F84AB /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
+		0CE588601A2583CD004F84AB /* SmokeGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CE5884B1A258390004F84AB /* SmokeGraphics.cpp */; };
+		0CE588611A2583D0004F84AB /* SmokeSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CE5884D1A258390004F84AB /* SmokeSim.cpp */; };
 		EF669ABCB88BC2FE1DB10942 /* SphSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66934D2184A1A79D28B3A2 /* SphSim.cpp */; };
 		EF669BD28D20AD04DAC97845 /* SphGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66946B1EF457943FE01D77 /* SphGraphics.cpp */; };
 /* End PBXBuildFile section */
@@ -98,14 +105,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		0CE5885B1A2583A3004F84AB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0C66656E19E305DD00F56EBC /* SmokeSimGPU copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SmokeSimGPU copy"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C66657119E306BA00F56EBC /* SmokeGraphicsGPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeGraphicsGPU.cpp; sourceTree = "<group>"; };
-		0C66657219E306BA00F56EBC /* SmokeGraphicsGPU.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphicsGPU.hpp; sourceTree = "<group>"; };
-		0C66657319E306BA00F56EBC /* SmokeSimGPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSimGPU.cpp; sourceTree = "<group>"; };
-		0C66657419E306BA00F56EBC /* SmokeSimGPU.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeSimGPU.hpp; sourceTree = "<group>"; };
 		0C66657F19E3119D00F56EBC /* InstancedCircles.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = InstancedCircles.fs; sourceTree = "<group>"; };
 		0C66658019E3119D00F56EBC /* InstancedCircles.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = InstancedCircles.vs; sourceTree = "<group>"; };
 		0C66658619E76B8100F56EBC /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -455,6 +467,13 @@
 		0CC20F1519D21547004B89EA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		0CC20F1719D21550004B89EA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0CC20F2B19D4BF1D004B89EA /* SphSim copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SphSim copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CE588491A25831E004F84AB /* FramebufferTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FramebufferTest.cpp; sourceTree = "<group>"; };
+		0CE5884A1A25831E004F84AB /* FramebufferTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FramebufferTest.hpp; sourceTree = "<group>"; };
+		0CE5884B1A258390004F84AB /* SmokeGraphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeGraphics.cpp; sourceTree = "<group>"; };
+		0CE5884C1A258390004F84AB /* SmokeGraphics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
+		0CE5884D1A258390004F84AB /* SmokeSim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim.cpp; sourceTree = "<group>"; };
+		0CE5884E1A258390004F84AB /* SmokeSim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SmokeSim.hpp; sourceTree = "<group>"; };
+		0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SmokeSim3D copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
 		EF66917AEEB942F68B27C9E6 /* SmokeGraphics3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics3D.hpp; sourceTree = "<group>"; };
 		EF6692E015CBD75DFB4E8B86 /* SphSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphSim.hpp; sourceTree = "<group>"; };
@@ -551,6 +570,19 @@
 				0CC20F2419D4BF1D004B89EA /* OpenGL.framework in Frameworks */,
 				0CC20F2519D4BF1D004B89EA /* Cocoa.framework in Frameworks */,
 				0CC20F2619D4BF1D004B89EA /* libglfw3.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CE588541A2583A3004F84AB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CE588551A2583A3004F84AB /* libRigid3D.a in Frameworks */,
+				0CE588561A2583A3004F84AB /* CoreVideo.framework in Frameworks */,
+				0CE588571A2583A3004F84AB /* IOKit.framework in Frameworks */,
+				0CE588581A2583A3004F84AB /* OpenGL.framework in Frameworks */,
+				0CE588591A2583A3004F84AB /* Cocoa.framework in Frameworks */,
+				0CE5885A1A2583A3004F84AB /* libglfw3.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -689,6 +721,7 @@
 				0C66658619E76B8100F56EBC /* libgtest.a */,
 				0C6665C019E7747D00F56EBC /* FluidSim_Tests */,
 				0C924BA11A23A6720088314B /* SmokeSim copy */,
+				0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1147,6 +1180,25 @@
 			path = source;
 			sourceTree = SOURCE_ROOT;
 		};
+		0CE588471A25831E004F84AB /* 2D_SmokeSim */ = {
+			isa = PBXGroup;
+			children = (
+				0CE5884B1A258390004F84AB /* SmokeGraphics.cpp */,
+				0CE5884C1A258390004F84AB /* SmokeGraphics.hpp */,
+				0CE5884D1A258390004F84AB /* SmokeSim.cpp */,
+				0CE5884E1A258390004F84AB /* SmokeSim.hpp */,
+				0CE588481A25831E004F84AB /* shaders */,
+			);
+			path = 2D_SmokeSim;
+			sourceTree = "<group>";
+		};
+		0CE588481A25831E004F84AB /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = shaders;
+			sourceTree = "<group>";
+		};
 		EF66908DC148F17DA4CD8519 /* GridBased */ = {
 			isa = PBXGroup;
 			children = (
@@ -1209,10 +1261,9 @@
 		EF669DEFEA77F30B181F418A /* GPU_Impl */ = {
 			isa = PBXGroup;
 			children = (
-				0C66657119E306BA00F56EBC /* SmokeGraphicsGPU.cpp */,
-				0C66657219E306BA00F56EBC /* SmokeGraphicsGPU.hpp */,
-				0C66657319E306BA00F56EBC /* SmokeSimGPU.cpp */,
-				0C66657419E306BA00F56EBC /* SmokeSimGPU.hpp */,
+				0CE588471A25831E004F84AB /* 2D_SmokeSim */,
+				0CE588491A25831E004F84AB /* FramebufferTest.cpp */,
+				0CE5884A1A25831E004F84AB /* FramebufferTest.hpp */,
 			);
 			path = GPU_Impl;
 			sourceTree = "<group>";
@@ -1332,6 +1383,23 @@
 			productReference = 0CC20F2B19D4BF1D004B89EA /* SphSim copy */;
 			productType = "com.apple.product-type.tool";
 		};
+		0CE5884F1A2583A3004F84AB /* GPU_SmokeSim2D */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CE5885C1A2583A3004F84AB /* Build configuration list for PBXNativeTarget "GPU_SmokeSim2D" */;
+			buildPhases = (
+				0CE588501A2583A3004F84AB /* Sources */,
+				0CE588541A2583A3004F84AB /* Frameworks */,
+				0CE5885B1A2583A3004F84AB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GPU_SmokeSim2D;
+			productName = SphSim;
+			productReference = 0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1359,6 +1427,7 @@
 				0C924B911A23A6720088314B /* SmokeSim3D */,
 				0C66658519E76B8100F56EBC /* gtest */,
 				0C6665BF19E7747D00F56EBC /* FluidSim_Tests */,
+				0CE5884F1A2583A3004F84AB /* GPU_SmokeSim2D */,
 			);
 		};
 /* End PBXProject section */
@@ -1417,9 +1486,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C66657619E306BA00F56EBC /* SmokeSimGPU.cpp in Sources */,
 				0CC20F1C19D4BF1D004B89EA /* GlfwOpenGlWindow.cpp in Sources */,
-				0C66657519E306BA00F56EBC /* SmokeGraphicsGPU.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CE588501A2583A3004F84AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CE588531A2583A3004F84AB /* GlfwOpenGlWindow.cpp in Sources */,
+				0CE588601A2583CD004F84AB /* SmokeGraphics.cpp in Sources */,
+				0CE588611A2583D0004F84AB /* SmokeSim.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1760,6 +1837,50 @@
 			};
 			name = Release;
 		};
+		0CE5885D1A2583A3004F84AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"external/Rigid3D/src/**",
+					"external/**",
+					"source/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libraries",
+				);
+				PRODUCT_NAME = "SmokeSim3D copy";
+				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
+			};
+			name = Debug;
+		};
+		0CE5885E1A2583A3004F84AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"external/Rigid3D/src/**",
+					"external/**",
+					"source/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libraries",
+				);
+				PRODUCT_NAME = "SmokeSim3D copy";
+				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1822,6 +1943,15 @@
 			buildConfigurations = (
 				0CC20F2919D4BF1D004B89EA /* Debug */,
 				0CC20F2A19D4BF1D004B89EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CE5885C1A2583A3004F84AB /* Build configuration list for PBXNativeTarget "GPU_SmokeSim2D" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CE5885D1A2583A3004F84AB /* Debug */,
+				0CE5885E1A2583A3004F84AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
