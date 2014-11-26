@@ -195,13 +195,13 @@ void GlfwOpenGlWindow::create(
     // Clear error buffer.
     while(glGetError() != GL_NO_ERROR);
 
-    setupGl();
-    setupCamera();
-    init();
-
-    steady_clock::time_point frameStartTime;
-
     try {
+        setupGl();
+        setupCamera();
+        init();
+
+        steady_clock::time_point frameStartTime;
+
         // Main Program Loop:
         while (!glfwWindowShouldClose(window)) {
             frameStartTime = steady_clock::now();
@@ -218,10 +218,12 @@ void GlfwOpenGlWindow::create(
 
             frameLimiter(secondsPerFrame, frameStartTime);
         }
+        
     } catch (const  std::exception & e) {
-        cout << e.what() << endl;
+        std::cerr << "Exception Thrown: ";
+        std::cerr << e.what() << endl;
     } catch (...) {
-        cout << "Uncaught exception thrown.  Terminating Program." << endl;
+        std::cerr << "Uncaught exception thrown.  Terminating Program." << endl;
     }
 
     cleanup();
