@@ -1,5 +1,5 @@
 #include "SmokeGraphics.hpp"
-#include "SmokeSim.hpp"
+#include "GpuSmokeSim2D.hpp"
 
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>

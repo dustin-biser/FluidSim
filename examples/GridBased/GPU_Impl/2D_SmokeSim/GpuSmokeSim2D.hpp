@@ -1,28 +1,42 @@
 /**
-* @brief SmokeSim.hpp
+* @brief GpuSmokeSim2D.hpp
 *
 * @author Dustin Biser
 */
 
 #pragma once
 
-#include "SmokeGraphics.hpp"
-
 #include "FluidSim/NumericTypes.hpp"
-#include "FluidSim/Grid.hpp"
-#include "FluidSim/StaggeredGrid.hpp"
 using namespace FluidSim;
 
 #include "Utils/GlfwOpenGlWindow.hpp"
 
-#include <glm/glm.hpp>
-using namespace glm;
+#include <Rigid3D/Graphics/ShaderProgram.hpp>
+using namespace Rigid3D;
 
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
 const float32 kDt = 0.008;
 const int32 solver_iterations = 60;
+const int32 kScreenWidth = 1024;
+const int32 kScreenHeight = 768;
+
+//----------------------------------------------------------------------------------------
+// Texture Storage Parameters
+//----------------------------------------------------------------------------------------
+const int32 kSimTextureWidth = 512;
+const int32 kSimTextureHeight = 512;
+const GLenum kVelocityTextureFormat = GL_RG;
+const GLenum kDensityTextureFormat = GL_RED;
+const GLenum kPressureTextureFormat = GL_RED;
+
+//----------------------------------------------------------------------------------------
+// Shader Parameters
+//----------------------------------------------------------------------------------------
+// Vertex attribute indices:
+const int32 kAttribIndex_positions = 0;
+const int32 kAttribIndex_texCoords = 1;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -44,31 +58,32 @@ const float32 u_solid = 0.0f; // horizontal velocity of solid boundaries.
 const float32 v_solid = 0.0f; // vertical velocity of solid boundaries.
 
 
-enum class CellType : bool {
-    Fluid, Solid
-};
-
-class SmokeSim : public GlfwOpenGlWindow {
+class GpuSmokeSim2D : public GlfwOpenGlWindow {
 
 public:
-    ~SmokeSim() { }
+    ~GpuSmokeSim2D() { }
 
     static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 
 private:
-    SmokeSim() = default; // Singleton. Prevent direct construction.
+    GpuSmokeSim2D() = default; // Singleton. Prevent direct construction.
 
-    StaggeredGrid<float32> velocityGrid;
-    StaggeredGrid<float32> tmp_velocity;
-    Grid<float32> densityGrid;
-    Grid<float32> temperatureGrid;
-    Grid<float32> pressureGrid;
-    Grid<float32> rhsGrid; // rhs of Ap = b
-    Grid<CellType> cellGrid;
+    GLuint framebuffer; // Framebuffer Object
 
-    SmokeGraphics smokeGraphics;
+    GLuint screenQuadVao;         // Vertex Array Object
+    GLuint screenQuadVertBuffer;  // Vertex Buffer Object
+    GLuint screenQuadIndexBuffer; // Element Buffer Object
 
-    vec2 max_vel;
+    ShaderProgram shaderProgram_Advection;
+    ShaderProgram shaderProgram_SceneRenderer;
+
+    // Store two versions of each texture. One for rendering to and one for
+    // reading from
+    GLuint velocityTexture[2]; // RG32
+    GLuint densityTexture[2];  // Red32
+    GLuint pressureTexture[2]; // Red32
+    GLuint tmpTexture_RG32;    // RG32
+    GLuint tmpTexture_R32;     // Red32
 
     virtual void init();
     virtual void logic();
@@ -76,13 +91,12 @@ private:
     virtual void keyInput(int key, int action, int mods);
     virtual void cleanup();
 
-    void initGridData();
-    void advectQuantities();
-    void addForces();
-    void computeRHS();
-    void computePressure();
-    void subtractPressureGradient();
-    void computeMaxVelocity();
-    void clampMaxVelocity();
+    void setFramebufferColorAttachment2D(GLuint framebuffer,
+                                         GLuint textureId);
 
+    void createTextureStorage();
+    void setupScreenQuadVboData();
+    void setupShaderPrograms();
+    void advectVelocity();
+    void render();
 };

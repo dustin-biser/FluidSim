@@ -1,442 +1,334 @@
 #include "GpuSmokeSim2D.hpp"
-#include "SmokeGraphics.hpp"
 
-#include "FluidSim/Interp.hpp"
-#include "FluidSim/Advect.hpp"
+#include <Rigid3D/Rigid3D.hpp>
+using namespace Rigid3D;
 
-#include <cmath>
 #include <iostream>
-#include <algorithm>
 using namespace std;
-
-#include <glm/glm.hpp>
 
 
 //----------------------------------------------------------------------------------------
 int main() {
-    shared_ptr<GlfwOpenGlWindow> smokeDemo = SmokeSim::getInstance();
+    std::shared_ptr<GlfwOpenGlWindow> smokeDemo = GpuSmokeSim2D::getInstance();
     smokeDemo->create(kScreenWidth,
                       kScreenHeight,
-                      "2D Smoke Simulation",
+                      "2D GPU Smoke Simulation",
                       1/60.0f);
 
     return 0;
 }
 
 //---------------------------------------------------------------------------------------
-shared_ptr<GlfwOpenGlWindow> SmokeSim::getInstance() {
-    static GlfwOpenGlWindow * instance = new SmokeSim();
+std::shared_ptr<GlfwOpenGlWindow> GpuSmokeSim2D::getInstance() {
+    static GlfwOpenGlWindow * instance = new GpuSmokeSim2D();
     if (p_instance == nullptr) {
-        p_instance = shared_ptr<GlfwOpenGlWindow>(instance);
+        p_instance = std::shared_ptr<GlfwOpenGlWindow>(instance);
     }
 
     return p_instance;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::init() {
-    cout << "\nInitializing Simulation." << endl;
+void GpuSmokeSim2D::init() {
+    glGenFramebuffers(1, &framebuffer);
 
-    max_vel = vec2(0,0);
+    glGenVertexArrays(1, &screenQuadVao);
+    glBindVertexArray(screenQuadVao);
+        glEnableVertexAttribArray(kAttribIndex_positions);
+        glEnableVertexAttribArray(kAttribIndex_texCoords);
+    glBindVertexArray(0);
 
-    initGridData();
+    setupScreenQuadVboData();
 
-    smokeGraphics.init(densityGrid);
-    smokeGraphics.uploadSolidCellData(cellGrid);
+    createTextureStorage();
+
+    setupShaderPrograms();
+
+    glClearColor(0.0, 0.0, 0.0, 1.0f);
+
+    // TODO Dustin - Remove this:
+    // Only for testing that render() is working to render a texture to screen
+    {
+        float32 data[kSimTextureWidth * kSimTextureHeight];
+        for(int i(0); i < kSimTextureHeight; ++i) {
+            for(int j(0); j < kSimTextureWidth; ++j) {
+                data[i*kSimTextureWidth + j] = 1.0f;
+                if (i > 256 && i < 350) {
+                    data[i*kSimTextureWidth + j] = 0.0f;
+                }
+            }
+        }
+
+        glBindTexture(GL_TEXTURE_2D, tmpTexture_R32);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kSimTextureWidth, kSimTextureHeight,
+                kDensityTextureFormat, GL_FLOAT, data);
+
+    }
+
+    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-static void fillGrid(Grid<float32> & grid,
-                     int32 start_col,
-                     int32 col_span,
-                     int32 start_row,
-                     int32 row_span,
-                     float32 value)
+void GpuSmokeSim2D::setupScreenQuadVboData() {
+    glBindVertexArray(screenQuadVao);
+
+    glGenBuffers(1, &screenQuadVertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, screenQuadVertBuffer);
+
+    //-- Create vertex data for screen quad
+    {
+        float32 vertexData[] = {
+            //  Position      Texture-Coords
+            -1.0f,  1.0f,    0.0f, 1.0f,   // Top-left
+             1.0f,  1.0f,    1.0f, 1.0f,   // Top-right
+             1.0f, -1.0f,    1.0f, 0.0f,   // Bottom-right
+            -1.0f, -1.0f,    0.0f, 0.0f    // Bottom-left
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+
+        int32 elementsPerVertex;
+        int32 stride;
+        int32 offsetToFirstElement;
+
+        //-- Position Data:
+        elementsPerVertex = 2;
+        stride = 4*sizeof(float32);
+        offsetToFirstElement = 0;
+        glVertexAttribPointer(kAttribIndex_positions, elementsPerVertex, GL_FLOAT,
+                GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
+
+        //-- Texture Coordinate Data:
+        elementsPerVertex = 2;
+        stride = 4*sizeof(float32);
+        offsetToFirstElement = 2*sizeof(float32);
+        glVertexAttribPointer(kAttribIndex_texCoords, elementsPerVertex, GL_FLOAT,
+                GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
+    }
+
+    //-- Create element buffer data for indices:
+    {
+        glGenBuffers(1, &screenQuadIndexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+
+        GLushort indices [] = {
+                3,2,1, 0,3,1
+        };
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::setupShaderPrograms() {
+//    shaderProgram_Advection.loadFromFile (
+//            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advection.vs",
+//            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advection.fs");
+
+
+    shaderProgram_SceneRenderer.loadFromFile(
+            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.vs",
+            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.fs");
+
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::createTextureStorage() {
+
+    //-- Velocity textures:
+    {
+        for(int i(0); i < 2; ++i) {
+            glGenTextures(1, &velocityTexture[i]);
+            glBindTexture(GL_TEXTURE_2D, velocityTexture[i]);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, kVelocityTextureFormat, kSimTextureWidth,
+                    kSimTextureHeight, 0, kVelocityTextureFormat, GL_FLOAT, NULL);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            CHECK_GL_ERRORS;
+        }
+    }
+
+    //-- Density textures:
+    {
+        for(int i(0); i < 2; ++i) {
+            glGenTextures(1, &densityTexture[i]);
+            glBindTexture(GL_TEXTURE_2D, densityTexture[i]);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, kDensityTextureFormat, kSimTextureWidth,
+                    kSimTextureHeight, 0, kDensityTextureFormat, GL_FLOAT, NULL);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            CHECK_GL_ERRORS;
+        }
+    }
+
+    //-- Pressure textures:
+    {
+        for(int i(0); i < 2; ++i) {
+            glGenTextures(1, &pressureTexture[i]);
+            glBindTexture(GL_TEXTURE_2D, pressureTexture[i]);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, kPressureTextureFormat, kSimTextureWidth,
+                    kSimTextureHeight, 0, kPressureTextureFormat, GL_FLOAT, NULL);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            CHECK_GL_ERRORS;
+        }
+    }
+
+    // TODO Dustin - remove this if not using tmpTextures
+    //-- tmpTexture_R32 texture:
+    {
+        glGenTextures(1, &tmpTexture_R32);
+        glBindTexture(GL_TEXTURE_2D, tmpTexture_R32);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, kPressureTextureFormat, kSimTextureWidth,
+                kSimTextureHeight, 0, kPressureTextureFormat, GL_FLOAT, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        CHECK_GL_ERRORS;
+    }
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::setFramebufferColorAttachment2D(
+        GLuint framebuffer,
+        GLuint textureId)
 {
-    for(int32 row(start_row); row < start_row + row_span; ++row) {
-        for(int32 col(start_col); col < start_col + col_span; ++col) {
-            grid(col,row) = value;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // Attach texture2DColorBuffer as COLOR_ATTACHMENT_0
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+            textureId, 0);
+
+    #ifdef DEBUG
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            throw Rigid3DException("Error. Framebuffer not complete.");
         }
-    }
+    #endif
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::initGridData() {
+/**
+* Read from velocityTexture[0] and write to velocityTexture[1].
+*/
+void GpuSmokeSim2D::advectVelocity() {
 
-    //-- Density Grid
-    {
-        GridSpec gridSpec;
-        gridSpec.width = kGridWidth;
-        gridSpec.height = kGridHeight;
-        gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
+    setFramebufferColorAttachment2D(framebuffer, velocityTexture[1]);
 
-        densityGrid = Grid<float32>(gridSpec);
-        densityGrid.setAll(0);
-    }
+    glBindVertexArray(screenQuadVao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, velocityTexture[0]);
 
-    //-- Temperature Grid
-    {
-        GridSpec gridSpec;
-        gridSpec.width = kGridWidth;
-        gridSpec.height = kGridHeight;
-        gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
+    // Set shader uniform to sample from texture unit 0
+    shaderProgram_Advection.setUniform("u_velocityTexture", 0);
 
-        temperatureGrid = Grid<float32>(gridSpec);
-        temperatureGrid.setAll(temp_0); // Set to ambient temperature
-    }
+    shaderProgram_Advection.enable();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    shaderProgram_Advection.disable();
 
-    //-- Cell Grid
-    {
-        GridSpec gridSpec;
-        gridSpec.width = kGridWidth;
-        gridSpec.height = kGridHeight;
-        gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-        cellGrid = Grid<CellType>(gridSpec);
-        cellGrid.setAll(CellType::Fluid);
-
-        //-- Set Location of Solid Cells:
-        {
-            // Boundary Cells are Solid
-            for (int32 row(0); row < cellGrid.height(); ++row) {
-                cellGrid(0, row) = CellType::Solid;
-                cellGrid(cellGrid.width() - 1, row) = CellType::Solid;
-
-            }
-            for (int32 col(0); col < cellGrid.width(); ++col) {
-                cellGrid(col, 0) = CellType::Solid;
-                cellGrid(col, cellGrid.height() - 1) = CellType::Solid;
-
-            }
-
-            // Create a Solid Box near center of grid
-            int32 mid_col = kGridWidth / 2;
-            int32 mid_row = kGridHeight / 2;
-            for (int32 j(-2); j < 2; ++j) {
-                for (int32 i(-10); i < 10; ++i) {
-                    cellGrid(mid_col + i, mid_row + j) = CellType::Solid;
-
-                }
-            }
-        }
-
-    }
-
-    //-- Pressure Grid
-    {
-        GridSpec gridSpec;
-        gridSpec.width = kGridWidth;
-        gridSpec.height = kGridHeight;
-        gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
-
-        pressureGrid = Grid<float32>(gridSpec);
-        pressureGrid.setAll(0);
-    }
-
-    //-- Divergence Grid
-    {
-        GridSpec gridSpec;
-        gridSpec.width = kGridWidth;
-        gridSpec.height = kGridHeight;
-        gridSpec.cellLength = kDx;
-        gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
-
-        rhsGrid = Grid<float32>(gridSpec);
-        rhsGrid.setAll(0);
-    }
-
-    //-- Velocity Grid
-    {
-        GridSpec u_gridSpec;
-        u_gridSpec.width = kGridWidth + 1;
-        u_gridSpec.height = kGridHeight;
-        u_gridSpec.cellLength = kDx;
-        u_gridSpec.origin = vec2(0, 0.5*kDx);
-
-        Grid<float32> u(u_gridSpec);
-        u.setAll(0);
-
-
-        GridSpec v_gridSpec;
-        v_gridSpec.width = kGridWidth;
-        v_gridSpec.height = kGridHeight + 1;
-        v_gridSpec.cellLength = kDx;
-        v_gridSpec.origin = vec2(0.5f*kDx, 0);
-
-        Grid<float32> v(v_gridSpec);
-        v.setAll(0);
-
-        velocityGrid = StaggeredGrid<float32>(std::move(u), std::move(v));
-
-        tmp_velocity = velocityGrid;
-    }
+    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::advectQuantities() {
-    //-- Advect the velocity field
-    tmp_velocity = velocityGrid;
-    advect(tmp_velocity.u, velocityGrid, kDt);
-    advect(tmp_velocity.v, velocityGrid, kDt);
-    velocityGrid = tmp_velocity;
+void GpuSmokeSim2D::render() {
+    // Use default framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    //-- Advect other quantities
-    advect(densityGrid, velocityGrid, kDt);
-    advect(temperatureGrid, velocityGrid, kDt);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tmpTexture_R32);
+    shaderProgram_SceneRenderer.setUniform("u_textureUnit", 0);
+
+    glBindVertexArray(screenQuadVao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+
+    shaderProgram_SceneRenderer.enable();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    shaderProgram_SceneRenderer.disable();
+
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::addForces() {
+void GpuSmokeSim2D::logic() {
+//    static bool firstRun = true;
+//    if (firstRun) {
+//        firstRun = false;
+//        return;
+//    }
+//
+//    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+//
+//    glViewport(0, 0, 512, 512);
+//
+//    float data[3];
+//    glReadPixels(0, 0, 1, 1, GL_RGB, GL_FLOAT, data);
+//
+//    cout << "(R,G,B) = (" << data[0] << ", " << data[1] << ", " << data[2] << ")" << endl;
 
-   //-- Buoyant Force:
-   float32 force;
-   float32 density;
-   float32 temp;
-   vec2 worldPos;
-   for(uint32 row(0); row < kGridHeight; ++row) {
-       for(uint32 col(0); col < kGridWidth; ++col) {
-           worldPos = velocityGrid.v.getPosition(col,row);
-           density = bilinear(densityGrid, worldPos);
-           temp = bilinear(temperatureGrid, worldPos);
+    CHECK_GL_ERRORS;
+}
 
-           force = -kBuoyant_d * density + kBuoyant_t * (temp - temp_0);
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::draw() {
 
-           velocityGrid.v(col,row) += kDt * force;
-       }
-   }
+    // Only process texture elements
+    glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
+
+    // 1. Advect Velocity
+    // 2. Advect Density
+    // 3. Compute and Apply Forces
+    // 5. Compute RHS (use tmpTexture)
+    // 4. Compute Pressure
+    // 5. Subtract Pressure Gradient from velocity (use tmpTexture)
+
+    // Render to entire window
+    glViewport(0, 0, kScreenWidth, kScreenHeight);
+    render();
+
+    CHECK_GL_ERRORS;
+}
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::keyInput(int key, int action, int mods) {
 
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeSim::computeRHS() {
-    Grid<float32> & u = velocityGrid.u;
-    Grid<float32> & v = velocityGrid.v;
-
-    float32 scale = kDensity * kDx / kDt;
-
-
-    for(int32 row(0); row < cellGrid.height(); ++row) {
-        for (int32 col(0); col < cellGrid.width(); ++col) {
-            if (cellGrid(col, row) == CellType::Fluid) {
-                float32 delta_u( u(col+1, row) - u(col,row) );
-                float32 delta_v( v(col, row+1) - v(col, row) );
-
-                rhsGrid(col,row) =  scale * (delta_u + delta_v);
-            }
-        }
-    }
-
-
-    // Update RHS based on solid boundaries:
-    for(int32 row(0); row < cellGrid.height(); ++row) {
-        for(int32 col(0); col < cellGrid.width(); ++col) {
-
-            if (cellGrid(col,row) == CellType::Fluid) {
-
-                // Left Neighbor
-                if (cellGrid(col-1,row) == CellType::Solid) {
-                   rhsGrid(col,row) += scale * (u(col,row) - u_solid);
-                }
-                // Right Neighbor
-                if (cellGrid(col+1,row) == CellType::Solid) {
-                    rhsGrid(col,row) -= scale * (u(col+1,row) - u_solid);
-                }
-                // Bottom Neighbor
-                if (cellGrid(col,row-1) == CellType::Solid) {
-                    rhsGrid(col,row) += scale * (v(col,row) - v_solid);
-                }
-                // Top Neighbor
-                if (cellGrid(col,row+1) == CellType::Solid) {
-                    rhsGrid(col,row) -= scale * (v(col,row+1) - v_solid);
-                }
-
-            }
-
-        }
-    }
-}
-//----------------------------------------------------------------------------------------
-void SmokeSim::computePressure() {
-    // Want to solve the system Ap = b
-    Grid<float32> & p = pressureGrid;
-
-    //-- Set pressure to all zeros for initial guess
-    p.setAll(0);
-
-    float32 numFluidNeighbors;
-    float32 neighborPressureSum;
-
-    //-- Apply Gauss-Seidel iterations to Poisson-pressure problem:
-    for(int32 iteration(0); iteration < solver_iterations; ++iteration) {
-
-        for (int32 row(0); row < cellGrid.height(); ++row) {
-            for (int32 col(0); col < cellGrid.width(); ++col) {
-
-                if(cellGrid(col,row) == CellType::Fluid) {
-
-                    numFluidNeighbors = 0;
-                    neighborPressureSum = 0;
-
-                    // Left Neighbor
-                    if (cellGrid(col-1,row) == CellType::Fluid) {
-                        ++numFluidNeighbors;
-                        neighborPressureSum += p(col-1,row);
-                    }
-                    // Right Neighbor
-                    if (cellGrid(col+1,row) == CellType::Fluid) {
-                        ++numFluidNeighbors;
-                        neighborPressureSum += p(col+1,row);
-                    }
-                    // Bottom Neighbor
-                    if (cellGrid(col, row-1) == CellType::Fluid) {
-                        ++numFluidNeighbors;
-                        neighborPressureSum += p(col,row-1);
-                    }
-                    // Top Neighbor
-                    if (cellGrid(col, row+1) == CellType::Fluid) {
-                        ++numFluidNeighbors;
-                        neighborPressureSum += p(col,row+1);
-                    }
-
-                    p(col,row) = -1 / numFluidNeighbors *
-                            (rhsGrid(col,row) - neighborPressureSum);
-
-                }
-            }
-        }
-    }
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::subtractPressureGradient() {
-    // Here we update the velocity field by subtracting off the pressure gradient
-    // making the field "divergence free"/incompressible.
-
-    Grid<float32> & u = velocityGrid.u;
-    Grid<float32> & v = velocityGrid.v;
-    Grid<float32> & p = pressureGrid;
-
-    float32 scale = kDt / (kDensity*kDx);
-    float32 value;
-
-    for(int32 row(0); row < cellGrid.height(); ++row) {
-        for(int32 col(0); col < cellGrid.width(); ++col) {
-
-            if (cellGrid(col,row) == CellType::Fluid) {
-                value = scale * p(col,row);
-                u(col,row) -= value;
-                u(col+1,row) += value;
-
-                v(col,row) -= value;
-                v(col,row+1) += value;
-            }
-
-        }
-    }
-
-    for(int32 row(0); row < cellGrid.height(); ++row) {
-        for(int32 col(0); col < cellGrid.width(); ++col) {
-
-            if (cellGrid(col,row) == CellType::Solid) {
-                u(col,row) = u_solid;
-                u(col+1,row) = u_solid;
-                v(col,row) = v_solid;
-                v(col,row+1) = v_solid;
-            }
-
-        }
-    }
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::computeMaxVelocity() {
-    Grid<float32> & u = velocityGrid.u;
-    Grid<float32> & v = velocityGrid.v;
-
-    for(int32 row(0); row < u.height(); ++row) {
-        for(int32 col(0); col < u.width(); ++col) {
-            max_vel.x = std::max(u(col,row), max_vel.x);
-        }
-    }
-
-    for(int32 row(0); row < v.height(); ++row) {
-        for(int32 col(0); col < v.width(); ++col) {
-            max_vel.y = std::max(v(col,row), max_vel.y);
-        }
-    }
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::clampMaxVelocity() {
-    Grid<float32> & u = velocityGrid.u;
-    Grid<float32> & v = velocityGrid.v;
-
-    float32 max_cfl_velocity = 2.5f * kDx / kDt;
-
-    float32 value;
-    for(int32 row(0); row < u.height(); ++row) {
-        for(int32 col(0); col < u.width(); ++col) {
-            value =  u(col,row);
-            u(col,row) = std::min(value, max_cfl_velocity);
-        }
-    }
-    for(int32 row(0); row < v.height(); ++row) {
-        for(int32 col(0); col < v.width(); ++col) {
-            value =  v(col,row);
-            v(col,row) = std::min(value, max_cfl_velocity);
-        }
-    }
-
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::logic() {
-
-    //-- Inject density and temperature:
-    static uint counter = 0;
-    if (counter < 60) {
-        fillGrid(densityGrid, 35, 10, 1, 6, 1.0f);
-        fillGrid(temperatureGrid, 35, 10, 1, 6, temp_0 + 200);
-        counter++;
-    }
-
-    advectQuantities();
-    addForces();
-
-    computeRHS();
-    computePressure();
-    subtractPressureGradient();
-
-    clampMaxVelocity();
-    computeMaxVelocity();
-
-    smokeGraphics.uploadTextureData(densityGrid);
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::draw() {
-    smokeGraphics.draw();
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::keyInput(int key, int action, int mods) {
-
-}
-
-//----------------------------------------------------------------------------------------
-void SmokeSim::cleanup() {
-    cout << "max_u: " << max_vel.x << endl;
-    cout << "max_v: " << max_vel.y << endl;
-    cout << "CFL Condtion, max(velocity) <= " << 5 * kDx / kDt << endl;
-    cout << endl;
-
-    cout << "Simulation Clean Up" << endl;
-
-    smokeGraphics.cleanup();
-
-    cout << " ... Good Bye." << endl;
+void GpuSmokeSim2D::cleanup() {
 }
