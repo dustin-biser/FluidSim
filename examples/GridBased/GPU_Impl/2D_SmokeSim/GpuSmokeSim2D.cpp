@@ -1,4 +1,4 @@
-#include "SmokeSim.hpp"
+#include "GpuSmokeSim2D.hpp"
 #include "SmokeGraphics.hpp"
 
 #include "FluidSim/Interp.hpp"
