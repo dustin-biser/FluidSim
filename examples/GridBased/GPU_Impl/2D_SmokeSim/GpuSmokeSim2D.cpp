@@ -46,25 +46,6 @@ void GpuSmokeSim2D::init() {
 
     glClearColor(0.0, 0.0, 0.0, 1.0f);
 
-    // TODO Dustin - Remove this:
-    // Only for testing that render() is working to render a texture to screen
-    {
-        float32 data[kSimTextureWidth * kSimTextureHeight];
-        for(int i(0); i < kSimTextureHeight; ++i) {
-            for(int j(0); j < kSimTextureWidth; ++j) {
-                data[i*kSimTextureWidth + j] = 1.0f;
-                if (i > 256 && i < 350) {
-                    data[i*kSimTextureWidth + j] = 0.0f;
-                }
-            }
-        }
-
-        glBindTexture(GL_TEXTURE_2D, tmpTexture_R32);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kSimTextureWidth, kSimTextureHeight,
-                kDensityTextureFormat, GL_FLOAT, data);
-
-    }
-
     CHECK_GL_ERRORS;
 }
 
@@ -135,6 +116,9 @@ void GpuSmokeSim2D::setupShaderPrograms() {
             "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.vs",
             "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.fs");
 
+    shaderProgram_tmp.loadFromFile(
+            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/WriteOutData.vs",
+            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/WriteOutData.fs");
 }
 
 //----------------------------------------------------------------------------------------
@@ -197,11 +181,11 @@ void GpuSmokeSim2D::createTextureStorage() {
     // TODO Dustin - remove this if not using tmpTextures
     //-- tmpTexture_R32 texture:
     {
-        glGenTextures(1, &tmpTexture_R32);
-        glBindTexture(GL_TEXTURE_2D, tmpTexture_R32);
+        glGenTextures(1, &tmpTexture_RGB);
+        glBindTexture(GL_TEXTURE_2D, tmpTexture_RGB);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, kPressureTextureFormat, kSimTextureWidth,
-                kSimTextureHeight, 0, kPressureTextureFormat, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kSimTextureWidth,
+                kSimTextureHeight, 0, GL_RGB, GL_FLOAT, NULL);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -217,9 +201,12 @@ void GpuSmokeSim2D::setFramebufferColorAttachment2D(
         GLuint framebuffer,
         GLuint textureId)
 {
+    GLint prevBoundDrawFramebuffer;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &prevBoundDrawFramebuffer);
+
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    // Attach texture2DColorBuffer as COLOR_ATTACHMENT_0
+    // Attach textureId as COLOR_ATTACHMENT_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
             textureId, 0);
 
@@ -230,7 +217,7 @@ void GpuSmokeSim2D::setFramebufferColorAttachment2D(
         }
     #endif
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, prevBoundDrawFramebuffer);
 
     CHECK_GL_ERRORS;
 }
@@ -267,7 +254,7 @@ void GpuSmokeSim2D::render() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, tmpTexture_R32);
+    glBindTexture(GL_TEXTURE_2D, tmpTexture_RGB);
     shaderProgram_SceneRenderer.setUniform("u_textureUnit", 0);
 
     glBindVertexArray(screenQuadVao);
@@ -281,6 +268,53 @@ void GpuSmokeSim2D::render() {
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    CHECK_GL_ERRORS;
+}
+
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::renderToTexture(GLuint texture) {
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    setFramebufferColorAttachment2D(framebuffer, tmpTexture_RGB);
+
+    // Set color to blue
+    shaderProgram_tmp.setUniform("u_color", vec4(0.5f,0.5f,1.0f,1.0f));
+
+    glBindVertexArray(screenQuadVao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+
+    shaderProgram_tmp.enable();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    shaderProgram_tmp.disable();
+
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::renderTextureToScreen(GLuint texture) {
+    // Use default framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tmpTexture_RGB);
+    shaderProgram_SceneRenderer.setUniform("u_textureUnit", 0);
+
+    glBindVertexArray(screenQuadVao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+
+    shaderProgram_SceneRenderer.enable();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    shaderProgram_SceneRenderer.disable();
+
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     CHECK_GL_ERRORS;
 }
@@ -310,6 +344,7 @@ void GpuSmokeSim2D::draw() {
 
     // Only process texture elements
     glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
+    renderToTexture(tmpTexture_RGB);
 
     // 1. Advect Velocity
     // 2. Advect Density
@@ -320,7 +355,8 @@ void GpuSmokeSim2D::draw() {
 
     // Render to entire window
     glViewport(0, 0, kScreenWidth, kScreenHeight);
-    render();
+//    render();
+    renderTextureToScreen(tmpTexture_RGB);
 
     CHECK_GL_ERRORS;
 }

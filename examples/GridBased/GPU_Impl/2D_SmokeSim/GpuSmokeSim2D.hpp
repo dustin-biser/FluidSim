@@ -30,6 +30,7 @@ const int32 kSimTextureHeight = 512;
 const GLenum kVelocityTextureFormat = GL_RG;
 const GLenum kDensityTextureFormat = GL_RED;
 const GLenum kPressureTextureFormat = GL_RED;
+const GLenum kTmpTextureR32Format = GL_RED;
 
 //----------------------------------------------------------------------------------------
 // Shader Parameters
@@ -82,8 +83,6 @@ private:
     GLuint velocityTexture[2]; // RG32
     GLuint densityTexture[2];  // Red32
     GLuint pressureTexture[2]; // Red32
-    GLuint tmpTexture_RG32;    // RG32
-    GLuint tmpTexture_R32;     // Red32
 
     virtual void init();
     virtual void logic();
@@ -99,4 +98,11 @@ private:
     void setupShaderPrograms();
     void advectVelocity();
     void render();
+
+
+    // TODO Dustin - Remove this after passing tests:
+        GLuint tmpTexture_RGB;    // RG32
+        void renderToTexture(GLuint texture);
+        void renderTextureToScreen(GLuint texture);
+        ShaderProgram shaderProgram_tmp;
 };
