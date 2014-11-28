@@ -17,27 +17,11 @@ using namespace Rigid3D;
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
+const float32 kSecondsPerFrame = 1.0f;
 const float32 kDt = 0.008;
 const int32 solver_iterations = 60;
 const int32 kScreenWidth = 1024;
 const int32 kScreenHeight = 768;
-
-//----------------------------------------------------------------------------------------
-// Texture Storage Parameters
-//----------------------------------------------------------------------------------------
-const int32 kSimTextureWidth = 512;
-const int32 kSimTextureHeight = 512;
-const GLenum kVelocityTextureFormat = GL_RG;
-const GLenum kDensityTextureFormat = GL_RED;
-const GLenum kPressureTextureFormat = GL_RED;
-const GLenum kTmpTextureR32Format = GL_RED;
-
-//----------------------------------------------------------------------------------------
-// Shader Parameters
-//----------------------------------------------------------------------------------------
-// Vertex attribute indices:
-const int32 kAttribIndex_positions = 0;
-const int32 kAttribIndex_texCoords = 1;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
@@ -48,15 +32,78 @@ const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
 const float32 kDensity = 1.0f;
 
 //----------------------------------------------------------------------------------------
-// Grid Parameters
+// Shader Parameters
 //----------------------------------------------------------------------------------------
-// Note: Keep KGridWidth a multiple of 4 so texture alignment is optimal.
-const int32 kGridWidth = 100;
-const int32 kGridHeight = 100;
-const float32 kDx = 1.0f/kGridWidth; // Grid cell length in meters.
-const float32 inv_kDx = 1.0f/kDx;
-const float32 u_solid = 0.0f; // horizontal velocity of solid boundaries.
-const float32 v_solid = 0.0f; // vertical velocity of solid boundaries.
+// Vertex attribute indices:
+const int32 kAttribIndex_positions = 0;
+const int32 kAttribIndex_texCoords = 1;
+
+//----------------------------------------------------------------------------------------
+// Texture Storage Parameters
+//----------------------------------------------------------------------------------------
+const int32 kSimTextureWidth = 512;
+const int32 kSimTextureHeight = 512;
+const float32 kDx = 1.0f / kSimTextureWidth; // Grid cell length
+
+// Grid Layout Specification
+template <int32 N>
+struct Grid {
+    vec2 worldOrigin;
+    float32 cellLength;
+    int32 textureWidth;    // Given in number of cells
+    int32 textureHeight;   // Given in number of cells
+    int32 textureUnit;     // Active texture unit
+    GLenum internalFormat; // Storage type
+    GLenum components;     // Color channels requested
+    GLenum dataType;
+    GLuint textureName[N]; // Used for binding GL textures
+};
+const int READ = 0;
+const int WRITE = 1;
+
+Grid<2> u_velocityGrid = {
+        vec2(0, 0.5*kDx),      // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth + 1,  // textureWidth
+        kSimTextureHeight,     // textureHeight
+        0,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
+
+Grid<2> v_velocityGrid = {
+        vec2(0.5*kDx, 0),      // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth,      // textureWidth
+        kSimTextureHeight + 1, // textureHeight
+        1,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
+
+Grid<2> densityGrid = {
+        0.5f*vec2(kDx, kDx),   // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth,      // textureWidth
+        kSimTextureHeight,     // textureHeight
+        2,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
+
+Grid<2> pressureGrid = {
+        0.5f*vec2(kDx, kDx),   // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth,      // textureWidth
+        kSimTextureHeight,     // textureHeight
+        3,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
 
 
 class GpuSmokeSim2D : public GlfwOpenGlWindow {
@@ -75,14 +122,8 @@ private:
     GLuint screenQuadVertBuffer;  // Vertex Buffer Object
     GLuint screenQuadIndexBuffer; // Element Buffer Object
 
-    ShaderProgram shaderProgram_Advection;
+    ShaderProgram shaderProgram_Advect;
     ShaderProgram shaderProgram_SceneRenderer;
-
-    // Store two versions of each texture. One for rendering to and one for
-    // reading from
-    GLuint velocityTexture[2]; // RG32
-    GLuint densityTexture[2];  // Red32
-    GLuint pressureTexture[2]; // Red32
 
     virtual void init();
     virtual void logic();
@@ -94,15 +135,15 @@ private:
                                          GLuint textureId);
 
     void createTextureStorage();
+    void initTextureData();
     void setupScreenQuadVboData();
     void setupShaderPrograms();
-    void advectVelocity();
-    void render();
+    void setShaderUniforms();
+    void swapTextureNames(Grid<2> & grid);
+    void advect(Grid<2> & dataGrid);
+    void render(const Grid<2> & dataGrid);
 
+    // TODO Dustin - Remove these after passing advect test:
+    void fillTexturesWithData();
 
-    // TODO Dustin - Remove this after passing tests:
-        GLuint tmpTexture_RGB;    // RG32
-        void renderToTexture(GLuint texture);
-        void renderTextureToScreen(GLuint texture);
-        ShaderProgram shaderProgram_tmp;
 };
