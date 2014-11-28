@@ -531,37 +531,42 @@ void GpuSmokeSim2D::logic() {
 
     CHECK_GL_ERRORS;
 }
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::inspectGridData(Grid<2> & grid) {
+    float * data = new float[grid.textureWidth * grid.textureHeight];
+    for(int i(0); i < grid.textureHeight; ++i) {
+        for(int j(0); j < grid.textureWidth; ++j) {
+            data[i * grid.textureWidth + j] = 0.0f;
+        }
+    }
+
+    glFinish();
+    glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[READ]);
+    glGetTexImage(GL_TEXTURE_2D, 0, densityGrid.components, densityGrid.dataType, data);
+
+
+    delete [] data;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    CHECK_GL_ERRORS;
+}
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim2D::draw() {
-
-    // Only process texture elements
-//    advect(u_velocityGrid);
-//    advect(v_velocityGrid);
-//    swapTextureNames(u_velocityGrid);
-//    swapTextureNames(v_velocityGrid);
-
-    advect(densityGrid);
-    swapTextureNames(densityGrid);
-
-    //-- Inspect densityGrid data:
-//        glFinish();
-//        for(float &f : data) {
-//            f = 0.0f;
-//        }
-//        glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[READ]);
-//        glGetTexImage(GL_TEXTURE_2D, 0, densityGrid.components, densityGrid.dataType, data);
-//
-//        glBindTexture(GL_TEXTURE_2D, 0);
-//        CHECK_GL_ERRORS;
-
-
     // 1. Advect Velocity
     // 2. Advect Density
     // 3. Compute and Apply Forces
-    // 5. Compute RHS (use tmpTexture)
-    // 4. Compute Pressure
-    // 5. Subtract Pressure Gradient from velocity (use tmpTexture)
+    // 4. Compute RHS (use tmpTexture)
+    // 5. Compute Pressure
+    // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
+    // 7. Render
+
+    advect(u_velocityGrid);
+    advect(v_velocityGrid);
+    swapTextureNames(u_velocityGrid);
+    swapTextureNames(v_velocityGrid);
+
+    advect(densityGrid);
+    swapTextureNames(densityGrid);
 
     // Render to entire window
     glViewport(0, 0, kScreenWidth, kScreenHeight);

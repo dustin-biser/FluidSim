@@ -143,8 +143,7 @@ private:
     void advect(Grid<2> & dataGrid);
     void render(const Grid<2> & dataGrid);
 
-    // TODO Dustin - Remove these after passing advect test:
+    // TODO Dustin - Remove these after testing is complete:
     void fillTexturesWithData();
-    float data[kSimTextureWidth*kSimTextureWidth];
-
+    void inspectGridData(Grid<2> & grid);
 };
