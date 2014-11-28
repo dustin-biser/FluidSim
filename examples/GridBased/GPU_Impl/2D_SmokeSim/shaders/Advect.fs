@@ -29,7 +29,7 @@ vec2 getWorldPosition(in Grid grid, in vec2 texCoord) {
 vec2 getTextureCoords(in Grid grid, in vec2 worldPos) {
     vec2 result = worldPos - grid.worldOrigin;
     float dx = grid.cellLength;
-    return result / vec2(grid.textureWidth * dx, grid.textureHeight * dx);
+    return result / vec2(dx, dx);
 }
 
 float linearInterp(in Grid grid, in vec2 worldPosition) {
@@ -39,49 +39,24 @@ float linearInterp(in Grid grid, in vec2 worldPosition) {
 
 
 void main () {
+    // Compute world position of 'dataCoord' within 'dataGrid'.
+    vec2 worldPosition = getWorldPosition(dataGrid, dataCoord);
 
-    // TODO Dustin - Uncomment this:
-//    // Compute world position of 'dataCoord' within 'dataGrid'.
-//    vec2 worldPosition = getWorldPosition(dataGrid, dataCoord);
-//
-//    float u = linearInterp(u_velocityGrid, worldPosition);
-//    float v = linearInterp(v_velocityGrid, worldPosition);
-//    vec2 velocity = vec2(u,v);
-//
-//    // Backtrace to particle location that will end up at 'worldPosition' at the
-//    // next timeStep.
-//    // Two stage Runge-Kutta:
-//    vec2 midPoint = worldPosition - (0.5 * timeStep * velocity);
-//    u = linearInterp(u_velocityGrid, midPoint);
-//    v = linearInterp(v_velocityGrid, midPoint);
-//    velocity = vec2(u,v);
-//    worldPosition = worldPosition - (timeStep * velocity);
-//
-//    result = linearInterp(dataGrid, worldPosition);
+    // Interpolate (u,v) velocity at this world location.
+    float u = linearInterp(u_velocityGrid, worldPosition);
+    float v = linearInterp(v_velocityGrid, worldPosition);
+    vec2 velocity = vec2(u,v);
 
+    // Backtrace to particle location that will end up at 'worldPosition' at the
+    // next timeStep.
+    // Two stage Runge-Kutta:
+    vec2 midPoint = worldPosition - (0.5 * timeStep * velocity);
+    u = linearInterp(u_velocityGrid, midPoint);
+    v = linearInterp(v_velocityGrid, midPoint);
+    velocity = vec2(u,v);
+    worldPosition = worldPosition - (timeStep * velocity);
 
-    // TODO Dustin - Remove this after testing:
-    {
-        result = u_velocityGrid.cellLength * v_velocityGrid.cellLength * timeStep;
-        result = texture(dataGrid.textureUnit, dataCoord).r*0.9;
-    }
+    result = linearInterp(dataGrid, worldPosition);
+
 }
-
-
-// Advection:
-/*
-    (col,row) = current cell within dataGrid:
-
-            worldPos = q.getPosition(col,row);
-            u = bilinear(velocity, worldPos);
-
-            // Backtrace to particle location that will end up at worldPos at the next
-            // time step dt.
-            // Two stage Runge-Kutta:
-            x_mid = worldPos - (0.5f * dt * u);
-            u = bilinear(velocity, x_mid);
-            x_p = worldPos - (dt * u);
-
-            q_new(col, row) = bilinear(q, x_p);
-*/
 

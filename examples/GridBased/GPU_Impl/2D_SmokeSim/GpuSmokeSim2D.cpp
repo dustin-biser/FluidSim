@@ -131,9 +131,9 @@ void GpuSmokeSim2D::fillTexturesWithData() {
     {
         float32 data[ v_velocityGrid.textureWidth * v_velocityGrid.textureHeight ];
 
-        // Make v_velocity point upwards for each grid cell:
+        // Make v_velocity point downwards for each grid cell:
         for (float32 &f : data) {
-            f = 0.001f * kDx;
+            f = 0.5f * kDx;
         }
         for (int i(0); i < 2; ++i) {
             glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[i]);
@@ -369,8 +369,10 @@ void GpuSmokeSim2D::createTextureStorage() {
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            const GLfloat borderColor[4] = {0.0, 0.0, 0.0, 0.0};
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
             glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -396,8 +398,10 @@ void GpuSmokeSim2D::createTextureStorage() {
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            const GLfloat borderColor[4] = {0.0, 0.0, 0.0, 0.0};
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
             glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -539,6 +543,18 @@ void GpuSmokeSim2D::draw() {
 
     advect(densityGrid);
     swapTextureNames(densityGrid);
+
+    //-- Inspect densityGrid data:
+//        glFinish();
+//        for(float &f : data) {
+//            f = 0.0f;
+//        }
+//        glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[READ]);
+//        glGetTexImage(GL_TEXTURE_2D, 0, densityGrid.components, densityGrid.dataType, data);
+//
+//        glBindTexture(GL_TEXTURE_2D, 0);
+//        CHECK_GL_ERRORS;
+
 
     // 1. Advect Velocity
     // 2. Advect Density

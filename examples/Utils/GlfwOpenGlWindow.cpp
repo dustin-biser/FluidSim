@@ -196,6 +196,10 @@ void GlfwOpenGlWindow::create(
     while(glGetError() != GL_NO_ERROR);
 
     try {
+        // Wait until monitor refreshes before swapping front and back buffers.
+        // To prevent tearing.
+        glfwSwapInterval(1);
+
         setupGl();
         setupCamera();
         init();

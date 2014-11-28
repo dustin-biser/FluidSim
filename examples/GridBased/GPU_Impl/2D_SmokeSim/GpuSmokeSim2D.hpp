@@ -17,7 +17,7 @@ using namespace Rigid3D;
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const float32 kSecondsPerFrame = 1.0f;
+const float32 kSecondsPerFrame = 1/100.0f;
 const float32 kDt = 0.008;
 const int32 solver_iterations = 60;
 const int32 kScreenWidth = 1024;
@@ -145,5 +145,6 @@ private:
 
     // TODO Dustin - Remove these after passing advect test:
     void fillTexturesWithData();
+    float data[kSimTextureWidth*kSimTextureWidth];
 
 };
