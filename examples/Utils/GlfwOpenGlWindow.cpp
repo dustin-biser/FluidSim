@@ -179,7 +179,10 @@ void GlfwOpenGlWindow::create(
         glfwTerminate();
         throw GlfwException("Call to glfwCreateWindow failed.");
     }
-    
+
+    // Get default framebuffer pixel dimensions in order to support high-definition
+    // monitors.
+    glfwGetFramebufferSize(window, &framebufferPixelWidth, &framebufferPixelHeight);
 
     centerWindow();
     glfwMakeContextCurrent(window);
@@ -233,6 +236,21 @@ void GlfwOpenGlWindow::create(
     cleanup();
     glfwDestroyWindow(window);
 }
+
+//----------------------------------------------------------------------------------------
+// For use with high-def monitors with a non-unity ratio between windows-coordinates
+// and number of pixels.
+int GlfwOpenGlWindow::defaultFramebufferWidth() const{
+   return framebufferPixelWidth;
+}
+
+//----------------------------------------------------------------------------------------
+// For use with high-def monitors with a non-unity ratio between windows-coordinates
+// and number of pixels.
+int GlfwOpenGlWindow::defaultFramebufferHeight() const{
+    return framebufferPixelHeight;
+}
+
 //----------------------------------------------------------------------------------------
 duration<double> GlfwOpenGlWindow::frameLimiter(
         double desiredSecondsPerFrame,

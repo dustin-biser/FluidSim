@@ -520,17 +520,9 @@ void GpuSmokeSim2D::render(const Grid<2> &dataGrid) {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim2D::logic() {
-//    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-//
-//    glViewport(0, 0, 512, 512);
-//
-//    float data[3];
-//    glReadPixels(0, 0, 1, 1, GL_RGB, GL_FLOAT, data);
-//
-//    cout << "(R,G,B) = (" << data[0] << ", " << data[1] << ", " << data[2] << ")" << endl;
 
-    CHECK_GL_ERRORS;
 }
+
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim2D::inspectGridData(Grid<2> & grid) {
     float * data = new float[grid.textureWidth * grid.textureHeight];
@@ -569,7 +561,7 @@ void GpuSmokeSim2D::draw() {
     swapTextureNames(densityGrid);
 
     // Render to entire window
-    glViewport(0, 0, kScreenWidth, kScreenHeight);
+    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
     render(densityGrid);
 
     CHECK_GL_ERRORS;
