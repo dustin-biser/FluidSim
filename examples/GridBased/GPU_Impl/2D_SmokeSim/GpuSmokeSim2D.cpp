@@ -3,9 +3,10 @@
 #include <Rigid3D/Rigid3D.hpp>
 using namespace Rigid3D;
 
+#include <chrono>
 #include <sstream>
-#include <iostream>
 using namespace std;
+using namespace std::chrono;
 
 
 //----------------------------------------------------------------------------------------
@@ -175,9 +176,61 @@ void GpuSmokeSim2D::fillTexturesWithData() {
         }
     }
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    CHECK_GL_ERRORS;
+    //-- cellTypeGrid:
+    {
 
+        const float32 FLUID = 0.0f;
+        const float32 SOLID = 1.0f;
+
+        const uint32 width = cellTypeGrid.textureWidth;
+        const uint32 height = cellTypeGrid.textureHeight;
+        float32 data[height][width];
+
+        // Initialize all cells to FLUID first.
+        for(int row(0); row < height; ++row) {
+            for(int col(0); col < width; ++col) {
+                data[row][col] = FLUID;
+            }
+        }
+
+        // Set Left and Right borders to SOLID.
+        for(int row(0); row < height; ++row) {
+            data[row][0] = SOLID;
+            data[row][(width-1)] = SOLID;
+        }
+
+        // Set Top and Bottom borders to SOLID.
+        for(int col(0); col < width; ++col) {
+            data[height-1][col] = SOLID;
+            data[0][col] = SOLID;
+        }
+
+        // Add a few SOLID cells to interior.
+        // Create a Solid Box near center of grid
+        int32 mid_col = kSimTextureWidth / 2;
+        int32 mid_row = kSimTextureHeight / 2;
+        int32 halfWidthSpan = (kSimTextureWidth*0.2f) * 0.5f;
+        int32 halfHeightSpan = (kSimTextureWidth*0.05f) * 0.5f;
+        for (int32 i(-halfHeightSpan); i < halfHeightSpan; ++i) {
+            for (int32 j(-halfWidthSpan); j < halfWidthSpan; ++j) {
+                data[mid_row + i][mid_col + j] = SOLID;
+            }
+        }
+
+        glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[READ]);
+        glTexSubImage2D(GL_TEXTURE_2D,
+                0, 0, 0,
+                cellTypeGrid.textureWidth,
+                cellTypeGrid.textureHeight,
+                cellTypeGrid.components,
+                cellTypeGrid.dataType,
+                data);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+    }
+
+    CHECK_GL_ERRORS;
 }
 
 
@@ -331,14 +384,14 @@ void GpuSmokeSim2D::createTextureStorage() {
             glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[i]);
 
             glTexImage2D(GL_TEXTURE_2D,
-                    0,
-                    v_velocityGrid.internalFormat,
-                    v_velocityGrid.textureWidth,
-                    v_velocityGrid.textureHeight,
-                    0,
-                    v_velocityGrid.components,
-                    v_velocityGrid.dataType,
-                    NULL);
+                         0,
+                         v_velocityGrid.internalFormat,
+                         v_velocityGrid.textureWidth,
+                         v_velocityGrid.textureHeight,
+                         0,
+                         v_velocityGrid.components,
+                         v_velocityGrid.dataType,
+                         NULL);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -358,14 +411,14 @@ void GpuSmokeSim2D::createTextureStorage() {
             glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[i]);
 
             glTexImage2D(GL_TEXTURE_2D,
-                    0,
-                    densityGrid.internalFormat,
-                    densityGrid.textureWidth,
-                    densityGrid.textureHeight,
-                    0,
-                    densityGrid.components,
-                    densityGrid.dataType,
-                    NULL);
+                         0,
+                         densityGrid.internalFormat,
+                         densityGrid.textureWidth,
+                         densityGrid.textureHeight,
+                         0,
+                         densityGrid.components,
+                         densityGrid.dataType,
+                         NULL);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -387,14 +440,14 @@ void GpuSmokeSim2D::createTextureStorage() {
             glBindTexture(GL_TEXTURE_2D, pressureGrid.textureName[i]);
 
             glTexImage2D(GL_TEXTURE_2D,
-                    0,
-                    pressureGrid.internalFormat,
-                    pressureGrid.textureWidth,
-                    pressureGrid.textureHeight,
-                    0,
-                    pressureGrid.components,
-                    pressureGrid.dataType,
-                    NULL);
+                         0,
+                         pressureGrid.internalFormat,
+                         pressureGrid.textureWidth,
+                         pressureGrid.textureHeight,
+                         0,
+                         pressureGrid.components,
+                         pressureGrid.dataType,
+                         NULL);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -408,18 +461,47 @@ void GpuSmokeSim2D::createTextureStorage() {
             CHECK_GL_ERRORS;
         }
     }
+
+    //-- cellTypeGrid:
+    {
+        glGenTextures(1, &cellTypeGrid.textureName[READ]);
+        glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[READ]);
+
+        glTexImage2D(GL_TEXTURE_2D,
+                0,
+                cellTypeGrid.internalFormat,
+                cellTypeGrid.textureWidth,
+                cellTypeGrid.textureHeight,
+                0,
+                cellTypeGrid.components,
+                cellTypeGrid.dataType,
+                NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        CHECK_GL_ERRORS;
+    }
+
 }
 
 //----------------------------------------------------------------------------------------
 /**
 * Assumes 'framebuffer' is currently bound using:
-*       glBindFramebuffer(GL_FRAMEBUFFER, framebuffer).
+*       glBindFramebuffer(framebufferType, framebuffer).
+*
+* @param framebufferType' - one of GL_FRAMEBUFFER, GL_READ_FRAMEBUFFER, GL_DRAW_FRAMEBUFFER.
 */
 void GpuSmokeSim2D::setFramebufferColorAttachment2D(
+        GLenum framebufferType,
         GLuint framebuffer,
         GLuint textureName)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+    glFramebufferTexture2D(framebufferType, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
             textureName, 0);
 
     #ifdef DEBUG
@@ -437,19 +519,20 @@ void GpuSmokeSim2D::setFramebufferColorAttachment2D(
 
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::swapTextureNames(Grid<2> & grid) {
+void GpuSmokeSim2D::swapTextureNames(Grid & grid) {
     GLuint tmp = grid.textureName[READ];
     grid.textureName[READ] = grid.textureName[WRITE];
     grid.textureName[WRITE] = tmp;
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::advect(Grid<2> & dataGrid) {
+void GpuSmokeSim2D::advect(Grid & dataGrid) {
     // Process only the texels belonging to dataGrid:
     glViewport(0, 0, dataGrid.textureWidth, dataGrid.textureHeight);
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    setFramebufferColorAttachment2D(framebuffer, dataGrid.textureName[WRITE]);
+    setFramebufferColorAttachment2D(GL_FRAMEBUFFER, framebuffer,
+            dataGrid.textureName[WRITE]);
 
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[READ]);
@@ -495,7 +578,7 @@ void GpuSmokeSim2D::advect(Grid<2> & dataGrid) {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::render(const Grid<2> &dataGrid) {
+void GpuSmokeSim2D::render(const Grid &dataGrid) {
     // Use default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -524,7 +607,7 @@ void GpuSmokeSim2D::logic() {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::inspectGridData(Grid<2> & grid) {
+void GpuSmokeSim2D::inspectGridData(Grid & grid) {
     float * data = new float[grid.textureWidth * grid.textureHeight];
     for(int i(0); i < grid.textureHeight; ++i) {
         for(int j(0); j < grid.textureWidth; ++j) {
@@ -560,9 +643,13 @@ void GpuSmokeSim2D::draw() {
     advect(densityGrid);
     swapTextureNames(densityGrid);
 
+
     // Render to entire window
     glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
-    render(densityGrid);
+//    render(densityGrid);
+
+    // TODO Dustin - Remove this after testing:
+    render(cellTypeGrid);
 
     CHECK_GL_ERRORS;
 }

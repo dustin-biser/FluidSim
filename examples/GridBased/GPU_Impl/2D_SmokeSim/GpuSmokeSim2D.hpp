@@ -14,6 +14,9 @@ using namespace FluidSim;
 #include <Rigid3D/Graphics/ShaderProgram.hpp>
 using namespace Rigid3D;
 
+#include <chrono>
+using namespace std::chrono;
+
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
@@ -46,7 +49,6 @@ const int32 kSimTextureHeight = 512;
 const float32 kDx = 1.0f / kSimTextureWidth; // Grid cell length
 
 // Grid Layout Specification
-template <int32 N>
 struct Grid {
     vec2 worldOrigin;
     float32 cellLength;
@@ -56,12 +58,12 @@ struct Grid {
     GLenum internalFormat; // Storage type
     GLenum components;     // Color channels requested
     GLenum dataType;
-    GLuint textureName[N]; // Used for binding GL textures
+    GLuint textureName[2]; // Used for binding GL textures, [0]=READ, [1]=WRITE.
 };
 const int READ = 0;
 const int WRITE = 1;
 
-Grid<2> u_velocityGrid = {
+Grid u_velocityGrid = {
         vec2(0, 0.5*kDx),      // worldOrigin
         kDx,                   // cellLength
         kSimTextureWidth + 1,  // textureWidth
@@ -72,7 +74,7 @@ Grid<2> u_velocityGrid = {
         GL_FLOAT               // dataType
 };
 
-Grid<2> v_velocityGrid = {
+Grid v_velocityGrid = {
         vec2(0.5*kDx, 0),      // worldOrigin
         kDx,                   // cellLength
         kSimTextureWidth,      // textureWidth
@@ -83,7 +85,7 @@ Grid<2> v_velocityGrid = {
         GL_FLOAT               // dataType
 };
 
-Grid<2> densityGrid = {
+Grid densityGrid = {
         0.5f*vec2(kDx, kDx),   // worldOrigin
         kDx,                   // cellLength
         kSimTextureWidth,      // textureWidth
@@ -94,7 +96,7 @@ Grid<2> densityGrid = {
         GL_FLOAT               // dataType
 };
 
-Grid<2> pressureGrid = {
+Grid pressureGrid = {
         0.5f*vec2(kDx, kDx),   // worldOrigin
         kDx,                   // cellLength
         kSimTextureWidth,      // textureWidth
@@ -105,6 +107,17 @@ Grid<2> pressureGrid = {
         GL_FLOAT               // dataType
 };
 
+// For determining which cells are solid or fluid.
+Grid cellTypeGrid = {
+        0.5f*vec2(kDx, kDx),   // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth,      // textureWidth
+        kSimTextureHeight,     // textureHeight
+        4,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
 
 class GpuSmokeSim2D : public GlfwOpenGlWindow {
 
@@ -131,19 +144,22 @@ private:
     virtual void keyInput(int key, int action, int mods);
     virtual void cleanup();
 
-    void setFramebufferColorAttachment2D(GLuint framebuffer,
-                                         GLuint textureId);
+    void setFramebufferColorAttachment2D(GLenum framebufferType,
+                                         GLuint framebuffer,
+                                         GLuint textureName);
 
     void createTextureStorage();
     void initTextureData();
     void setupScreenQuadVboData();
     void setupShaderPrograms();
     void setShaderUniforms();
-    void swapTextureNames(Grid<2> & grid);
-    void advect(Grid<2> & dataGrid);
-    void render(const Grid<2> & dataGrid);
+    void swapTextureNames(Grid & grid);
+    void advect(Grid & dataGrid);
+
+    void render(const Grid & dataGrid);
+
 
     // TODO Dustin - Remove these after testing is complete:
-    void fillTexturesWithData();
-    void inspectGridData(Grid<2> & grid);
+        void fillTexturesWithData();
+        void inspectGridData(Grid & grid);
 };
