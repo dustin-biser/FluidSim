@@ -107,13 +107,25 @@ Grid pressureGrid = {
         GL_FLOAT               // dataType
 };
 
+// Store right-hand-side (RHS) of Poisson-Pressure Solve, Ap = b.
+Grid rhsGrid = {
+        0.5f*vec2(kDx, kDx),   // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth,      // textureWidth
+        kSimTextureHeight,     // textureHeight
+        4,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
+
 // For determining which cells are solid or fluid.
 Grid cellTypeGrid = {
         0.5f*vec2(kDx, kDx),   // worldOrigin
         kDx,                   // cellLength
         kSimTextureWidth,      // textureWidth
         kSimTextureHeight,     // textureHeight
-        4,                     // textureUnit
+        5,                     // textureUnit
         GL_R16F,               // internalFormat
         GL_RED,                // components
         GL_FLOAT               // dataType
@@ -136,6 +148,7 @@ private:
     GLuint screenQuadIndexBuffer; // Element Buffer Object
 
     ShaderProgram shaderProgram_Advect;
+    ShaderProgram shaderProgram_ComputeRHS;
     ShaderProgram shaderProgram_SceneRenderer;
 
     virtual void init();
@@ -155,6 +168,7 @@ private:
     void setShaderUniforms();
     void swapTextureNames(Grid & grid);
     void advect(Grid & dataGrid);
+    void computeRHS();
 
     void render(const Grid & dataGrid);
 

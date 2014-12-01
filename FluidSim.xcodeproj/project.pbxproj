@@ -494,10 +494,12 @@
 		EF6696C2E7CC525CEC67F809 /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669749A10E6448920C6AB8 /* SphGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphGraphics.hpp; sourceTree = "<group>"; };
 		EF66977F865710D1837547C1 /* SmokeGraphics3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeGraphics3D.cpp; sourceTree = "<group>"; };
+		EF6697EF2548464344F7A43F /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.vs; sourceTree = "<group>"; };
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF66997994A712D501965D3D /* SmokeSim3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim3D.cpp; sourceTree = "<group>"; };
 		EF6699AF6708CCE7BD24263C /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
+		EF669B0F64CF5DFBCF8103BA /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
 		EF669C43BA7358CADB688E18 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF669C5B5525E27C8D74CABC /* SolidCell.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = SolidCell.vs; sourceTree = "<group>"; };
@@ -1206,6 +1208,8 @@
 				EF669C43BA7358CADB688E18 /* ScreenQuad.fs */,
 				EF66911C2F27CAA68F321858 /* WriteOutData.vs */,
 				EF669192CA4C2F04CD5F921B /* WriteOutData.fs */,
+				EF669B0F64CF5DFBCF8103BA /* ComputeRHS.fs */,
+				EF6697EF2548464344F7A43F /* ComputeRHS.vs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
