@@ -154,11 +154,12 @@ void GpuSmokeSim2D::fillTexturesWithData() {
                 // TODO Dustin - Remove after testing:
                 // Make every other row constant, in order to test computeRHS()
                 const int width = v_velocityGrid.textureWidth;
+                const int height = v_velocityGrid.textureHeight;
                 float value;
-                for(int i(0); i < v_velocityGrid.textureHeight; ++i) {
+                for(int i(0); i < height; ++i) {
                     for(int j(0); j < width; ++j) {
-                        if (i % 10 == 0) {
-                            value = 10.0f;
+                        if (i % 4 == 0) {
+                            value = 2.2f;
                         } else {
                             value = 0.0f;
                         }
@@ -875,8 +876,8 @@ void GpuSmokeSim2D::inspectGridData(Grid & grid) {
     }
 
     glFinish();
-    glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[READ]);
-    glGetTexImage(GL_TEXTURE_2D, 0, densityGrid.components, densityGrid.dataType, data);
+    glBindTexture(GL_TEXTURE_2D, grid.textureName[READ]);
+    glGetTexImage(GL_TEXTURE_2D, 0, grid.components, grid.dataType, data);
 
 
     delete [] data;
@@ -903,6 +904,7 @@ void GpuSmokeSim2D::draw() {
 //    swapTextureNames(densityGrid);
 
     computeRHS();
+    inspectGridData(rhsGrid);
 
 
     // Render to entire window

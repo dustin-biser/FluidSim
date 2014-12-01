@@ -52,16 +52,15 @@ void main() {
     ivec2 cellIndex = ivec2(dataCoord.s * cellTypeGrid.textureWidth,
                             dataCoord.t * cellTypeGrid.textureHeight);
 
-    result = 0;
-
     float delta_u =  u(cellIndex+ivec2(1,0)) - u(cellIndex);
     float delta_v =  v(cellIndex+ivec2(0,1)) - v(cellIndex);
 
-    result =  scale * (delta_u + delta_v);
-
-    // TODO Dustin - Remove this:
+        // TODO Dustin - remove this after testing:
             float garbage = u_solid * v_solid;
-            result = 1.0;
+            scale = 1.0;
+            result = texture(v_velocityGrid.textureUnit, dataCoord).r;
+
+//    result =  scale * (delta_u + delta_v);
 
 //    //-- Update RHS based on solid boundaries:
 //    // Left Neighbor
@@ -84,7 +83,8 @@ void main() {
 }
 
 // TESTS:
-// 1. PASSED, cellIndex calculation
+// 1. PASSED, cellIndex calculation matches grid dimensions 512x512
 // 2. PASSED, cellIsFluid()
-// 3. PASSED, v_Velocity texture is zeros and ones
+
+// 3. v(cellIndex) values match input data.
 
