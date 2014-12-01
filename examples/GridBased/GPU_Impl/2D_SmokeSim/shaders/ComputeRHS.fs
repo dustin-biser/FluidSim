@@ -54,31 +54,32 @@ void main() {
 
     result = 0;
 
-    if ( cellIsFluid(cellIndex) ) {
-        float delta_u =  u(cellIndex+ivec2(1,0)) - u(cellIndex);
-        float delta_v =  v(cellIndex+ivec2(0,1)) - v(cellIndex);
+    float delta_u =  u(cellIndex+ivec2(1,0)) - u(cellIndex);
+    float delta_v =  v(cellIndex+ivec2(0,1)) - v(cellIndex);
 
-        result =  scale * (delta_u + delta_v);
+    result =  scale * (delta_u + delta_v);
 
-        //-- Update RHS based on solid boundaries:
-        // Left Neighbor
-        if ( cellIsSolid(cellIndex - ivec2(1,0)) ) {
-            result += scale * (u(cellIndex) - u_solid);
-        }
-        // Right Neighbor
-        if ( cellIsSolid(cellIndex + ivec2(1,0)) ) {
-            result -= scale * (u(cellIndex + ivec2(1,0)) - u_solid);
-        }
-        // Bottom Neighbor
-        if ( cellIsSolid(cellIndex - ivec2(0,1)) ) {
-            result += scale * (v(cellIndex) - v_solid);
-        }
-        // Top Neighbor
-        if ( cellIsSolid(cellIndex + ivec2(0,1)) ) {
-            result -= scale * (v(cellIndex + ivec2(0,1)) - v_solid);
-        }
+    // TODO Dustin - Remove this:
+            float garbage = u_solid * v_solid;
+            result = 1.0;
 
-    }
+//    //-- Update RHS based on solid boundaries:
+//    // Left Neighbor
+//    if ( cellIsSolid(cellIndex - ivec2(1,0)) ) {
+//        result += scale * (u(cellIndex) - u_solid);
+//    }
+//    // Right Neighbor
+//    if ( cellIsSolid(cellIndex + ivec2(1,0)) ) {
+//        result -= scale * (u(cellIndex + ivec2(1,0)) - u_solid);
+//    }
+//    // Bottom Neighbor
+//    if ( cellIsSolid(cellIndex - ivec2(0,1)) ) {
+//        result += scale * (v(cellIndex) - v_solid);
+//    }
+//    // Top Neighbor
+//    if ( cellIsSolid(cellIndex + ivec2(0,1)) ) {
+//        result -= scale * (v(cellIndex + ivec2(0,1)) - v_solid);
+//    }
 
 }
 

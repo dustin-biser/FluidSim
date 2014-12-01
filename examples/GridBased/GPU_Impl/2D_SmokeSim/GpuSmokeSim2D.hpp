@@ -142,6 +142,7 @@ private:
     GpuSmokeSim2D() = default; // Singleton. Prevent direct construction.
 
     GLuint framebuffer; // Framebuffer Object
+    GLuint depth_stencil_rbo; // Renderbuffer Object
 
     GLuint screenQuadVao;         // Vertex Array Object
     GLuint screenQuadVertBuffer;  // Vertex Buffer Object
@@ -149,6 +150,7 @@ private:
 
     ShaderProgram shaderProgram_Advect;
     ShaderProgram shaderProgram_ComputeRHS;
+    ShaderProgram shaderProgram_StencilFluidCells;
     ShaderProgram shaderProgram_SceneRenderer;
 
     virtual void init();
@@ -161,15 +163,18 @@ private:
                                          GLuint framebuffer,
                                          GLuint textureName);
 
+    void checkFramebufferCompleteness();
+    void createDepthStencilBufferStorage();
     void createTextureStorage();
     void initTextureData();
     void setupScreenQuadVboData();
     void setupShaderPrograms();
     void setShaderUniforms();
+
+    void stencilFluidCells();
     void swapTextureNames(Grid & grid);
     void advect(Grid & dataGrid);
     void computeRHS();
-
     void render(const Grid & dataGrid);
 
 

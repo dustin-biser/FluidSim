@@ -474,6 +474,7 @@
 		0CE5884E1A258390004F84AB /* GpuSmokeSim2D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim2D.hpp; sourceTree = "<group>"; };
 		0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SmokeSim3D copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
+		EF66903F31F7F3D321E330B7 /* StencilFluidCells.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = StencilFluidCells.vs; sourceTree = "<group>"; };
 		EF66911C2F27CAA68F321858 /* WriteOutData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = WriteOutData.vs; sourceTree = "<group>"; };
 		EF66917AEEB942F68B27C9E6 /* SmokeGraphics3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics3D.hpp; sourceTree = "<group>"; };
 		EF669192CA4C2F04CD5F921B /* WriteOutData.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = WriteOutData.fs; sourceTree = "<group>"; };
@@ -498,6 +499,7 @@
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF66997994A712D501965D3D /* SmokeSim3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim3D.cpp; sourceTree = "<group>"; };
 		EF6699AF6708CCE7BD24263C /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
+		EF669A170B5E22D3886C3280 /* StencilFluidCells.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = StencilFluidCells.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
 		EF669B0F64CF5DFBCF8103BA /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
@@ -1210,6 +1212,8 @@
 				EF669192CA4C2F04CD5F921B /* WriteOutData.fs */,
 				EF669B0F64CF5DFBCF8103BA /* ComputeRHS.fs */,
 				EF6697EF2548464344F7A43F /* ComputeRHS.vs */,
+				EF66903F31F7F3D321E330B7 /* StencilFluidCells.vs */,
+				EF669A170B5E22D3886C3280 /* StencilFluidCells.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

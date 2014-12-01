@@ -50,13 +50,19 @@ void GpuSmokeSim2D::init() {
 
     setShaderUniforms();
 
-    glClearColor(0.0, 0.0, 0.0, 1.0f);
-
+    createDepthStencilBufferStorage();
 
 
     // TODO Dustin - Remove this after passing advect tests:
-    fillTexturesWithData();
+        fillTexturesWithData();
 
+    stencilFluidCells();
+
+    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass all fragments with stencil == 1.
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilMask(0x00); // Prevent writing to the stencil buffer.
+
+    glClearColor(0.0, 0.0, 0.0, 1.0f);
 
     CHECK_GL_ERRORS;
 }
@@ -140,25 +146,25 @@ void GpuSmokeSim2D::fillTexturesWithData() {
     {
         float32 data[ v_velocityGrid.textureWidth * v_velocityGrid.textureHeight ];
 
-        // Make v_velocity point upwards for each grid cell:
-        for (float32 &f : data) {
-                f = 0.5f * kDx;
-        }
+//        // Make v_velocity point upwards for each grid cell:
+//        for (float32 &f : data) {
+//                f = 0.5f * kDx;
+//        }
 
-//                // TODO Dustin - Remove after testing:
-//                // Make every other row constant, in order to test computeRHS()
-//                const int width = v_velocityGrid.textureWidth;
-//                float value;
-//                for(int i(0); i < v_velocityGrid.textureHeight; ++i) {
-//                    for(int j(0); j < width; ++j) {
-//                        if (i % 10 == 0) {
-//                            value = 10.0f;
-//                        } else {
-//                            value = 0.0f;
-//                        }
-//                        data[i * width + j] = value;
-//                    }
-//                }
+                // TODO Dustin - Remove after testing:
+                // Make every other row constant, in order to test computeRHS()
+                const int width = v_velocityGrid.textureWidth;
+                float value;
+                for(int i(0); i < v_velocityGrid.textureHeight; ++i) {
+                    for(int j(0); j < width; ++j) {
+                        if (i % 10 == 0) {
+                            value = 10.0f;
+                        } else {
+                            value = 0.0f;
+                        }
+                        data[i * width + j] = value;
+                    }
+                }
 
         for (int i(0); i < 2; ++i) {
             glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[i]);
@@ -324,6 +330,10 @@ void GpuSmokeSim2D::setupShaderPrograms() {
             "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.vs",
             "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.fs");
 
+    shaderProgram_StencilFluidCells.loadFromFile(
+            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.vs",
+            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.fs");
+
     shaderProgram_SceneRenderer.loadFromFile(
             "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.vs",
             "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.fs");
@@ -437,6 +447,19 @@ void GpuSmokeSim2D::setShaderUniforms() {
         shaderProgram_ComputeRHS.setUniform("v_solid", 0.0f);
     }
 
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::createDepthStencilBufferStorage() {
+    glGenRenderbuffers(1, &depth_stencil_rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, depth_stencil_rbo);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
+            kSimTextureWidth, kSimTextureHeight);
+
+
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -604,6 +627,17 @@ void GpuSmokeSim2D::createTextureStorage() {
 }
 
 //----------------------------------------------------------------------------------------
+void GpuSmokeSim2D::checkFramebufferCompleteness() {
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        stringstream error;
+        error << "Error. Framebuffer not complete.";
+        error << " ErroCode: " << status;
+        throw Rigid3DException(error.str());
+    }
+}
+
+//----------------------------------------------------------------------------------------
 /**
 * Assumes 'framebuffer' is currently bound using:
 *       glBindFramebuffer(framebufferType, framebuffer).
@@ -619,13 +653,7 @@ void GpuSmokeSim2D::setFramebufferColorAttachment2D(
             textureName, 0);
 
     #ifdef DEBUG
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (status != GL_FRAMEBUFFER_COMPLETE) {
-            stringstream error;
-            error << "Error. Framebuffer not complete.";
-            error << " ErroCode: " << status;
-            throw Rigid3DException(error.str());
-        }
+        checkFramebufferCompleteness();
     #endif
 
     CHECK_GL_ERRORS;
@@ -697,6 +725,14 @@ void GpuSmokeSim2D::computeRHS() {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     setFramebufferColorAttachment2D(GL_FRAMEBUFFER, framebuffer,
             rhsGrid.textureName[0]);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+            depth_stencil_rbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+            depth_stencil_rbo);
+
+    #ifdef DEBUG
+        checkFramebufferCompleteness();
+    #endif
 
     // Set u_velocityGrid texture for reading.
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
@@ -710,20 +746,94 @@ void GpuSmokeSim2D::computeRHS() {
     glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
     glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[READ]);
 
-    glBindVertexArray(screenQuadVao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+    glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
 
-    shaderProgram_ComputeRHS.enable();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-    shaderProgram_ComputeRHS.disable();
+    // Only process fluid cells, which have stencil value = 1.
+    glEnable(GL_STENCIL_TEST);
+
+        glBindVertexArray(screenQuadVao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+
+        shaderProgram_ComputeRHS.enable();
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+        shaderProgram_ComputeRHS.disable();
+
+    glDisable(GL_STENCIL_TEST);
 
 
+    //-- Restore defaults:
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+// Write 0's to stencil buffer at location of solid cells.
+// Write 1's to stencil buffer at location of fluid cells.
+void GpuSmokeSim2D::stencilFluidCells() {
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+            depth_stencil_rbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+            depth_stencil_rbo);
+
+    // Framebuffer needs a color attachment to be complete, but we won't render to it.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+            cellTypeGrid.textureName[0], 0);
+
+    #ifdef DEBUG
+        checkFramebufferCompleteness();
+    #endif
+
+    glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
+
+    // Clear the depth and stencil buffers.
+    glClearStencil(1); // Sets all cells to Fluid initially.
+    glClearDepth(1.0);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+
+    glEnable(GL_STENCIL_TEST);
+
+        // Each non-discarded fragment sets stencil value to 0.
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilMask(0xFF); // Write to stencil buffer
+        // Disable writing to the color and depth buffers
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glDepthMask(GL_FALSE);
+
+        glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
+        glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[0]);
+        shaderProgram_StencilFluidCells.setUniform("u_textureUnit", cellTypeGrid.textureUnit);
+
+        glBindVertexArray(screenQuadVao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
+
+        shaderProgram_StencilFluidCells.enable();
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+        shaderProgram_StencilFluidCells.disable();
+
+    glDisable(GL_STENCIL_TEST);
+
+
+    //-- Restore defaults:
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDepthMask(GL_TRUE);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    CHECK_GL_ERRORS;
+
 }
 
 //----------------------------------------------------------------------------------------
@@ -784,23 +894,23 @@ void GpuSmokeSim2D::draw() {
     // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
     // 7. Render
 
-    advect(u_velocityGrid);
-    advect(v_velocityGrid);
-    swapTextureNames(u_velocityGrid);
-    swapTextureNames(v_velocityGrid);
-
-    advect(densityGrid);
-    swapTextureNames(densityGrid);
+//    advect(u_velocityGrid);
+//    advect(v_velocityGrid);
+//    swapTextureNames(u_velocityGrid);
+//    swapTextureNames(v_velocityGrid);
+//
+//    advect(densityGrid);
+//    swapTextureNames(densityGrid);
 
     computeRHS();
 
 
     // Render to entire window
     glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
-    render(densityGrid);
+//    render(densityGrid);
 
     // TODO Dustin - Remove this after testing:
-//    render(rhsGrid);
+    render(rhsGrid);
 
     CHECK_GL_ERRORS;
 }
