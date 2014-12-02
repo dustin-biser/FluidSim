@@ -107,13 +107,25 @@ Grid pressureGrid = {
         GL_FLOAT               // dataType
 };
 
+// Store right-hand-side (RHS) of Poisson-Pressure Solve, Ap = b.
+Grid rhsGrid = {
+        0.5f*vec2(kDx, kDx),   // worldOrigin
+        kDx,                   // cellLength
+        kSimTextureWidth,      // textureWidth
+        kSimTextureHeight,     // textureHeight
+        4,                     // textureUnit
+        GL_R16F,               // internalFormat
+        GL_RED,                // components
+        GL_FLOAT               // dataType
+};
+
 // For determining which cells are solid or fluid.
 Grid cellTypeGrid = {
         0.5f*vec2(kDx, kDx),   // worldOrigin
         kDx,                   // cellLength
         kSimTextureWidth,      // textureWidth
         kSimTextureHeight,     // textureHeight
-        4,                     // textureUnit
+        5,                     // textureUnit
         GL_R16F,               // internalFormat
         GL_RED,                // components
         GL_FLOAT               // dataType
@@ -130,12 +142,15 @@ private:
     GpuSmokeSim2D() = default; // Singleton. Prevent direct construction.
 
     GLuint framebuffer; // Framebuffer Object
+    GLuint depth_stencil_rbo; // Renderbuffer Object
 
     GLuint screenQuadVao;         // Vertex Array Object
     GLuint screenQuadVertBuffer;  // Vertex Buffer Object
     GLuint screenQuadIndexBuffer; // Element Buffer Object
 
     ShaderProgram shaderProgram_Advect;
+    ShaderProgram shaderProgram_ComputeRHS;
+    ShaderProgram shaderProgram_StencilFluidCells;
     ShaderProgram shaderProgram_SceneRenderer;
 
     virtual void init();
@@ -148,14 +163,18 @@ private:
                                          GLuint framebuffer,
                                          GLuint textureName);
 
+    void checkFramebufferCompleteness();
+    void createDepthStencilBufferStorage();
     void createTextureStorage();
     void initTextureData();
     void setupScreenQuadVboData();
     void setupShaderPrograms();
     void setShaderUniforms();
+
+    void stencilFluidCells();
     void swapTextureNames(Grid & grid);
     void advect(Grid & dataGrid);
-
+    void computeRHS();
     void render(const Grid & dataGrid);
 
 
