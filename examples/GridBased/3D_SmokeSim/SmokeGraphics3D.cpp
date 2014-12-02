@@ -110,8 +110,9 @@ void SmokeGraphics3D::setupBufferData() {
     glVertexAttribPointer(position_attribIndex, elementsPerVertex,
             GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     CHECK_GL_ERRORS;
 }
@@ -133,7 +134,6 @@ void SmokeGraphics3D::updateShaderUniforms() {
 //----------------------------------------------------------------------------------------
 void SmokeGraphics3D::draw() {
     glBindVertexArray(vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
     shaderProgram.enable();
         glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
