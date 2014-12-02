@@ -179,6 +179,10 @@
 		0C6665B719E76D2E00F56EBC /* libpthread.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpthread.dylib; path = usr/lib/libpthread.dylib; sourceTree = SDKROOT; };
 		0C6665C019E7747D00F56EBC /* FluidSim_Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FluidSim_Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C924BA11A23A6720088314B /* SmokeSim copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SmokeSim copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA6292A1A2E6EE500BA98B2 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ComputeRHS.fs; sourceTree = "<group>"; };
+		0CA6292B1A2E6EE500BA98B2 /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ComputeRHS.vs; sourceTree = "<group>"; };
+		0CA6292C1A2E6EE500BA98B2 /* StencilFluidCells.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = StencilFluidCells.fs; sourceTree = "<group>"; };
+		0CA6292D1A2E6EE500BA98B2 /* StencilFluidCells.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = StencilFluidCells.vs; sourceTree = "<group>"; };
 		0CBCE20819F839A5007ACADF /* Advect_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Advect_Test.cpp; sourceTree = "<group>"; };
 		0CBCE20919F839A5007ACADF /* Grid_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid_Test.cpp; sourceTree = "<group>"; };
 		0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interp_Test.cpp; sourceTree = "<group>"; };
@@ -1268,6 +1272,10 @@
 		EF6695DCF65B0053CF1E7170 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				0CA6292A1A2E6EE500BA98B2 /* ComputeRHS.fs */,
+				0CA6292B1A2E6EE500BA98B2 /* ComputeRHS.vs */,
+				0CA6292C1A2E6EE500BA98B2 /* StencilFluidCells.fs */,
+				0CA6292D1A2E6EE500BA98B2 /* StencilFluidCells.vs */,
 				EF669F43235526E33150BD4C /* Advect.vs */,
 				EF6692A591BAC08A529AFCC8 /* Advect.fs */,
 				EF6699D3BB01429773D4699A /* ScreenQuad.vs */,
