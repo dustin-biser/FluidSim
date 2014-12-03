@@ -101,10 +101,10 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
-    //-- bvFrontFace_texture2d
+    //-- bvEntrace_texture2d:
     {
-        glGenTextures(1, &bvFrontFace_texture2d);
-        glBindTexture(GL_TEXTURE_2D, bvFrontFace_texture2d);
+        glGenTextures(1, &bvEntrace_texture2d);
+        glBindTexture(GL_TEXTURE_2D, bvEntrace_texture2d);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, defaultFramebufferWidth(),
                 defaultFramebufferHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
@@ -122,8 +122,8 @@ void VolumeRenderer::createTextureStorage() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::createDepthStencilBufferStorage() {
-    glGenRenderbuffers(1, &depth_stencil_rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, depth_stencil_rbo);
+    glGenRenderbuffers(1, &depth_rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, depth_rbo);
 
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
             defaultFramebufferWidth(), defaultFramebufferHeight());
@@ -175,6 +175,10 @@ void VolumeRenderer::setupShaders() {
     shaderProgram_RenderTexture.loadFromFile(
             "examples/VolumeRendering/shaders/ScreenQuad.vs",
             "examples/VolumeRendering/shaders/ScreenQuad.fs");
+
+    shaderProgram_ColorScreen.loadFromFile(
+            "examples/VolumeRendering/shaders/ColorScreen.vs",
+            "examples/VolumeRendering/shaders/ColorScreen.fs");
 }
 
 //---------------------------------------------------------------------------------------
@@ -319,32 +323,20 @@ void VolumeRenderer::computeVolumeEntryPoint() {
 
     //-- Attach color, depth, and stencil buffers to framebuffer.
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-            bvFrontFace_texture2d, 0);
+            bvEntrace_texture2d, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-            depth_stencil_rbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-            depth_stencil_rbo);
+            depth_rbo);
     CHECK_FRAMEBUFFER_COMPLETENESS;
 
-    //-- Stencil only screen fragments covered by bounding volume:
-    {
-        // Clear attached buffers
-        glClearStencil(0);
-        glClear(GL_COLOR_BUFFER_BIT |
-                GL_DEPTH_BUFFER_BIT |
-                GL_STENCIL_BUFFER_BIT);
+    // Clear attached buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glStencilMask(0xFF);
+    // Render only the front face of geometry.
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-
-        glEnable(GL_STENCIL_TEST);
-
-            renderBoundingVolume();
-
-        glDisable(GL_STENCIL_TEST);
-    }
+    renderBoundingVolume();
 
     //-- Reset Defaults:
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -381,7 +373,8 @@ void VolumeRenderer::logic() {
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::draw() {
     computeVolumeEntryPoint();
-    renderTextureToScreen(bvFrontFace_texture2d);
+    renderTextureToScreen(bvEntrace_texture2d);
+
 
 
     // Cull Back Faces
@@ -389,7 +382,6 @@ void VolumeRenderer::draw() {
 
     // Cull Front Faces
     // Render back faces with FrontFaceTexture bound
-
 }
 
 //---------------------------------------------------------------------------------------

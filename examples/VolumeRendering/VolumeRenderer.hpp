@@ -30,10 +30,11 @@ private:
     VolumeRenderer() = default; // Singleton. Prevent direct construction.
 
     GLuint framebuffer;
-    GLuint depth_stencil_rbo; // Render Buffer Obejct.
+    GLuint depth_rbo; // Render Buffer Obejct.
 
     GLuint volumeDensity_texture3d;
-    GLuint bvFrontFace_texture2d;  // bounding volume front face texture.
+    GLuint bvEntrace_texture2d;  // Bounding volume entrance colors
+    GLuint rayDirection_texture2d; // Ray direction texture into bounding volume
 
     GLuint bvVao;          // Bounding volume Vertex Array Object.
     GLuint bvVertexBuffer; // Bounding volume Vertex Buffer Obejct.
@@ -66,4 +67,8 @@ private:
     ShaderProgram shaderProgram_RenderTexture;
     void setupScreenQuadVboData();
     void renderTextureToScreen(GLuint textureName);
+
+
+    //TODO Dustin - Remove this after testing:
+    ShaderProgram shaderProgram_ColorScreen;
 };

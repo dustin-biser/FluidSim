@@ -508,6 +508,7 @@
 		EF66984E6B620E19AF5041E3 /* SphSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphSim.cpp; sourceTree = "<group>"; };
 		EF669874E0F8C1BF2326407F /* BvEntry.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = BvEntry.vs; sourceTree = "<group>"; };
 		EF6698AA53C449105CF1CC12 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
+		EF6698CF138E2D1333C00806 /* ColorScreen.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ColorScreen.vs; sourceTree = "<group>"; };
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlfwOpenGlWindow.cpp; sourceTree = "<group>"; };
 		EF6699D3BB01429773D4699A /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
@@ -523,6 +524,7 @@
 		EF669C7B7386A7D48F759609 /* FramebufferTest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FramebufferTest.hpp; sourceTree = "<group>"; };
 		EF669CA7F1AE33CDF028C87B /* GlfwOpenGlWindow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GlfwOpenGlWindow.hpp; sourceTree = "<group>"; };
 		EF669CD588730852C5B43853 /* SolidCell.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = SolidCell.fs; sourceTree = "<group>"; };
+		EF669CE94DD108F3ADBAD43C /* ColorScreen.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ColorScreen.fs; sourceTree = "<group>"; };
 		EF669CEEBC2909ACE0EBB183 /* SmokeGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeGraphics.cpp; sourceTree = "<group>"; };
 		EF669D4246BCE5C5E6C9E189 /* StaggeredGrid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StaggeredGrid.hpp; sourceTree = "<group>"; };
 		EF669D7CDF8FEA65D75F6539 /* SmokeGraphics3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics3D.hpp; sourceTree = "<group>"; };
@@ -1311,6 +1313,8 @@
 				EF669A7E9DCDD468C467B09D /* BvEntry.fs */,
 				EF6695B2D92486A64416268B /* ScreenQuad.vs */,
 				EF6698AA53C449105CF1CC12 /* ScreenQuad.fs */,
+				EF6698CF138E2D1333C00806 /* ColorScreen.vs */,
+				EF669CE94DD108F3ADBAD43C /* ColorScreen.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
