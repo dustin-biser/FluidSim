@@ -30,17 +30,18 @@ private:
     VolumeRenderer() = default; // Singleton. Prevent direct construction.
 
     GLuint framebuffer;
-    GLuint depth_rbo; // Render Buffer Obejct.
+    GLuint depth_rbo;      // Render Buffer Object.
 
-    GLuint volumeDensity_texture3d;
-    GLuint bvEntrace_texture2d;  // Bounding volume entrance colors
-    GLuint rayDirection_texture2d; // Ray direction texture into bounding volume
+    GLuint volumeDensity_texture3d; // 3D data set to be rendered.
+    GLuint bvEntrace_texture2d;     // Bounding volume entrance colors
+    GLuint rayDirection_texture2d;  // Ray direction texture into bounding volume
 
     GLuint bvVao;          // Bounding volume Vertex Array Object.
     GLuint bvVertexBuffer; // Bounding volume Vertex Buffer Obejct.
     GLuint bvIndexBuffer;  // Bounding volume Index Buffer Object.
 
     ShaderProgram shaderProgram_BvEntry;
+    ShaderProgram shaderProgram_RayDirection;
 
     virtual void setupGl();
     virtual void init();
@@ -56,9 +57,9 @@ private:
     void createDepthStencilBufferStorage();
     void initCubeDensityTexture();
     void setupBoundingCubeVertexData();
-    void computeVolumeEntryPoint();
 
-    void renderBoundingVolume();
+    void composeVolumeEntryTexture();
+    void composeRayDirectionTexture();
 
     //-- For Rendering Texture To Screen:
     GLuint screenQuadVao;         // Vertex Array Object

@@ -106,6 +106,23 @@ void VolumeRenderer::createTextureStorage() {
         glGenTextures(1, &bvEntrace_texture2d);
         glBindTexture(GL_TEXTURE_2D, bvEntrace_texture2d);
 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, defaultFramebufferWidth(),
+                defaultFramebufferHeight(), 0, GL_RGB, GL_FLOAT, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        CHECK_GL_ERRORS;
+    }
+
+    //-- rayDirection_texture2d:
+    {
+        glGenTextures(1, &rayDirection_texture2d);
+        glBindTexture(GL_TEXTURE_2D, rayDirection_texture2d);
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, defaultFramebufferWidth(),
                 defaultFramebufferHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
 
@@ -172,6 +189,10 @@ void VolumeRenderer::setupShaders() {
             "examples/VolumeRendering/shaders/BvEntry.vs",
             "examples/VolumeRendering/shaders/BvEntry.fs");
 
+    shaderProgram_RayDirection.loadFromFile(
+            "examples/VolumeRendering/shaders/RayDirection.vs",
+            "examples/VolumeRendering/shaders/RayDirection.fs");
+
     shaderProgram_RenderTexture.loadFromFile(
             "examples/VolumeRendering/shaders/ScreenQuad.vs",
             "examples/VolumeRendering/shaders/ScreenQuad.fs");
@@ -185,6 +206,9 @@ void VolumeRenderer::setupShaders() {
 void VolumeRenderer::updateShaderUniforms() {
     shaderProgram_BvEntry.setUniform("modelView_matrix", camera.getViewMatrix());
     shaderProgram_BvEntry.setUniform("projection_matrix", camera.getProjectionMatrix());
+
+    shaderProgram_RayDirection.setUniform("modelView_matrix", camera.getViewMatrix());
+    shaderProgram_RayDirection.setUniform("projection_matrix", camera.getProjectionMatrix());
 }
 
 //---------------------------------------------------------------------------------------
@@ -305,28 +329,26 @@ void VolumeRenderer::setupScreenQuadVboData() {
     CHECK_GL_ERRORS;
 }
 
-//---------------------------------------------------------------------------------------
-void VolumeRenderer::renderBoundingVolume() {
-    glBindVertexArray(bvVao);
-
-    shaderProgram_BvEntry.enable();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
-    shaderProgram_BvEntry.disable();
-
-    glBindVertexArray(0);
-    CHECK_GL_ERRORS;
-}
-
-//---------------------------------------------------------------------------------------
-void VolumeRenderer::computeVolumeEntryPoint() {
+//----------------------------------------------------------------------------------------
+static void bindFramebufferWithAttachments(
+        GLuint framebuffer,
+        GLuint colorTextureName,
+        GLuint depthRenderBufferObject)
+{
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
     //-- Attach color, depth, and stencil buffers to framebuffer.
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-            bvEntrace_texture2d, 0);
+            colorTextureName, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-            depth_rbo);
+            depthRenderBufferObject);
+
     CHECK_FRAMEBUFFER_COMPLETENESS;
+}
+
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::composeVolumeEntryTexture() {
+    bindFramebufferWithAttachments(framebuffer, bvEntrace_texture2d, depth_rbo);
 
     // Clear attached buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -336,9 +358,48 @@ void VolumeRenderer::computeVolumeEntryPoint() {
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
-    renderBoundingVolume();
+    //-- Render Bounding Volume
+    {
+        glBindVertexArray(bvVao);
+
+        shaderProgram_BvEntry.enable();
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+        shaderProgram_BvEntry.disable();
+    }
+
 
     //-- Reset Defaults:
+    glBindVertexArray(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::composeRayDirectionTexture() {
+    bindFramebufferWithAttachments(framebuffer, rayDirection_texture2d, depth_rbo);
+
+    // Clear attached buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render only the back face of geometry.
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glFrontFace(GL_CCW);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, bvEntrace_texture2d);
+    shaderProgram_RayDirection.setUniform("rayEntryTexture", 0);
+
+    glBindVertexArray(bvVao);
+
+    shaderProgram_RayDirection.enable();
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+    shaderProgram_RayDirection.disable();
+
+    //-- Reset Defaults:
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     CHECK_GL_ERRORS;
 }
@@ -372,8 +433,11 @@ void VolumeRenderer::logic() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::draw() {
-    computeVolumeEntryPoint();
-    renderTextureToScreen(bvEntrace_texture2d);
+    composeVolumeEntryTexture();
+    composeRayDirectionTexture();
+
+//    renderTextureToScreen(bvEntrace_texture2d);
+    renderTextureToScreen(rayDirection_texture2d);
 
 
 
