@@ -17,6 +17,7 @@ const int kBoundingVolumeDepth  = 512;
 
 const GLuint position_attrib_index = 0;
 const GLuint color_attrib_index = 1;
+const GLuint textureCoord_attrib_index = 2;
 
 class VolumeRenderer : public GlfwOpenGlWindow {
 
@@ -27,6 +28,9 @@ public:
 
 private:
     VolumeRenderer() = default; // Singleton. Prevent direct construction.
+
+    GLuint framebuffer;
+    GLuint depth_stencil_rbo; // Render Buffer Obejct.
 
     GLuint volumeDensity_texture3d;
     GLuint bvFrontFace_texture2d;  // bounding volume front face texture.
@@ -42,14 +46,24 @@ private:
     virtual void logic();
     virtual void draw();
     virtual void cleanup();
-//    virtual void keyInput(int key, int action, int mods);
 
 
-    void setupCamera();
+    void initCamera();
     void updateShaderUniforms();
-    void initShaders();
+    void setupShaders();
     void createTextureStorage();
+    void createDepthStencilBufferStorage();
     void initCubeDensityTexture();
     void setupBoundingCubeVertexData();
     void computeVolumeEntryPoint();
+
+    void renderBoundingVolume();
+
+    //-- For Rendering Texture To Screen:
+    GLuint screenQuadVao;         // Vertex Array Object
+    GLuint screenQuadVertBuffer;  // Vertex Buffer Object
+    GLuint screenQuadIndexBuffer; // Element Buffer Object
+    ShaderProgram shaderProgram_RenderTexture;
+    void setupScreenQuadVboData();
+    void renderTextureToScreen(GLuint textureName);
 };

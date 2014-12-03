@@ -60,7 +60,7 @@ void GlfwOpenGlWindow::windowResizeCallBack(GLFWwindow * window, int width, int 
 
 //----------------------------------------------------------------------------------------
 void GlfwOpenGlWindow::resize(int width, int height) {
-    float aspectRatio = ((float) width) / height;
+    float aspectRatio = float(width) / height;
     float frustumYScale = cotangent(degreesToRadians(camera.getFieldOfViewY() / 2));
 
     float frustumXScale = frustumYScale;
@@ -373,7 +373,7 @@ void GlfwOpenGlWindow::keyInputBase(int key, int action, int mods) {
     if (action == GLFW_PRESS) {
         if (key == GLFW_KEY_ESCAPE) {
             glfwSetWindowShouldClose(window, GL_TRUE);
-        } else if (key == GLFW_KEY_F11) {
+        } else if (key == GLFW_KEY_F1) {
             if (fullScreen == false) {
                 switchToFullScreen();
             } else {
