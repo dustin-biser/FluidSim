@@ -58,7 +58,7 @@ private:
     void initCubeDensityTexture();
     void setupBoundingCubeVertexData();
 
-    void composeVolumeEntryTexture();
+    void composeVolumeEntranceTexture();
     void composeRayDirectionTexture();
 
     //-- For Rendering Texture To Screen:
@@ -71,5 +71,7 @@ private:
 
 
     //TODO Dustin - Remove this after testing:
+    GLuint tmp_texture2d;
+    void renderBackFaces();
     ShaderProgram shaderProgram_ColorScreen;
 };

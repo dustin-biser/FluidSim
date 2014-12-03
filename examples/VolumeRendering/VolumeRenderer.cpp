@@ -135,6 +135,23 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
+    //-- tmp_texture2d:
+    {
+        glGenTextures(1, &tmp_texture2d);
+        glBindTexture(GL_TEXTURE_2D, tmp_texture2d);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, defaultFramebufferWidth(),
+                defaultFramebufferHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        CHECK_GL_ERRORS;
+    }
+
 }
 
 //---------------------------------------------------------------------------------------
@@ -142,7 +159,7 @@ void VolumeRenderer::createDepthStencilBufferStorage() {
     glGenRenderbuffers(1, &depth_rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, depth_rbo);
 
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32,
             defaultFramebufferWidth(), defaultFramebufferHeight());
 
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -347,7 +364,7 @@ static void bindFramebufferWithAttachments(
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::composeVolumeEntryTexture() {
+void VolumeRenderer::composeVolumeEntranceTexture() {
     bindFramebufferWithAttachments(framebuffer, bvEntrace_texture2d, depth_rbo);
 
     // Clear attached buffers
@@ -427,18 +444,44 @@ void VolumeRenderer::renderTextureToScreen(GLuint textureName) {
 }
 
 //---------------------------------------------------------------------------------------
+void VolumeRenderer::renderBackFaces() {
+    bindFramebufferWithAttachments(framebuffer, tmp_texture2d, depth_rbo);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render only the back face of geometry.
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glFrontFace(GL_CCW);
+
+    glBindVertexArray(bvVao);
+
+    shaderProgram_BvEntry.enable();
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+    shaderProgram_BvEntry.disable();
+
+    glCullFace(GL_BACK);
+
+    renderTextureToScreen(tmp_texture2d);
+
+    //-- Restore Defaults:
+    glBindVertexArray(0);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
 void VolumeRenderer::logic() {
     updateShaderUniforms();
 }
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::draw() {
-    composeVolumeEntryTexture();
-    composeRayDirectionTexture();
+//    composeVolumeEntranceTexture();
+//    composeRayDirectionTexture();
+//
+//    renderTextureToScreen(rayDirection_texture2d);
 
-//    renderTextureToScreen(bvEntrace_texture2d);
-    renderTextureToScreen(rayDirection_texture2d);
-
+    renderBackFaces();
 
 
     // Cull Back Faces

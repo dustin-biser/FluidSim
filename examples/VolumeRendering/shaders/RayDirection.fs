@@ -15,4 +15,10 @@ void main () {
 
     outColor.rgb = normalize(rayDirection);
     outColor.a = length(rayDirection);
+
+
+    // TODO Dustin - remove this:
+        outColor.gb = vec2(0,0);
+        outColor.r = length(rayDirection);
+        outColor.a = 1.0;
 }
