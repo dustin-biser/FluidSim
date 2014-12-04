@@ -406,6 +406,8 @@ void VolumeRenderer::composeRayDirectionTexture() {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bvEntrace_texture2d);
     shaderProgram_RayDirection.setUniform("rayEntryTexture", 0);
+    shaderProgram_RayDirection.setUniform("framebufferWidth", defaultFramebufferWidth());
+    shaderProgram_RayDirection.setUniform("framebufferHeight", defaultFramebufferHeight());
 
     glBindVertexArray(bvVao);
 
@@ -476,12 +478,13 @@ void VolumeRenderer::logic() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::draw() {
-//    composeVolumeEntranceTexture();
-//    composeRayDirectionTexture();
-//
-//    renderTextureToScreen(rayDirection_texture2d);
+    composeVolumeEntranceTexture();
+    composeRayDirectionTexture();
 
-    renderBackFaces();
+    renderTextureToScreen(rayDirection_texture2d);
+
+//    renderTextureToScreen(bvEntrace_texture2d);
+//    renderBackFaces();
 
 
     // Cull Back Faces
