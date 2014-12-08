@@ -9,8 +9,8 @@ uniform sampler2D rayEntryTexture;
 uniform int framebufferWidth;
 uniform int framebufferHeight;
 
-// Write normalized directions (s,t,r) to RGB channels.
-// Write magnitude of ray direction into Alpha channel.
+// Write normalized directions (s,t,r) to outColor.rgb
+// Write magnitude of ray direction outColor.a
 void main () {
     vec2 texCoords;
     texCoords.s = gl_FragCoord.x / float(framebufferWidth);

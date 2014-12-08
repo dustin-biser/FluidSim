@@ -1,5 +1,6 @@
 #include "VolumeRenderer.hpp"
 
+#include <climits>
 using namespace std;
 
 //----------------------------------------------------------------------------------------
@@ -59,7 +60,7 @@ void VolumeRenderer::init() {
         glEnableVertexAttribArray(textureCoord_attrib_index);
     glBindVertexArray(0);
 
-    createDepthStencilBufferStorage();
+    createDepthBufferStorage();
 
     setupScreenQuadVboData();
 
@@ -73,7 +74,7 @@ void VolumeRenderer::init() {
 
     createTextureStorage();
 
-    initCubeDensityTexture();
+    fillCubeDensityTexture();
 
     glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
 
@@ -96,6 +97,7 @@ void VolumeRenderer::createTextureStorage() {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+        // Default border color = (0,0,0,0).
 
         glBindTexture(GL_TEXTURE_3D, 0);
         CHECK_GL_ERRORS;
@@ -135,6 +137,40 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
+    //-- accumulatedDensity_texture2dA:
+    {
+        glGenTextures(1, &accumulatedDensity_texture2dA);
+        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2dA);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, defaultFramebufferWidth(),
+                defaultFramebufferHeight(), 0, GL_RED, GL_FLOAT, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        CHECK_GL_ERRORS;
+    }
+
+    //-- accumulatedDensity_texture2dB:
+    {
+        glGenTextures(1, &accumulatedDensity_texture2dB);
+        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2dB);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, defaultFramebufferWidth(),
+                defaultFramebufferHeight(), 0, GL_RED, GL_FLOAT, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        CHECK_GL_ERRORS;
+    }
+
     //-- tmp_texture2d:
     {
         glGenTextures(1, &tmp_texture2d);
@@ -155,7 +191,7 @@ void VolumeRenderer::createTextureStorage() {
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::createDepthStencilBufferStorage() {
+void VolumeRenderer::createDepthBufferStorage() {
     glGenRenderbuffers(1, &depth_rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, depth_rbo);
 
@@ -167,7 +203,7 @@ void VolumeRenderer::createDepthStencilBufferStorage() {
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::initCubeDensityTexture() {
+void VolumeRenderer::fillCubeDensityTexture() {
     glBindTexture(GL_TEXTURE_3D, volumeDensity_texture3d);
 
     const int width = kBoundingVolumeWidth;
@@ -175,10 +211,18 @@ void VolumeRenderer::initCubeDensityTexture() {
     const int depth = kBoundingVolumeDepth;
     float32 * data = new float32[depth*height*width];
 
-    for(int k(100); k < kBoundingVolumeDepth-100; ++k) {
-        for(int j(100); j < kBoundingVolumeHeight-100; ++j) {
-            for(int i(100); i < kBoundingVolumeWidth-100; ++i) {
-               data[k*(height*width) + j*width + i] = 0.01f;
+    // Form a wedge like shape that is non-isotropic:
+    // From the base upward, each slice should become thinner.
+    for(int k(0); k < kBoundingVolumeDepth; ++k) {
+        for(int j(0); j < kBoundingVolumeHeight; ++j) {
+            for(int i(0); i < kBoundingVolumeWidth; ++i) {
+
+               data[k*(height*width) + j*width + i] = 0.5f;
+//               data[k*(height*width) + j*width + i] =
+//                       k/float(kBoundingVolumeDepth) *
+//                       j/float(kBoundingVolumeHeight) *
+//                       i/float(kBoundingVolumeWidth);
+
             }
         }
     }
@@ -210,6 +254,14 @@ void VolumeRenderer::setupShaders() {
             "examples/VolumeRendering/shaders/RayDirection.vs",
             "examples/VolumeRendering/shaders/RayDirection.fs");
 
+    shaderProgram_RayMarch.loadFromFile(
+            "examples/VolumeRendering/shaders/RayMarch.vs",
+            "examples/VolumeRendering/shaders/RayMarch.fs");
+
+    shaderProgram_RayStoppingCriteria.loadFromFile(
+            "examples/VolumeRendering/shaders/RayStoppingCriteria.vs",
+            "examples/VolumeRendering/shaders/RayStoppingCriteria.fs");
+
     shaderProgram_RenderTexture.loadFromFile(
             "examples/VolumeRendering/shaders/ScreenQuad.vs",
             "examples/VolumeRendering/shaders/ScreenQuad.fs");
@@ -226,6 +278,12 @@ void VolumeRenderer::updateShaderUniforms() {
 
     shaderProgram_RayDirection.setUniform("modelView_matrix", camera.getViewMatrix());
     shaderProgram_RayDirection.setUniform("projection_matrix", camera.getProjectionMatrix());
+
+    shaderProgram_RayMarch.setUniform("modelView_matrix", camera.getViewMatrix());
+    shaderProgram_RayMarch.setUniform("projection_matrix", camera.getProjectionMatrix());
+
+    shaderProgram_RayStoppingCriteria.setUniform("modelView_matrix", camera.getViewMatrix());
+    shaderProgram_RayStoppingCriteria.setUniform("projection_matrix", camera.getProjectionMatrix());
 }
 
 //---------------------------------------------------------------------------------------
@@ -364,6 +422,19 @@ static void bindFramebufferWithAttachments(
 }
 
 //---------------------------------------------------------------------------------------
+void VolumeRenderer::renderBoundingVolume(const ShaderProgram & shader) {
+
+    glBindVertexArray(bvVao);
+
+    shader.enable();
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+    shader.disable();
+
+    glBindVertexArray(0);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
 void VolumeRenderer::composeVolumeEntranceTexture() {
     bindFramebufferWithAttachments(framebuffer, bvEntrace_texture2d, depth_rbo);
 
@@ -375,15 +446,7 @@ void VolumeRenderer::composeVolumeEntranceTexture() {
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
-    //-- Render Bounding Volume
-    {
-        glBindVertexArray(bvVao);
-
-        shaderProgram_BvEntry.enable();
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
-        shaderProgram_BvEntry.disable();
-    }
-
+    renderBoundingVolume(shaderProgram_BvEntry);
 
     //-- Reset Defaults:
     glBindVertexArray(0);
@@ -409,17 +472,162 @@ void VolumeRenderer::composeRayDirectionTexture() {
     shaderProgram_RayDirection.setUniform("framebufferWidth", defaultFramebufferWidth());
     shaderProgram_RayDirection.setUniform("framebufferHeight", defaultFramebufferHeight());
 
-    glBindVertexArray(bvVao);
-
-    shaderProgram_RayDirection.enable();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
-    shaderProgram_RayDirection.disable();
+    renderBoundingVolume(shaderProgram_RayDirection);
 
     //-- Reset Defaults:
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
+static inline void swapTextureNames(GLuint & textureA, GLuint & textureB) {
+    // XOR swap
+    textureA ^= textureB;
+    textureB ^= textureA;
+    textureA ^= textureB;
+}
+
+
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::renderVolume(
+        GLuint in_dataTexture3d,
+        float stepSize,
+        uint32 numSubSteps)
+{
+    // Clear initial density texture values:
+    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2dA, depth_rbo);
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2dB, depth_rbo);
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glDepthFunc(GL_LESS); // Only fragments with depth less than 1.0 will pass.
+    glDepthRange(0.0f, 1.0f);
+    glDepthMask(GL_FALSE); // Prevent writing to depth buffer.
+
+    uint iterationCount = 0;
+
+
+    while (iterationCount < 120) {
+        bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2dA, depth_rbo);
+
+        marchRaysForward(in_dataTexture3d, accumulatedDensity_texture2dB, stepSize, numSubSteps,
+                iterationCount);
+
+        swapTextureNames(accumulatedDensity_texture2dA, accumulatedDensity_texture2dB);
+        ++iterationCount;
+    }
+
+//    while (numSamplesPassed > 10) {
+//    while(iterationCount < 80) {
+//        queryResultAvailable = GL_FALSE;
+//
+//        glBeginQuery(GL_SAMPLES_PASSED, queryObj);
+//
+//            marchRaysForward(in_dataTexture3d, stepSize, numSubSteps, iterationCount);
+//            checkRayStoppingCriteria(stepSize, iterationCount);
+//
+//        glEndQuery(GL_SAMPLES_PASSED);
+//
+//        ++iterationCount;
+//
+//        glGetQueryObjectuiv(queryObj, GL_QUERY_RESULT_AVAILABLE, &queryResultAvailable);
+//
+//        if (queryResultAvailable == GL_TRUE) {
+//            glGetQueryObjectuiv(queryObj, GL_QUERY_RESULT, &numSamplesPassed);
+//
+//            cout << "numSamplesPassed: " << numSamplesPassed << endl;
+//
+//            glDeleteQueries(1, &queryObj);
+//            glGenQueries(1, &queryObj);
+//        }
+//    }
+
+    renderTextureToScreen(accumulatedDensity_texture2dA);
+
+    //-- Restore defaults:
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
+/*
+* Check if density threshold has been reached or if current ray length is greater than
+* ray distance through bounding volume.  If true, set gl_FragDepth = 1.0 which will
+* cause early fragment discard due to depth testing.
+*/
+void VolumeRenderer::checkRayStoppingCriteria(float stepSize, uint32 iterationCount) {
+    glDepthMask(GL_TRUE); // Enable writing to depth buffer.
+
+    // Prevent writing to color attachment.
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+
+    //-- Set Shader Uniforms:
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, rayDirection_texture2d);
+        shaderProgram_RayStoppingCriteria.setUniform("rayDirection_texture2d", 0);
+
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2dA);
+        shaderProgram_RayStoppingCriteria.setUniform("accumulatedDensity_texture2d", 1);
+
+        shaderProgram_RayStoppingCriteria.setUniform("stepSize", stepSize);
+        shaderProgram_RayStoppingCriteria.setUniform("iterationCount", iterationCount);
+        shaderProgram_RayStoppingCriteria.setUniform("maxDensityThreshold", kMaxDensity);
+        shaderProgram_RayStoppingCriteria.setUniform("one_over_framebufferWidth",
+                1.0f / float(defaultFramebufferWidth()));
+        shaderProgram_RayStoppingCriteria.setUniform("one_over_framebufferHeight",
+                1.0f / float(defaultFramebufferHeight()));
+    }
+
+    renderBoundingVolume(shaderProgram_RayStoppingCriteria);
+
+    //-- Reset Defaults:
+    glDepthMask(GL_FALSE);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::marchRaysForward(
+        GLuint in_dataTexture3d,
+        GLuint accumulatedDensity_texture2d,
+        float stepSize,
+        uint32 numSubSteps,
+        uint32 iterationCount) {
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_3D, in_dataTexture3d);
+    shaderProgram_RayMarch.setUniform("dataTexture3d", 0);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, rayDirection_texture2d);
+    shaderProgram_RayMarch.setUniform("rayDirection_texture2d", 1);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2d);
+    shaderProgram_RayMarch.setUniform("accumulatedDensity_texture2d", 2);
+
+    shaderProgram_RayMarch.setUniform("stepSize", stepSize);
+
+    shaderProgram_RayMarch.setUniform("iterationCount", iterationCount);
+    shaderProgram_RayMarch.setUniform("one_over_framebufferWidth",
+            1.0f / float(defaultFramebufferWidth()));
+    shaderProgram_RayMarch.setUniform("one_over_framebufferHeight",
+            1.0f / float(defaultFramebufferHeight()));
+
+    renderBoundingVolume(shaderProgram_RayMarch);
+
+    //-- Reset defaults:
+    glBindTexture(GL_TEXTURE_3D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -439,9 +647,9 @@ void VolumeRenderer::renderTextureToScreen(GLuint textureName) {
     shaderProgram_RenderTexture.disable();
 
 
+    //-- Restore defaults:
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
-
     CHECK_GL_ERRORS;
 }
 
@@ -456,11 +664,7 @@ void VolumeRenderer::renderBackFaces() {
     glCullFace(GL_FRONT);
     glFrontFace(GL_CCW);
 
-    glBindVertexArray(bvVao);
-
-    shaderProgram_BvEntry.enable();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
-    shaderProgram_BvEntry.disable();
+    renderBoundingVolume(shaderProgram_BvEntry);
 
     glCullFace(GL_BACK);
 
@@ -481,17 +685,14 @@ void VolumeRenderer::draw() {
     composeVolumeEntranceTexture();
     composeRayDirectionTexture();
 
-    renderTextureToScreen(rayDirection_texture2d);
+    renderVolume(volumeDensity_texture3d,
+                 kStepSize,
+                 kNumSubSteps);
 
+
+//    renderTextureToScreen(rayDirection_texture2d);
 //    renderTextureToScreen(bvEntrace_texture2d);
 //    renderBackFaces();
-
-
-    // Cull Back Faces
-    // Render front faces into the FrontFaceTexture
-
-    // Cull Front Faces
-    // Render back faces with FrontFaceTexture bound
 }
 
 //---------------------------------------------------------------------------------------
