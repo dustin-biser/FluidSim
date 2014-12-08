@@ -1,6 +1,6 @@
 #include "VolumeRenderer.hpp"
 
-#include <climits>
+#include <cfloat>
 using namespace std;
 
 //----------------------------------------------------------------------------------------
@@ -60,6 +60,8 @@ void VolumeRenderer::init() {
         glEnableVertexAttribArray(textureCoord_attrib_index);
     glBindVertexArray(0);
 
+    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
+
     createDepthBufferStorage();
 
     setupScreenQuadVboData();
@@ -76,7 +78,7 @@ void VolumeRenderer::init() {
 
     fillCubeDensityTexture();
 
-    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
+    generateNoiseTexture();
 
     CHECK_GL_ERRORS;
 }
@@ -137,10 +139,10 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
-    //-- accumulatedDensity_texture2dA:
+    //-- accumulatedDensity_texture2d:
     {
-        glGenTextures(1, &accumulatedDensity_texture2dA);
-        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2dA);
+        glGenTextures(1, &accumulatedDensity_texture2d);
+        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2d);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, defaultFramebufferWidth(),
                 defaultFramebufferHeight(), 0, GL_RED, GL_FLOAT, NULL);
@@ -154,30 +156,13 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
-    //-- accumulatedDensity_texture2dB:
+    //-- noise_texture2d:
     {
-        glGenTextures(1, &accumulatedDensity_texture2dB);
-        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2dB);
+        glGenTextures(1, &noise_texture2d);
+        glBindTexture(GL_TEXTURE_2D, noise_texture2d);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, defaultFramebufferWidth(),
                 defaultFramebufferHeight(), 0, GL_RED, GL_FLOAT, NULL);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        CHECK_GL_ERRORS;
-    }
-
-    //-- tmp_texture2d:
-    {
-        glGenTextures(1, &tmp_texture2d);
-        glBindTexture(GL_TEXTURE_2D, tmp_texture2d);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, defaultFramebufferWidth(),
-                defaultFramebufferHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -218,11 +203,6 @@ void VolumeRenderer::fillCubeDensityTexture() {
             for(int i(0); i < kBoundingVolumeWidth; ++i) {
 
                data[k*(height*width) + j*width + i] = 0.5f;
-//               data[k*(height*width) + j*width + i] =
-//                       k/float(kBoundingVolumeDepth) *
-//                       j/float(kBoundingVolumeHeight) *
-//                       i/float(kBoundingVolumeWidth);
-
             }
         }
     }
@@ -258,17 +238,13 @@ void VolumeRenderer::setupShaders() {
             "examples/VolumeRendering/shaders/RayMarch.vs",
             "examples/VolumeRendering/shaders/RayMarch.fs");
 
-    shaderProgram_RayStoppingCriteria.loadFromFile(
-            "examples/VolumeRendering/shaders/RayStoppingCriteria.vs",
-            "examples/VolumeRendering/shaders/RayStoppingCriteria.fs");
-
     shaderProgram_RenderTexture.loadFromFile(
             "examples/VolumeRendering/shaders/ScreenQuad.vs",
             "examples/VolumeRendering/shaders/ScreenQuad.fs");
 
-    shaderProgram_ColorScreen.loadFromFile(
-            "examples/VolumeRendering/shaders/ColorScreen.vs",
-            "examples/VolumeRendering/shaders/ColorScreen.fs");
+    shaderProgram_NoiseGenerator.loadFromFile(
+            "examples/VolumeRendering/shaders/NoiseGenerator.vs",
+            "examples/VolumeRendering/shaders/NoiseGenerator.fs");
 }
 
 //---------------------------------------------------------------------------------------
@@ -281,9 +257,6 @@ void VolumeRenderer::updateShaderUniforms() {
 
     shaderProgram_RayMarch.setUniform("modelView_matrix", camera.getViewMatrix());
     shaderProgram_RayMarch.setUniform("projection_matrix", camera.getProjectionMatrix());
-
-    shaderProgram_RayStoppingCriteria.setUniform("modelView_matrix", camera.getViewMatrix());
-    shaderProgram_RayStoppingCriteria.setUniform("projection_matrix", camera.getProjectionMatrix());
 }
 
 //---------------------------------------------------------------------------------------
@@ -435,6 +408,18 @@ void VolumeRenderer::renderBoundingVolume(const ShaderProgram & shader) {
 }
 
 //---------------------------------------------------------------------------------------
+void VolumeRenderer::renderScreenQuad(const ShaderProgram & shader) {
+    glBindVertexArray(screenQuadVao);
+
+    shader.enable();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    shader.disable();
+
+    glBindVertexArray(0);
+    CHECK_GL_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------
 void VolumeRenderer::composeVolumeEntranceTexture() {
     bindFramebufferWithAttachments(framebuffer, bvEntrace_texture2d, depth_rbo);
 
@@ -483,25 +468,10 @@ void VolumeRenderer::composeRayDirectionTexture() {
 }
 
 //---------------------------------------------------------------------------------------
-static inline void swapTextureNames(GLuint & textureA, GLuint & textureB) {
-    // XOR swap
-    textureA ^= textureB;
-    textureB ^= textureA;
-    textureA ^= textureB;
-}
-
-
-//---------------------------------------------------------------------------------------
-void VolumeRenderer::renderVolume(
-        GLuint in_dataTexture3d,
-        float stepSize,
-        uint32 numSubSteps)
+void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
 {
     // Clear initial density texture values:
-    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2dA, depth_rbo);
-    glClearColor(0,0,0,0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2dB, depth_rbo);
+    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2d, depth_rbo);
     glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -509,45 +479,9 @@ void VolumeRenderer::renderVolume(
     glDepthRange(0.0f, 1.0f);
     glDepthMask(GL_FALSE); // Prevent writing to depth buffer.
 
-    uint iterationCount = 0;
+    marchRaysForward(in_dataTexture3d, stepSize);
 
-
-    while (iterationCount < 120) {
-        bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2dA, depth_rbo);
-
-        marchRaysForward(in_dataTexture3d, accumulatedDensity_texture2dB, stepSize, numSubSteps,
-                iterationCount);
-
-        swapTextureNames(accumulatedDensity_texture2dA, accumulatedDensity_texture2dB);
-        ++iterationCount;
-    }
-
-//    while (numSamplesPassed > 10) {
-//    while(iterationCount < 80) {
-//        queryResultAvailable = GL_FALSE;
-//
-//        glBeginQuery(GL_SAMPLES_PASSED, queryObj);
-//
-//            marchRaysForward(in_dataTexture3d, stepSize, numSubSteps, iterationCount);
-//            checkRayStoppingCriteria(stepSize, iterationCount);
-//
-//        glEndQuery(GL_SAMPLES_PASSED);
-//
-//        ++iterationCount;
-//
-//        glGetQueryObjectuiv(queryObj, GL_QUERY_RESULT_AVAILABLE, &queryResultAvailable);
-//
-//        if (queryResultAvailable == GL_TRUE) {
-//            glGetQueryObjectuiv(queryObj, GL_QUERY_RESULT, &numSamplesPassed);
-//
-//            cout << "numSamplesPassed: " << numSamplesPassed << endl;
-//
-//            glDeleteQueries(1, &queryObj);
-//            glGenQueries(1, &queryObj);
-//        }
-//    }
-
-    renderTextureToScreen(accumulatedDensity_texture2dA);
+    renderTextureToScreen(accumulatedDensity_texture2d);
 
     //-- Restore defaults:
     glDepthFunc(GL_LEQUAL);
@@ -556,53 +490,10 @@ void VolumeRenderer::renderVolume(
 }
 
 //---------------------------------------------------------------------------------------
-/*
-* Check if density threshold has been reached or if current ray length is greater than
-* ray distance through bounding volume.  If true, set gl_FragDepth = 1.0 which will
-* cause early fragment discard due to depth testing.
-*/
-void VolumeRenderer::checkRayStoppingCriteria(float stepSize, uint32 iterationCount) {
-    glDepthMask(GL_TRUE); // Enable writing to depth buffer.
-
-    // Prevent writing to color attachment.
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-
-    //-- Set Shader Uniforms:
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, rayDirection_texture2d);
-        shaderProgram_RayStoppingCriteria.setUniform("rayDirection_texture2d", 0);
-
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2dA);
-        shaderProgram_RayStoppingCriteria.setUniform("accumulatedDensity_texture2d", 1);
-
-        shaderProgram_RayStoppingCriteria.setUniform("stepSize", stepSize);
-        shaderProgram_RayStoppingCriteria.setUniform("iterationCount", iterationCount);
-        shaderProgram_RayStoppingCriteria.setUniform("maxDensityThreshold", kMaxDensity);
-        shaderProgram_RayStoppingCriteria.setUniform("one_over_framebufferWidth",
-                1.0f / float(defaultFramebufferWidth()));
-        shaderProgram_RayStoppingCriteria.setUniform("one_over_framebufferHeight",
-                1.0f / float(defaultFramebufferHeight()));
-    }
-
-    renderBoundingVolume(shaderProgram_RayStoppingCriteria);
-
-    //-- Reset Defaults:
-    glDepthMask(GL_FALSE);
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    CHECK_GL_ERRORS;
-}
-
-//---------------------------------------------------------------------------------------
 void VolumeRenderer::marchRaysForward(
         GLuint in_dataTexture3d,
-        GLuint accumulatedDensity_texture2d,
-        float stepSize,
-        uint32 numSubSteps,
-        uint32 iterationCount) {
-
+        float stepSize)
+{
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_3D, in_dataTexture3d);
     shaderProgram_RayMarch.setUniform("dataTexture3d", 0);
@@ -612,12 +503,11 @@ void VolumeRenderer::marchRaysForward(
     shaderProgram_RayMarch.setUniform("rayDirection_texture2d", 1);
 
     glActiveTexture(GL_TEXTURE0 + 2);
-    glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2d);
-    shaderProgram_RayMarch.setUniform("accumulatedDensity_texture2d", 2);
+    glBindTexture(GL_TEXTURE_2D, noise_texture2d);
+    shaderProgram_RayMarch.setUniform("noise_texture2d", 2);
 
     shaderProgram_RayMarch.setUniform("stepSize", stepSize);
 
-    shaderProgram_RayMarch.setUniform("iterationCount", iterationCount);
     shaderProgram_RayMarch.setUniform("one_over_framebufferWidth",
             1.0f / float(defaultFramebufferWidth()));
     shaderProgram_RayMarch.setUniform("one_over_framebufferHeight",
@@ -640,38 +530,57 @@ void VolumeRenderer::renderTextureToScreen(GLuint textureName) {
     glBindTexture(GL_TEXTURE_2D, textureName);
     shaderProgram_RenderTexture.setUniform("u_textureUnit", 0);
 
-    glBindVertexArray(screenQuadVao);
-
-    shaderProgram_RenderTexture.enable();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-    shaderProgram_RenderTexture.disable();
-
+    renderScreenQuad(shaderProgram_RenderTexture);
 
     //-- Restore defaults:
     glBindTexture(GL_TEXTURE_2D, 0);
-    glBindVertexArray(0);
     CHECK_GL_ERRORS;
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::renderBackFaces() {
-    bindFramebufferWithAttachments(framebuffer, tmp_texture2d, depth_rbo);
-
+void VolumeRenderer::generateNoiseTexture() {
+    bindFramebufferWithAttachments(framebuffer, noise_texture2d, depth_rbo);
+    glClearDepth(1.0f);
+    glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Render only the back face of geometry.
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    glFrontFace(GL_CCW);
+    renderScreenQuad(shaderProgram_NoiseGenerator);
 
-    renderBoundingVolume(shaderProgram_BvEntry);
+    //-- Restore defaults:
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    CHECK_GL_ERRORS;
+}
 
-    glCullFace(GL_BACK);
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::inspectTexture(GLuint textureName) {
+    const int width = defaultFramebufferWidth();
+    const int height = defaultFramebufferHeight();
+    float * data = new float[width * height];
 
-    renderTextureToScreen(tmp_texture2d);
+    glFinish();
+    glBindTexture(GL_TEXTURE_2D, textureName);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_FLOAT, data);
 
-    //-- Restore Defaults:
-    glBindVertexArray(0);
+    float min = FLT_MAX;
+    float max = FLT_MIN;
+    float value;
+    for(int i(0); i < height; ++i) {
+        for(int j(0); j < width; ++j) {
+            value = data[i*width + j];
+            if(value < min) {
+                min = value;
+            }
+            if(value > max) {
+                max = value;
+            }
+        }
+    }
+
+    cout << "min: " << min << endl;
+    cout << "max: " << max << endl;
+
+    delete [] data;
+    glBindTexture(GL_TEXTURE_2D, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -684,15 +593,7 @@ void VolumeRenderer::logic() {
 void VolumeRenderer::draw() {
     composeVolumeEntranceTexture();
     composeRayDirectionTexture();
-
-    renderVolume(volumeDensity_texture3d,
-                 kStepSize,
-                 kNumSubSteps);
-
-
-//    renderTextureToScreen(rayDirection_texture2d);
-//    renderTextureToScreen(bvEntrace_texture2d);
-//    renderBackFaces();
+    renderVolume(volumeDensity_texture3d, kRayStepSize);
 }
 
 //---------------------------------------------------------------------------------------

@@ -15,9 +15,7 @@ const int kBoundingVolumeWidth  = 512;
 const int kBoundingVolumeHeight = 512;
 const int kBoundingVolumeDepth  = 512;
 
-const float kStepSize = 0.01;
-const float kNumSubSteps = 4;
-const float kMaxDensity = 0.9;
+const float kRayStepSize = 0.01;
 
 const GLuint position_attrib_index = 0;
 const GLuint color_attrib_index = 1;
@@ -39,8 +37,8 @@ private:
     GLuint volumeDensity_texture3d;   // 3D data set to be rendered.
     GLuint bvEntrace_texture2d;       // Bounding volume entrance colors.
     GLuint rayDirection_texture2d;    // Ray direction texture into bounding volume.
-    GLuint accumulatedDensity_texture2dA; // Resultant volume rendering.
-    GLuint accumulatedDensity_texture2dB; // Resultant volume rendering.
+    GLuint accumulatedDensity_texture2d; // Resultant volume rendering.
+    GLuint noise_texture2d;
 
     GLuint bvVao;          // Bounding volume Vertex Array Object.
     GLuint bvVertexBuffer; // Bounding volume Vertex Buffer Obejct.
@@ -49,7 +47,7 @@ private:
     ShaderProgram shaderProgram_BvEntry;
     ShaderProgram shaderProgram_RayDirection;
     ShaderProgram shaderProgram_RayMarch;
-    ShaderProgram shaderProgram_RayStoppingCriteria;
+    ShaderProgram shaderProgram_NoiseGenerator;
 
     virtual void setupGl();
     virtual void init();
@@ -65,22 +63,17 @@ private:
     void createDepthBufferStorage();
     void fillCubeDensityTexture();
     void setupBoundingCubeVertexData();
+    void generateNoiseTexture();
 
     void composeVolumeEntranceTexture();
     void composeRayDirectionTexture();
-    void renderVolume(GLuint in_dataTexture3d,
-                      float stepSize,
-                      uint32 numSubSteps);
+    void renderVolume(GLuint in_dataTexture3d, float stepSize);
 
     void marchRaysForward(GLuint in_dataTexture3d,
-                          GLuint accumulatedDensity_texture2d,
-                          float stepSize,
-                          uint32 numSubSteps,
-                          uint32 iterationCount);
-
-    void checkRayStoppingCriteria(float stepSize, uint32 iterationCount);
+                          float stepSize);
 
     void renderBoundingVolume(const ShaderProgram & shader);
+    void renderScreenQuad(const ShaderProgram & shader);
 
     //-- For Rendering Texture To Screen:
     GLuint screenQuadVao;         // Vertex Array Object
@@ -91,8 +84,7 @@ private:
     void renderTextureToScreen(GLuint textureName);
 
 
-    //TODO Dustin - Remove this after testing:
-    GLuint tmp_texture2d;
-    void renderBackFaces();
-    ShaderProgram shaderProgram_ColorScreen;
+
+    // TODO Dustin - Remove after testing:
+    void inspectTexture(GLuint textureName);
 };
