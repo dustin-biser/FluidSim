@@ -24,6 +24,7 @@
 		0C4002E11A375B1000C76A78 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
 		0C4002FE1A375B6B00C76A78 /* GpuSmokeSim3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */; };
 		0C4002FF1A375FB000C76A78 /* GraphicsRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669C5AFC8EB6BF40CF06A8 /* GraphicsRenderer.cpp */; };
+		0C40030F1A378A9700C76A78 /* VolumeRenderingExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */; };
 		0C66656419E305DD00F56EBC /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0C66656519E305DD00F56EBC /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0C66656619E305DD00F56EBC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
@@ -507,11 +508,13 @@
 		EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlfwOpenGlWindow.cpp; sourceTree = "<group>"; };
 		EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderer.cpp; sourceTree = "<group>"; };
 		EF6699F3F74C873B9C114073 /* WriteOutData.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = WriteOutData.fs; sourceTree = "<group>"; };
+		EF669A438020C6836504C8A8 /* VolumeRenderingExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderingExample.hpp; sourceTree = "<group>"; };
 		EF669A7E9DCDD468C467B09D /* BvEntry.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BvEntry.fs; sourceTree = "<group>"; };
 		EF669A80041D212360A52AD2 /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.vs; sourceTree = "<group>"; };
 		EF669A9D08C95C2145FC1DA7 /* RayDirection.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayDirection.fs; sourceTree = "<group>"; };
 		EF669AAB2BBD4415E3864349 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
+		EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderingExample.cpp; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
 		EF669C182C48E938F3CA6546 /* RayMarch.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayMarch.fs; sourceTree = "<group>"; };
 		EF669C28717301A7D7206D49 /* SphGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphGraphics.cpp; sourceTree = "<group>"; };
@@ -1231,6 +1234,8 @@
 				EF6690F6392364937643B7EF /* VolumeRenderer.hpp */,
 				EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */,
 				EF66976B15DEABD4695D7F91 /* shaders */,
+				EF669A438020C6836504C8A8 /* VolumeRenderingExample.hpp */,
+				EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */,
 			);
 			path = VolumeRendering;
 			sourceTree = "<group>";
@@ -1369,9 +1374,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0C06D4621A2CD33600635199 /* VolumeRenderer */ = {
+		0C06D4621A2CD33600635199 /* VolumeRenderingExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C06D46E1A2CD33600635199 /* Build configuration list for PBXNativeTarget "VolumeRenderer" */;
+			buildConfigurationList = 0C06D46E1A2CD33600635199 /* Build configuration list for PBXNativeTarget "VolumeRenderingExample" */;
 			buildPhases = (
 				0C06D4631A2CD33600635199 /* Sources */,
 				0C06D4661A2CD33600635199 /* Frameworks */,
@@ -1381,7 +1386,7 @@
 			);
 			dependencies = (
 			);
-			name = VolumeRenderer;
+			name = VolumeRenderingExample;
 			productName = SphSim;
 			productReference = 0C06D4711A2CD33600635199 /* GPU_SmokeSim2D copy */;
 			productType = "com.apple.product-type.tool";
@@ -1514,7 +1519,7 @@
 				0C66658519E76B8100F56EBC /* gtest */,
 				0C6665BF19E7747D00F56EBC /* FluidSim_Tests */,
 				0CE5884F1A2583A3004F84AB /* GpuSmokeSim2D */,
-				0C06D4621A2CD33600635199 /* VolumeRenderer */,
+				0C06D4621A2CD33600635199 /* VolumeRenderingExample */,
 				0C4002D61A375B1000C76A78 /* GpuSmokeSim3D */,
 			);
 		};
@@ -1527,6 +1532,7 @@
 			files = (
 				0C06D4721A2CD35C00635199 /* VolumeRenderer.cpp in Sources */,
 				0C06D4641A2CD33600635199 /* GlfwOpenGlWindow.cpp in Sources */,
+				0C40030F1A378A9700C76A78 /* VolumeRenderingExample.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1972,7 +1978,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0C06D46E1A2CD33600635199 /* Build configuration list for PBXNativeTarget "VolumeRenderer" */ = {
+		0C06D46E1A2CD33600635199 /* Build configuration list for PBXNativeTarget "VolumeRenderingExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0C06D46F1A2CD33600635199 /* Debug */,
