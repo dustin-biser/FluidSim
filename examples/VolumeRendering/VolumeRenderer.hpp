@@ -31,7 +31,6 @@ private:
     uint32 framebufferHeight;
 
     GLuint framebuffer;
-    GLuint depth_rbo;      // Render Buffer Object.
 
     GLuint bvEntrance_texture2d;         // Bounding volume entrance colors.
     GLuint rayDirection_texture2d;       // Ray direction texture into bounding volume.
@@ -50,7 +49,6 @@ private:
     void updateShaderUniforms(const Camera & camera);
     void setupShaders();
     void createTextureStorage();
-    void createDepthBufferStorage();
     void setupBoundingCubeVertexData();
     void generateNoiseTexture();
 
@@ -76,7 +74,6 @@ private:
     void renderTextureToScreen(GLuint textureName);
 
     //-- Previous OpenGL settings prior to calling draw(...)
-    GLfloat prev_depth_clear_value;
     GLfloat prev_color_clear_value[4];
     GLint prev_cull_face;
     GLint prev_cull_face_mode;

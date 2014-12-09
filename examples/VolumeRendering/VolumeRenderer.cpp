@@ -34,8 +34,6 @@ VolumeRenderer::VolumeRenderer(
 
     glViewport(0, 0, framebufferWidth, framebufferHeight);
 
-    createDepthBufferStorage();
-
     setupScreenQuadVboData();
 
     setupBoundingCubeVertexData();
@@ -54,7 +52,6 @@ VolumeRenderer::~VolumeRenderer() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glDeleteFramebuffers(1, &framebuffer);
-    glDeleteRenderbuffers(1, &depth_rbo);
 
     glDeleteTextures(1, &bvEntrance_texture2d);
     glDeleteTextures(1, &rayDirection_texture2d);
@@ -143,18 +140,6 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
-}
-
-//---------------------------------------------------------------------------------------
-void VolumeRenderer::createDepthBufferStorage() {
-    glGenRenderbuffers(1, &depth_rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, depth_rbo);
-
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32,
-            framebufferWidth, framebufferHeight);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    CHECK_GL_ERRORS;
 }
 
 //---------------------------------------------------------------------------------------
@@ -313,16 +298,12 @@ void VolumeRenderer::setupScreenQuadVboData() {
 //----------------------------------------------------------------------------------------
 static void bindFramebufferWithAttachments(
         GLuint framebuffer,
-        GLuint colorTextureName,
-        GLuint depthRenderBufferObject)
+        GLuint colorTextureName)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    //-- Attach color, depth, and stencil buffers to framebuffer.
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
             colorTextureName, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-            depthRenderBufferObject);
 
     CHECK_FRAMEBUFFER_COMPLETENESS;
 }
@@ -354,10 +335,10 @@ void VolumeRenderer::renderScreenQuad(const ShaderProgram & shader) {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::composeVolumeEntranceTexture() {
-    bindFramebufferWithAttachments(framebuffer, bvEntrance_texture2d, depth_rbo);
+    bindFramebufferWithAttachments(framebuffer, bvEntrance_texture2d);
 
-    // Clear attached buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Clear attached buffer
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Render only the front face of geometry.
     glCullFace(GL_BACK);
@@ -371,10 +352,10 @@ void VolumeRenderer::composeVolumeEntranceTexture() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::composeRayDirectionTexture() {
-    bindFramebufferWithAttachments(framebuffer, rayDirection_texture2d, depth_rbo);
+    bindFramebufferWithAttachments(framebuffer, rayDirection_texture2d);
 
-    // Clear attached buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Clear attached buffer
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Render only the back face of geometry.
     glCullFace(GL_FRONT);
@@ -399,17 +380,14 @@ void VolumeRenderer::composeRayDirectionTexture() {
 void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
 {
     // Clear initial density texture values:
-    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2d, depth_rbo);
+    bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2d);
     glClearColor(0,0,0,0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     marchRaysForward(in_dataTexture3d, stepSize);
 
     renderTextureToScreen(accumulatedDensity_texture2d);
 
-    //-- Restore defaults:
-    glDepthFunc(GL_LEQUAL);
-    glDepthMask(GL_TRUE);
     CHECK_GL_ERRORS;
 }
 
@@ -466,10 +444,9 @@ void VolumeRenderer::renderTextureToScreen(GLuint textureName) {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::generateNoiseTexture() {
-    bindFramebufferWithAttachments(framebuffer, noise_texture2d, depth_rbo);
-    glClearDepth(1.0f);
+    bindFramebufferWithAttachments(framebuffer, noise_texture2d);
     glClearColor(0,0,0,0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     renderScreenQuad(shaderProgram_NoiseGenerator);
 
@@ -480,7 +457,6 @@ void VolumeRenderer::generateNoiseTexture() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::accqiurePreviousGLSetings() {
-    glGetFloatv(GL_DEPTH_CLEAR_VALUE, &prev_depth_clear_value);
     glGetFloatv(GL_COLOR_CLEAR_VALUE, prev_color_clear_value);
     glGetIntegerv(GL_CULL_FACE, &prev_cull_face);
     glGetIntegerv(GL_CULL_FACE_MODE, &prev_cull_face_mode);
@@ -488,7 +464,6 @@ void VolumeRenderer::accqiurePreviousGLSetings() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::restorePreviousGLSettings() {
-    glClearDepth(prev_depth_clear_value);
     glClearColor(prev_color_clear_value[0],
             prev_color_clear_value[1],
             prev_color_clear_value[2],
