@@ -1,4 +1,4 @@
-#include "GpuSmokeSim2D.hpp"
+#include "GpuSmokeSim3D.hpp"
 
 #include <Rigid3D/Rigid3D.hpp>
 using namespace Rigid3D;
@@ -11,7 +11,7 @@ using namespace std::chrono;
 
 //----------------------------------------------------------------------------------------
 int main() {
-    std::shared_ptr<GlfwOpenGlWindow> smokeDemo = GpuSmokeSim2D::getInstance();
+    std::shared_ptr<GlfwOpenGlWindow> smokeDemo = GpuSmokeSim3D::getInstance();
     smokeDemo->create(kScreenWidth,
                       kScreenHeight,
                       "2D GPU Smoke Simulation",
@@ -21,8 +21,8 @@ int main() {
 }
 
 //---------------------------------------------------------------------------------------
-std::shared_ptr<GlfwOpenGlWindow> GpuSmokeSim2D::getInstance() {
-    static GlfwOpenGlWindow * instance = new GpuSmokeSim2D();
+std::shared_ptr<GlfwOpenGlWindow> GpuSmokeSim3D::getInstance() {
+    static GlfwOpenGlWindow * instance = new GpuSmokeSim3D();
     if (p_instance == nullptr) {
         p_instance = std::shared_ptr<GlfwOpenGlWindow>(instance);
     }
@@ -31,38 +31,40 @@ std::shared_ptr<GlfwOpenGlWindow> GpuSmokeSim2D::getInstance() {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::init() {
-    glGenFramebuffers(1, &framebuffer);
+void GpuSmokeSim3D::init() {
+    graphics = new GraphicsRenderer(defaultFramebufferWidth(),
+                                    defaultFramebufferHeight(),
+                                    &camera);
 
-    glGenVertexArrays(1, &screenQuadVao);
-    glBindVertexArray(screenQuadVao);
-        glEnableVertexAttribArray(kAttribIndex_positions);
-        glEnableVertexAttribArray(kAttribIndex_texCoords);
-    glBindVertexArray(0);
+//    glGenFramebuffers(1, &framebuffer);
+//
+//    glGenVertexArrays(1, &screenQuadVao);
+//    glBindVertexArray(screenQuadVao);
+//        glEnableVertexAttribArray(kAttribIndex_positions);
+//        glEnableVertexAttribArray(kAttribIndex_texCoords);
+//    glBindVertexArray(0);
 
-    setupScreenQuadVboData();
-
-    createTextureStorage();
-
-    initTextureData();
-
-    setupShaderPrograms();
-
-    setShaderUniforms();
-
-    createDepthStencilBufferStorage();
+//    setupScreenQuadVboData();
+//
+//    createTextureStorage();
+//
+//    initTextureData();
+//
+//    setupShaderPrograms();
+//
+//    setShaderUniforms();
+//
+//    createDepthBufferStorage();
 
 
     // TODO Dustin - Remove this after passing advect tests:
-        fillTexturesWithData();
+//        fillTexturesWithData();
 
-    stencilFluidCells();
-
-    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass all fragments with stencil == 1.
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    glStencilMask(0x00); // Prevent writing to the stencil buffer.
-
-    glClearColor(0.0, 0.0, 0.0, 1.0f);
+//    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass all fragments with stencil == 1.
+//    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+//    glStencilMask(0x00); // Prevent writing to the stencil buffer.
+//
+//    glClearColor(0.0, 0.0, 0.0, 1.0f);
 
     CHECK_GL_ERRORS;
 }
@@ -71,76 +73,76 @@ void GpuSmokeSim2D::init() {
 /**
 * Fill simulation textures with initial data.
 */
-void GpuSmokeSim2D::initTextureData() {
-    // Make large enough so each texture can be be filled with data.
-    float32 data[ (kSimTextureWidth+1) * (kSimTextureHeight+1)];
-    for(float32 &f : data) {
-        f = 0;
-    }
-
-    //-- u_velocityGrid:
-    for(int i(0); i < 2; ++i) {
-        glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[i]);
-        glTexSubImage2D(GL_TEXTURE_2D,
-                        0, 0, 0,
-                        u_velocityGrid.textureWidth,
-                        u_velocityGrid.textureHeight,
-                        u_velocityGrid.components,
-                        u_velocityGrid.dataType,
-                        data);
-    }
-
-    //-- v_velocityGrid:
-    for(int i(0); i < 2; ++i) {
-        glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[i]);
-        glTexSubImage2D(GL_TEXTURE_2D,
-                0, 0, 0,
-                v_velocityGrid.textureWidth,
-                v_velocityGrid.textureHeight,
-                v_velocityGrid.components,
-                v_velocityGrid.dataType,
-                data);
-    }
-
-    //-- densityGrid:
-    for(int i(0); i < 2; ++i) {
-        glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[i]);
-        glTexSubImage2D(GL_TEXTURE_2D,
-                0, 0, 0,
-                densityGrid.textureWidth,
-                densityGrid.textureHeight,
-                densityGrid.components,
-                densityGrid.dataType,
-                data);
-    }
-
-    //-- pressureGrid:
-    glBindTexture(GL_TEXTURE_2D, pressureGrid.textureName[READ]);
-    glTexSubImage2D(GL_TEXTURE_2D,
-            0, 0, 0,
-            pressureGrid.textureWidth,
-            pressureGrid.textureHeight,
-            pressureGrid.components,
-            pressureGrid.dataType,
-            data);
-
-    //-- rhsGrid:
-    glBindTexture(GL_TEXTURE_2D, rhsGrid.textureName[READ]);
-    glTexSubImage2D(GL_TEXTURE_2D,
-            0, 0, 0,
-            rhsGrid.textureWidth,
-            rhsGrid.textureHeight,
-            rhsGrid.components,
-            rhsGrid.dataType,
-            data);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    CHECK_GL_ERRORS;
+void GpuSmokeSim3D::initTextureData() {
+//    // Make large enough so each texture can be be filled with data.
+//    float32 data[ (kSimTextureWidth+1) * (kSimTextureHeight+1)];
+//    for(float32 &f : data) {
+//        f = 0;
+//    }
+//
+//    //-- u_velocityGrid:
+//    for(int i(0); i < 2; ++i) {
+//        glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[i]);
+//        glTexSubImage2D(GL_TEXTURE_2D,
+//                        0, 0, 0,
+//                        u_velocityGrid.textureWidth,
+//                        u_velocityGrid.textureHeight,
+//                        u_velocityGrid.components,
+//                        u_velocityGrid.dataType,
+//                        data);
+//    }
+//
+//    //-- v_velocityGrid:
+//    for(int i(0); i < 2; ++i) {
+//        glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[i]);
+//        glTexSubImage2D(GL_TEXTURE_2D,
+//                0, 0, 0,
+//                v_velocityGrid.textureWidth,
+//                v_velocityGrid.textureHeight,
+//                v_velocityGrid.components,
+//                v_velocityGrid.dataType,
+//                data);
+//    }
+//
+//    //-- densityGrid:
+//    for(int i(0); i < 2; ++i) {
+//        glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[i]);
+//        glTexSubImage2D(GL_TEXTURE_2D,
+//                0, 0, 0,
+//                densityGrid.textureWidth,
+//                densityGrid.textureHeight,
+//                densityGrid.components,
+//                densityGrid.dataType,
+//                data);
+//    }
+//
+//    //-- pressureGrid:
+//    glBindTexture(GL_TEXTURE_2D, pressureGrid.textureName[READ]);
+//    glTexSubImage2D(GL_TEXTURE_2D,
+//            0, 0, 0,
+//            pressureGrid.textureWidth,
+//            pressureGrid.textureHeight,
+//            pressureGrid.components,
+//            pressureGrid.dataType,
+//            data);
+//
+//    //-- rhsGrid:
+//    glBindTexture(GL_TEXTURE_2D, rhsGrid.textureName[READ]);
+//    glTexSubImage2D(GL_TEXTURE_2D,
+//            0, 0, 0,
+//            rhsGrid.textureWidth,
+//            rhsGrid.textureHeight,
+//            rhsGrid.components,
+//            rhsGrid.dataType,
+//            data);
+//
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//
+//    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::fillTexturesWithData() {
+void GpuSmokeSim3D::fillTexturesWithData() {
 
     //-- v_velocityGrid:
     {
@@ -266,7 +268,7 @@ void GpuSmokeSim2D::fillTexturesWithData() {
 
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::setupScreenQuadVboData() {
+void GpuSmokeSim3D::setupScreenQuadVboData() {
     glBindVertexArray(screenQuadVao);
 
     glGenBuffers(1, &screenQuadVertBuffer);
@@ -322,28 +324,24 @@ void GpuSmokeSim2D::setupScreenQuadVboData() {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::setupShaderPrograms() {
+void GpuSmokeSim3D::setupShaderPrograms() {
     shaderProgram_Advect.loadFromFile (
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advect.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advect.fs");
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.fs");
 
     shaderProgram_ComputeRHS.loadFromFile(
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.fs");
-
-    shaderProgram_StencilFluidCells.loadFromFile(
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.fs");
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeRHS.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeRHS.fs");
 
     shaderProgram_SceneRenderer.loadFromFile(
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.fs");
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.fs");
 
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::setShaderUniforms() {
+void GpuSmokeSim3D::setShaderUniforms() {
     //-- shaderProgram_Advect:
     {
         //-- u_velocityGrid:
@@ -452,11 +450,11 @@ void GpuSmokeSim2D::setShaderUniforms() {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::createDepthStencilBufferStorage() {
-    glGenRenderbuffers(1, &depth_stencil_rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, depth_stencil_rbo);
+void GpuSmokeSim3D::createDepthBufferStorage() {
+    glGenRenderbuffers(1, &depth_rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, depth_rbo);
 
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32,
             kSimTextureWidth, kSimTextureHeight);
 
 
@@ -465,31 +463,31 @@ void GpuSmokeSim2D::createDepthStencilBufferStorage() {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::createTextureStorage() {
+void GpuSmokeSim3D::createTextureStorage() {
 
     //-- u_velocityGrid textures:
     {
         for(int i(0); i < 2; ++i) {
             glGenTextures(1, &u_velocityGrid.textureName[i]);
-            glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[i]);
+            glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[i]);
 
-            glTexImage2D(GL_TEXTURE_2D,
+            glTexImage3D(GL_TEXTURE_3D,
                          0,
                          u_velocityGrid.internalFormat,
                          u_velocityGrid.textureWidth,
                          u_velocityGrid.textureHeight,
+                         u_velocityGrid.textureDepth,
                          0,
                          u_velocityGrid.components,
                          u_velocityGrid.dataType,
                          NULL);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-            glBindTexture(GL_TEXTURE_2D, 0);
-
+            glBindTexture(GL_TEXTURE_3D, 0);
             CHECK_GL_ERRORS;
         }
     }
@@ -498,25 +496,52 @@ void GpuSmokeSim2D::createTextureStorage() {
     {
         for(int i(0); i < 2; ++i) {
             glGenTextures(1, &v_velocityGrid.textureName[i]);
-            glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[i]);
+            glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[i]);
 
-            glTexImage2D(GL_TEXTURE_2D,
-                         0,
-                         v_velocityGrid.internalFormat,
-                         v_velocityGrid.textureWidth,
-                         v_velocityGrid.textureHeight,
-                         0,
-                         v_velocityGrid.components,
-                         v_velocityGrid.dataType,
-                         NULL);
+            glTexImage3D(GL_TEXTURE_3D,
+                    0,
+                    v_velocityGrid.internalFormat,
+                    v_velocityGrid.textureWidth,
+                    v_velocityGrid.textureHeight,
+                    v_velocityGrid.textureDepth,
+                    0,
+                    v_velocityGrid.components,
+                    v_velocityGrid.dataType,
+                    NULL);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindTexture(GL_TEXTURE_3D, 0);
+            CHECK_GL_ERRORS;
+        }
+    }
 
+    //-- w_velocityGrid textures:
+    {
+        for(int i(0); i < 2; ++i) {
+            glGenTextures(1, &w_velocityGrid.textureName[i]);
+            glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[i]);
+
+            glTexImage3D(GL_TEXTURE_3D,
+                    0,
+                    w_velocityGrid.internalFormat,
+                    w_velocityGrid.textureWidth,
+                    w_velocityGrid.textureHeight,
+                    w_velocityGrid.textureDepth,
+                    0,
+                    w_velocityGrid.components,
+                    w_velocityGrid.dataType,
+                    NULL);
+
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+            glBindTexture(GL_TEXTURE_3D, 0);
             CHECK_GL_ERRORS;
         }
     }
@@ -525,27 +550,27 @@ void GpuSmokeSim2D::createTextureStorage() {
     {
         for(int i(0); i < 2; ++i) {
             glGenTextures(1, &densityGrid.textureName[i]);
-            glBindTexture(GL_TEXTURE_2D, densityGrid.textureName[i]);
+            glBindTexture(GL_TEXTURE_3D, densityGrid.textureName[i]);
 
-            glTexImage2D(GL_TEXTURE_2D,
+            glTexImage3D(GL_TEXTURE_3D,
                          0,
                          densityGrid.internalFormat,
                          densityGrid.textureWidth,
                          densityGrid.textureHeight,
+                         densityGrid.textureDepth,
                          0,
                          densityGrid.components,
                          densityGrid.dataType,
                          NULL);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             const GLfloat borderColor[4] = {0.0, 0.0, 0.0, 0.0};
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+            glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-            glBindTexture(GL_TEXTURE_2D, 0);
-
+            glBindTexture(GL_TEXTURE_3D, 0);
             CHECK_GL_ERRORS;
         }
     }
@@ -553,49 +578,50 @@ void GpuSmokeSim2D::createTextureStorage() {
     //-- pressureGrid texture:
     {
         glGenTextures(1, &pressureGrid.textureName[READ]);
-        glBindTexture(GL_TEXTURE_2D, pressureGrid.textureName[READ]);
+        glBindTexture(GL_TEXTURE_3D, pressureGrid.textureName[READ]);
 
-        glTexImage2D(GL_TEXTURE_2D,
+        glTexImage3D(GL_TEXTURE_3D,
                      0,
                      pressureGrid.internalFormat,
                      pressureGrid.textureWidth,
                      pressureGrid.textureHeight,
+                     pressureGrid.textureDepth,
                      0,
                      pressureGrid.components,
                      pressureGrid.dataType,
                      NULL);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        glBindTexture(GL_TEXTURE_2D, 0);
-
+        glBindTexture(GL_TEXTURE_3D, 0);
         CHECK_GL_ERRORS;
     }
 
     //-- rhsGrid texture:
     {
         glGenTextures(1, &rhsGrid.textureName[READ]);
-        glBindTexture(GL_TEXTURE_2D, rhsGrid.textureName[READ]);
+        glBindTexture(GL_TEXTURE_3D, rhsGrid.textureName[READ]);
 
-        glTexImage2D(GL_TEXTURE_2D,
+        glTexImage3D(GL_TEXTURE_3D,
                 0,
                 rhsGrid.internalFormat,
                 rhsGrid.textureWidth,
                 rhsGrid.textureHeight,
+                rhsGrid.textureDepth,
                 0,
                 rhsGrid.components,
                 rhsGrid.dataType,
                 NULL);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_3D, 0);
 
         CHECK_GL_ERRORS;
     }
@@ -603,24 +629,25 @@ void GpuSmokeSim2D::createTextureStorage() {
     //-- cellTypeGrid texture:
     {
         glGenTextures(1, &cellTypeGrid.textureName[READ]);
-        glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[READ]);
+        glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
 
-        glTexImage2D(GL_TEXTURE_2D,
+        glTexImage3D(GL_TEXTURE_3D,
                 0,
                 cellTypeGrid.internalFormat,
                 cellTypeGrid.textureWidth,
                 cellTypeGrid.textureHeight,
+                cellTypeGrid.textureDepth,
                 0,
                 cellTypeGrid.components,
                 cellTypeGrid.dataType,
                 NULL);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_3D, 0);
 
         CHECK_GL_ERRORS;
     }
@@ -628,54 +655,47 @@ void GpuSmokeSim2D::createTextureStorage() {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::checkFramebufferCompleteness() {
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE) {
-        stringstream error;
-        error << "Error. Framebuffer not complete.";
-        error << " ErroCode: " << status;
-        throw Rigid3DException(error.str());
-    }
-}
-
-//----------------------------------------------------------------------------------------
-/**
-* Assumes 'framebuffer' is currently bound using:
-*       glBindFramebuffer(framebufferType, framebuffer).
-*
-* @param framebufferType' - one of GL_FRAMEBUFFER, GL_READ_FRAMEBUFFER, GL_DRAW_FRAMEBUFFER.
-*/
-void GpuSmokeSim2D::setFramebufferColorAttachment2D(
-        GLenum framebufferType,
+static void bindFramebufferWithAttachments(
         GLuint framebuffer,
-        GLuint textureName)
+        GLuint colorTextureName,
+        GLuint depthRenderBufferObject)
 {
-    glFramebufferTexture2D(framebufferType, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-            textureName, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    #ifdef DEBUG
-        checkFramebufferCompleteness();
-    #endif
+    //-- Attach color, depth, and stencil buffers to framebuffer.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+            colorTextureName, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+            depthRenderBufferObject);
 
-    CHECK_GL_ERRORS;
+    CHECK_FRAMEBUFFER_COMPLETENESS;
 }
 
-
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::swapTextureNames(Grid & grid) {
+void GpuSmokeSim3D::swapTextureNames(Grid & grid) {
     GLuint tmp = grid.textureName[READ];
     grid.textureName[READ] = grid.textureName[WRITE];
     grid.textureName[WRITE] = tmp;
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::advect(Grid & dataGrid) {
+void GpuSmokeSim3D::renderScreenQuad(const ShaderProgram & shader) {
+    glBindVertexArray(screenQuadVao);
+
+    shader.enable();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    shader.disable();
+
+    glBindVertexArray(0);
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim3D::advect(Grid & dataGrid) {
     // Process only the texels belonging to dataGrid:
     glViewport(0, 0, dataGrid.textureWidth, dataGrid.textureHeight);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    setFramebufferColorAttachment2D(GL_FRAMEBUFFER, framebuffer,
-            dataGrid.textureName[WRITE]);
+    bindFramebufferWithAttachments(framebuffer, dataGrid.textureName[WRITE], depth_rbo);
 
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[READ]);
@@ -701,39 +721,18 @@ void GpuSmokeSim2D::advect(Grid & dataGrid) {
     shaderProgram_Advect.setUniform("dataGrid.textureUnit",
             dataGrid.textureUnit);
 
-    //-- Render screen quad:
-    {
-        glBindVertexArray(screenQuadVao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
-
-        shaderProgram_Advect.enable();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-        shaderProgram_Advect.disable();
-    }
+    renderScreenQuad(shaderProgram_Advect);
 
 
     //-- Reset back to defaults:
     glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::computeRHS() {
+void GpuSmokeSim3D::computeRHS() {
     // Attach rhsGrid texture to framebuffer for writing.
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    setFramebufferColorAttachment2D(GL_FRAMEBUFFER, framebuffer,
-            rhsGrid.textureName[0]);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-            depth_stencil_rbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-            depth_stencil_rbo);
-
-    #ifdef DEBUG
-        checkFramebufferCompleteness();
-    #endif
+    bindFramebufferWithAttachments(framebuffer, rhsGrid.textureName[0], depth_rbo);
 
     // Set u_velocityGrid texture for reading.
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
@@ -749,96 +748,15 @@ void GpuSmokeSim2D::computeRHS() {
 
     glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
 
-    // Only process fluid cells, which have stencil value = 1.
-    glEnable(GL_STENCIL_TEST);
-
-        glBindVertexArray(screenQuadVao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
-
-        shaderProgram_ComputeRHS.enable();
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-        shaderProgram_ComputeRHS.disable();
-
-    glDisable(GL_STENCIL_TEST);
-
+    renderScreenQuad(shaderProgram_ComputeRHS);
 
     //-- Restore defaults:
     glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-// Write 0's to stencil buffer at location of solid cells.
-// Write 1's to stencil buffer at location of fluid cells.
-void GpuSmokeSim2D::stencilFluidCells() {
-
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-            depth_stencil_rbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-            depth_stencil_rbo);
-
-    // Framebuffer needs a color attachment to be complete, but we won't render to it.
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-            cellTypeGrid.textureName[0], 0);
-
-    #ifdef DEBUG
-        checkFramebufferCompleteness();
-    #endif
-
-    glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
-
-    // Clear the depth and stencil buffers.
-    glClearStencil(1); // Sets all cells to Fluid initially.
-    glClearDepth(1.0);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-
-    glEnable(GL_STENCIL_TEST);
-
-        // Each non-discarded fragment sets stencil value to 0.
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);
-
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glStencilMask(0xFF); // Write to stencil buffer
-        // Disable writing to the color and depth buffers
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glDepthMask(GL_FALSE);
-
-        glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
-        glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[0]);
-        shaderProgram_StencilFluidCells.setUniform("u_textureUnit", cellTypeGrid.textureUnit);
-
-        glBindVertexArray(screenQuadVao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
-
-        shaderProgram_StencilFluidCells.enable();
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-        shaderProgram_StencilFluidCells.disable();
-
-    glDisable(GL_STENCIL_TEST);
-
-
-    //-- Restore defaults:
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glDepthMask(GL_TRUE);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    CHECK_GL_ERRORS;
-
-}
-
-//----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::render(const Grid &dataGrid) {
+void GpuSmokeSim3D::render(const Grid &dataGrid) {
     // Use default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -846,28 +764,14 @@ void GpuSmokeSim2D::render(const Grid &dataGrid) {
     glBindTexture(GL_TEXTURE_2D, dataGrid.textureName[READ]);
     shaderProgram_SceneRenderer.setUniform("u_textureUnit", dataGrid.textureUnit);
 
-    glBindVertexArray(screenQuadVao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, screenQuadIndexBuffer);
-
-    shaderProgram_SceneRenderer.enable();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-    shaderProgram_SceneRenderer.disable();
-
+    renderScreenQuad(shaderProgram_SceneRenderer);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::logic() {
-
-}
-
-//----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::inspectGridData(Grid & grid) {
+void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     float * data = new float[grid.textureWidth * grid.textureHeight];
     for(int i(0); i < grid.textureHeight; ++i) {
         for(int j(0); j < grid.textureWidth; ++j) {
@@ -886,7 +790,12 @@ void GpuSmokeSim2D::inspectGridData(Grid & grid) {
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::draw() {
+void GpuSmokeSim3D::logic() {
+    graphics->draw();
+}
+
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim3D::draw() {
     // 1. Advect Velocity
     // 2. Advect Density
     // 3. Compute and Apply Forces
@@ -895,33 +804,33 @@ void GpuSmokeSim2D::draw() {
     // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
     // 7. Render
 
-    advect(u_velocityGrid);
-    advect(v_velocityGrid);
-    swapTextureNames(u_velocityGrid);
-    swapTextureNames(v_velocityGrid);
-
-    advect(densityGrid);
-    swapTextureNames(densityGrid);
-
-//    computeRHS();
-//    inspectGridData(rhsGrid);
-
-    // Render to entire window
-    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
+//    advect(u_velocityGrid);
+//    advect(v_velocityGrid);
+//    swapTextureNames(u_velocityGrid);
+//    swapTextureNames(v_velocityGrid);
+//
+//    advect(densityGrid);
+//    swapTextureNames(densityGrid);
+//
+////    computeRHS();
+////    inspectGridData(rhsGrid);
+//
+//    // Render to entire window
+//    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
+//
 //    render(densityGrid);
-
-    // TODO Dustin - Remove this after testing:
-    render(densityGrid);
 
     CHECK_GL_ERRORS;
 }
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::keyInput(int key, int action, int mods) {
+void GpuSmokeSim3D::keyInput(int key, int action, int mods) {
 
 }
 
 //----------------------------------------------------------------------------------------
-void GpuSmokeSim2D::cleanup() {
+void GpuSmokeSim3D::cleanup() {
+    delete graphics;
+
     glDeleteFramebuffers(1, &framebuffer);
 
     glDeleteBuffers(1, &screenQuadVertBuffer);

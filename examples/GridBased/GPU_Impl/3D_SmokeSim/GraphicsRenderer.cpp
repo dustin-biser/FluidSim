@@ -1,5 +1,4 @@
-#include "SmokeGraphics3D.hpp"
-#include "SmokeSim3D.hpp"
+#include "GraphicsRenderer.hpp"
 
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>
@@ -8,12 +7,16 @@
 using namespace std;
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::init(Camera * camera) {
+GraphicsRenderer::GraphicsRenderer(
+        uint32 framebufferWidth,
+        uint32 framebufferHeight,
+        Camera * camera)
+{
     this->camera = camera;
 
     setupShaders();
     setupVao();
-    setupBufferData();
+    setupBoundingCubeVertexData();
     setupCamera();
     setupShaderUniforms();
 
@@ -28,29 +31,35 @@ void SmokeGraphics3D::init(Camera * camera) {
     glDepthFunc(GL_LEQUAL);
     glClearColor(0.1, 0.1, 0.1, 1.0);
 
+    glViewport(0, 0, framebufferWidth, framebufferHeight);
+
     CHECK_GL_ERRORS;
+}
+//----------------------------------------------------------------------------------------
+GraphicsRenderer::~GraphicsRenderer() {
+   // Empty
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::setupCamera() {
-    camera->setFieldOfViewY(45.0f);
+void GraphicsRenderer::setupCamera() {
+    camera->setFieldOfViewY(degreesToRadians(45));
     camera->setAspectRatio(1.0f);
     camera->setNearZDistance(0.1f);
     camera->setFarZDistance(100.0f);
-    camera->setPosition(1.0, 1.5, 2.5);
+    camera->setPosition(2.0, 1.5, 3.0);
     camera->lookAt(0, 0, 0);
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::setupShaders() {
-    shaderProgram.loadFromFile("data/shaders/LineRender.vs",
-                               "data/shaders/LineRender.fs");
+void GraphicsRenderer::setupShaders() {
+    shaderProgram_cubeEdges.loadFromFile("data/shaders/LineRender.vs",
+                                         "data/shaders/LineRender.fs");
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::setupVao() {
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+void GraphicsRenderer::setupVao() {
+    glGenVertexArrays(1, &boundingCube_vao);
+    glBindVertexArray(boundingCube_vao);
 
     // Enable Vertex Position Attribute Array
     glEnableVertexAttribArray(position_attribIndex);
@@ -61,7 +70,7 @@ void SmokeGraphics3D::setupVao() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::setupBufferData() {
+void GraphicsRenderer::setupBoundingCubeVertexData() {
 
     //  Cube vertex offsets in model-space
     float32 cubeVertices[] = {
@@ -90,16 +99,16 @@ void SmokeGraphics3D::setupBufferData() {
     };
 
     // Store vertexAttribute mappings, and bound element buffer
-    glBindVertexArray(vao);
+    glBindVertexArray(boundingCube_vao);
 
     // Upload Vertex Position Data:
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glGenBuffers(1, &boundingCube_vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, boundingCube_vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
     // Upload Index Data:
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glGenBuffers(1, &boundingCube_indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boundingCube_indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 
@@ -118,26 +127,28 @@ void SmokeGraphics3D::setupBufferData() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::setupShaderUniforms() {
-    shaderProgram.setUniform("ModelViewMatrix", camera->getViewMatrix());
-    shaderProgram.setUniform("ProjectionMatrix", camera->getProjectionMatrix());
-    shaderProgram.setUniform("u_LineColor", vec4(0.7, 0.7, 0.7, 1.0));
+void GraphicsRenderer::setupShaderUniforms() {
+    shaderProgram_cubeEdges.setUniform("ModelViewMatrix", camera->getViewMatrix());
+    shaderProgram_cubeEdges.setUniform("ProjectionMatrix", camera->getProjectionMatrix());
+    shaderProgram_cubeEdges.setUniform("u_LineColor", vec4(0.4, 0.4, 0.4, 1.0));
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::updateShaderUniforms() {
+void GraphicsRenderer::updateShaderUniforms() {
     // Scale bounding box to taller:
     mat4 modelMatrix = glm::scale(mat4(), vec3(1.5,2.0,1.5));
-    shaderProgram.setUniform("ModelViewMatrix", camera->getViewMatrix()*modelMatrix);
+    shaderProgram_cubeEdges.setUniform("ModelViewMatrix", camera->getViewMatrix()*modelMatrix);
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::draw() {
-    glBindVertexArray(vao);
+void GraphicsRenderer::draw() {
+    updateShaderUniforms();
 
-    shaderProgram.enable();
+    glBindVertexArray(boundingCube_vao);
+
+    shaderProgram_cubeEdges.enable();
         glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
-    shaderProgram.disable();
+    shaderProgram_cubeEdges.disable();
 
     glBindVertexArray(0);
 
@@ -145,14 +156,14 @@ void SmokeGraphics3D::draw() {
 }
 
 //----------------------------------------------------------------------------------------
-void SmokeGraphics3D::cleanup() {
+void GraphicsRenderer::cleanup() {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
-    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &boundingCube_vertexBuffer);
+    glDeleteBuffers(1, &boundingCube_indexBuffer);
+    glDeleteVertexArrays(1, &boundingCube_vao);
 
     CHECK_GL_ERRORS;
 }
