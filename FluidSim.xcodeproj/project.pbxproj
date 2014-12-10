@@ -118,9 +118,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0C06D4711A2CD33600635199 /* GPU_SmokeSim2D copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "GPU_SmokeSim2D copy"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C4002E61A375B1000C76A78 /* GPU_SmokeSim2D copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "GPU_SmokeSim2D copy"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C66656E19E305DD00F56EBC /* SmokeSimGPU copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SmokeSimGPU copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C06D4711A2CD33600635199 /* VolumeRenderingExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VolumeRenderingExample; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C4002E61A375B1000C76A78 /* GpuSmokeSim3D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GpuSmokeSim3D; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C66656E19E305DD00F56EBC /* SmokeSim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SmokeSim; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C66657F19E3119D00F56EBC /* InstancedCircles.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = InstancedCircles.fs; sourceTree = "<group>"; };
 		0C66658019E3119D00F56EBC /* InstancedCircles.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = InstancedCircles.vs; sourceTree = "<group>"; };
 		0C66658619E76B8100F56EBC /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -468,7 +468,7 @@
 		0CC20F1319D21541004B89EA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		0CC20F1519D21547004B89EA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		0CC20F1719D21550004B89EA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SmokeSim3D copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GpuSmokeSim2D; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
 		EF6690426336D679DDB9E84D /* GpuSmokeSim3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim3D.hpp; sourceTree = "<group>"; };
 		EF669049A888B3DE6CBC241F /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
@@ -751,12 +751,12 @@
 			isa = PBXGroup;
 			children = (
 				0CC20DC419D2144F004B89EA /* SphSim */,
-				0C66656E19E305DD00F56EBC /* SmokeSimGPU copy */,
+				0C66656E19E305DD00F56EBC /* SmokeSim */,
 				0C66658619E76B8100F56EBC /* libgtest.a */,
 				0C6665C019E7747D00F56EBC /* FluidSim_Tests */,
-				0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */,
-				0C06D4711A2CD33600635199 /* GPU_SmokeSim2D copy */,
-				0C4002E61A375B1000C76A78 /* GPU_SmokeSim2D copy */,
+				0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */,
+				0C06D4711A2CD33600635199 /* VolumeRenderingExample */,
+				0C4002E61A375B1000C76A78 /* GpuSmokeSim3D */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1388,7 +1388,7 @@
 			);
 			name = VolumeRenderingExample;
 			productName = SphSim;
-			productReference = 0C06D4711A2CD33600635199 /* GPU_SmokeSim2D copy */;
+			productReference = 0C06D4711A2CD33600635199 /* VolumeRenderingExample */;
 			productType = "com.apple.product-type.tool";
 		};
 		0C4002D61A375B1000C76A78 /* GpuSmokeSim3D */ = {
@@ -1405,7 +1405,7 @@
 			);
 			name = GpuSmokeSim3D;
 			productName = SphSim;
-			productReference = 0C4002E61A375B1000C76A78 /* GPU_SmokeSim2D copy */;
+			productReference = 0C4002E61A375B1000C76A78 /* GpuSmokeSim3D */;
 			productType = "com.apple.product-type.tool";
 		};
 		0C66655F19E305DD00F56EBC /* SmokeSim */ = {
@@ -1422,7 +1422,7 @@
 			);
 			name = SmokeSim;
 			productName = SphSim;
-			productReference = 0C66656E19E305DD00F56EBC /* SmokeSimGPU copy */;
+			productReference = 0C66656E19E305DD00F56EBC /* SmokeSim */;
 			productType = "com.apple.product-type.tool";
 		};
 		0C66658519E76B8100F56EBC /* gtest */ = {
@@ -1490,7 +1490,7 @@
 			);
 			name = GpuSmokeSim2D;
 			productName = SphSim;
-			productReference = 0CE5885F1A2583A3004F84AB /* SmokeSim3D copy */;
+			productReference = 0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -1616,7 +1616,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "GPU_SmokeSim2D copy";
+				PRODUCT_NAME = VolumeRenderingExample;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Debug;
@@ -1636,7 +1636,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "GPU_SmokeSim2D copy";
+				PRODUCT_NAME = VolumeRenderingExample;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Release;
@@ -1660,7 +1660,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "GPU_SmokeSim2D copy";
+				PRODUCT_NAME = GpuSmokeSim3D;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Debug;
@@ -1680,7 +1680,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "GPU_SmokeSim2D copy";
+				PRODUCT_NAME = GpuSmokeSim3D;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Release;
@@ -1704,7 +1704,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "SmokeSimGPU copy";
+				PRODUCT_NAME = SmokeSim;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Debug;
@@ -1724,7 +1724,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "SmokeSimGPU copy";
+				PRODUCT_NAME = SmokeSim;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Release;
@@ -1950,7 +1950,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "SmokeSim3D copy";
+				PRODUCT_NAME = GpuSmokeSim2D;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Debug;
@@ -1970,7 +1970,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
-				PRODUCT_NAME = "SmokeSim3D copy";
+				PRODUCT_NAME = GpuSmokeSim2D;
 				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
 			};
 			name = Release;

@@ -17,7 +17,7 @@ const int kBoundingVolumeWidth  = 512;
 const int kBoundingVolumeHeight = 512;
 const int kBoundingVolumeDepth  = 512;
 
-const float kRayStepSize = 0.01;
+const float kRayStepSize = 0.05;
 
 class VolumeRenderingExample : public GlfwOpenGlWindow {
 

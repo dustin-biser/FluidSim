@@ -480,8 +480,8 @@ void VolumeRenderer::restorePreviousGLSettings() {
 void VolumeRenderer::draw(
         const Camera & camera,
         float32 rayStepSize,
-        GLuint volumeData_texture3d
-){
+        GLuint volumeData_texture3d)
+{
     accqiurePreviousGLSetings();
 
     updateShaderUniforms(camera);
@@ -493,7 +493,6 @@ void VolumeRenderer::draw(
     composeRayDirectionTexture();
 
     renderVolume(volumeData_texture3d, rayStepSize);
-
 
     restorePreviousGLSettings();
 }
