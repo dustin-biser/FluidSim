@@ -118,23 +118,6 @@ void VolumeRenderer::createTextureStorage() {
         CHECK_GL_ERRORS;
     }
 
-    //-- accumulatedDensity_texture2d:
-    {
-        glGenTextures(1, &accumulatedDensity_texture2d);
-        glBindTexture(GL_TEXTURE_2D, accumulatedDensity_texture2d);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, framebufferWidth,
-                framebufferHeight, 0, GL_RED, GL_FLOAT, NULL);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        CHECK_GL_ERRORS;
-    }
-
     //-- noise_texture2d:
     {
         glGenTextures(1, &noise_texture2d);
@@ -477,6 +460,9 @@ void VolumeRenderer::composeRayDirectionTexture() {
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
 {
+    // Reuse bvEntrance_texture2d texture for accumulating density values along ray:
+    accumulatedDensity_texture2d = bvEntrance_texture2d;
+
     // Clear initial density texture values:
     bindFramebufferWithAttachments(framebuffer, accumulatedDensity_texture2d);
     glClearColor(0,0,0,0);
