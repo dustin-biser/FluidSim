@@ -34,6 +34,7 @@ void VolumeRenderingExample::init() {
                                         defaultFramebufferWidth(),
                                         defaultFramebufferHeight());
 
+    volumeRenderer->enableDrawBoundingVolumeEdges();
     setupDepthSettings();
     initCamera();
     createTextureStorage();
@@ -56,7 +57,7 @@ void VolumeRenderingExample::setupDepthSettings() {
 void VolumeRenderingExample::initCamera() {
     camera.setNearZDistance(0.1f);
     camera.setFarZDistance(100.0f);
-    camera.setPosition(1.1, 1.1, 1.0);
+    camera.setPosition(0.7, 0.8, 1.5);
     camera.lookAt(0, 0, 0);
 }
 
@@ -95,7 +96,7 @@ void VolumeRenderingExample::fillVolumeDensityTexture() {
         for(int j(0); j < kBoundingVolumeHeight; ++j) {
             for(int i(0); i < kBoundingVolumeWidth; ++i) {
 
-                data[k*(height*width) + j*width + i] = 0.5f;
+                data[k*(height*width) + j*width + i] = 0.8f;
             }
         }
     }
