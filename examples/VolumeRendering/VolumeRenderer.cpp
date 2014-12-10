@@ -17,7 +17,7 @@ VolumeRenderer::VolumeRenderer(
         boundingVolumeDepth(boundingVolumeDepth),
         framebufferWidth(framebufferWidth),
         framebufferHeight(framebufferHeight),
-        edgeDrawingEnabled(false)
+        edgeDrawingEnabled(true)
 {
     glGenFramebuffers(1, &framebuffer);
 

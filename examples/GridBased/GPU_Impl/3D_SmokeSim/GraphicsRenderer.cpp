@@ -1,7 +1,5 @@
 #include "GraphicsRenderer.hpp"
 
-#include <vector>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
@@ -47,19 +45,19 @@ void GraphicsRenderer::setupCamera() {
     camera->setNearZDistance(0.1f);
     camera->setFarZDistance(100.0f);
     camera->setPosition(2.0, 1.5, 3.0);
-    camera->lookAt(0, 0, 0);
+    camera->lookAt(0,0,0);
 }
 
 //----------------------------------------------------------------------------------------
 void GraphicsRenderer::setupShaders() {
-    shaderProgram_cubeEdges.loadFromFile("data/shaders/LineRender.vs",
+    shaderProgram_LineRender.loadFromFile("data/shaders/LineRender.vs",
                                          "data/shaders/LineRender.fs");
 }
 
 //----------------------------------------------------------------------------------------
 void GraphicsRenderer::setupVao() {
-    glGenVertexArrays(1, &boundingCube_vao);
-    glBindVertexArray(boundingCube_vao);
+    glGenVertexArrays(1, &boundingVolume_vao);
+    glBindVertexArray(boundingVolume_vao);
 
     // Enable Vertex Position Attribute Array
     glEnableVertexAttribArray(position_attribIndex);
@@ -99,16 +97,16 @@ void GraphicsRenderer::setupBoundingCubeVertexData() {
     };
 
     // Store vertexAttribute mappings, and bound element buffer
-    glBindVertexArray(boundingCube_vao);
+    glBindVertexArray(boundingVolume_vao);
 
     // Upload Vertex Position Data:
-    glGenBuffers(1, &boundingCube_vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, boundingCube_vertexBuffer);
+    glGenBuffers(1, &boundingVolume_vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, boundingVolume_vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
     // Upload Index Data:
-    glGenBuffers(1, &boundingCube_indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boundingCube_indexBuffer);
+    glGenBuffers(1, &boundingVolume_indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boundingVolume_indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 
@@ -128,27 +126,27 @@ void GraphicsRenderer::setupBoundingCubeVertexData() {
 
 //----------------------------------------------------------------------------------------
 void GraphicsRenderer::setupShaderUniforms() {
-    shaderProgram_cubeEdges.setUniform("ModelViewMatrix", camera->getViewMatrix());
-    shaderProgram_cubeEdges.setUniform("ProjectionMatrix", camera->getProjectionMatrix());
-    shaderProgram_cubeEdges.setUniform("u_LineColor", vec4(0.4, 0.4, 0.4, 1.0));
+    shaderProgram_LineRender.setUniform("ModelViewMatrix", camera->getViewMatrix());
+    shaderProgram_LineRender.setUniform("ProjectionMatrix", camera->getProjectionMatrix());
+    shaderProgram_LineRender.setUniform("u_LineColor", vec4(0.4, 0.4, 0.4, 1.0));
 }
 
 //----------------------------------------------------------------------------------------
 void GraphicsRenderer::updateShaderUniforms() {
-    // Scale bounding box to taller:
-    mat4 modelMatrix = glm::scale(mat4(), vec3(1.5,2.0,1.5));
-    shaderProgram_cubeEdges.setUniform("ModelViewMatrix", camera->getViewMatrix()*modelMatrix);
+    // Scale bounding box
+    mat4 modelMatrix = glm::scale(mat4(), vec3(1.5,2.5,1.5));
+    shaderProgram_LineRender.setUniform("ModelViewMatrix", camera->getViewMatrix()*modelMatrix);
 }
 
 //----------------------------------------------------------------------------------------
 void GraphicsRenderer::draw() {
     updateShaderUniforms();
 
-    glBindVertexArray(boundingCube_vao);
+    glBindVertexArray(boundingVolume_vao);
 
-    shaderProgram_cubeEdges.enable();
+    shaderProgram_LineRender.enable();
         glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
-    shaderProgram_cubeEdges.disable();
+    shaderProgram_LineRender.disable();
 
     glBindVertexArray(0);
 
@@ -161,9 +159,9 @@ void GraphicsRenderer::cleanup() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glDeleteBuffers(1, &boundingCube_vertexBuffer);
-    glDeleteBuffers(1, &boundingCube_indexBuffer);
-    glDeleteVertexArrays(1, &boundingCube_vao);
+    glDeleteBuffers(1, &boundingVolume_vertexBuffer);
+    glDeleteBuffers(1, &boundingVolume_indexBuffer);
+    glDeleteVertexArrays(1, &boundingVolume_vao);
 
     CHECK_GL_ERRORS;
 }

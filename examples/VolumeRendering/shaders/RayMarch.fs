@@ -26,13 +26,12 @@ void main() {
     vec3 ray;
 
     float noise = texture(noise_texture2d, texCoords).r;
-    float step = stepSize + 0.1*noise;
+    float step = stepSize + 0.01*noise;
 
     outDensity = 0;
 
     // March ray through bounding volume while accumulating density values:
     for(float s = 0; s < rayLength; s += step) {
-
         ray = f_color + (s * rayDir);
         outDensity += texture(dataTexture3d, ray).r * step;
 

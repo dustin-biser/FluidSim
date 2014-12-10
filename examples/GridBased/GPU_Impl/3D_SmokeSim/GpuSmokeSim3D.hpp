@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include "GraphicsRenderer.hpp"
-
 #include "FluidSim/NumericTypes.hpp"
 using namespace FluidSim;
 
@@ -18,6 +16,12 @@ using namespace Rigid3D;
 
 #include <chrono>
 using namespace std::chrono;
+
+
+// Forward Declarations:
+class GraphicsRenderer;
+class VolumeRenderer;
+
 
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
@@ -46,9 +50,9 @@ const int32 kAttribIndex_texCoords = 1;
 //----------------------------------------------------------------------------------------
 // Texture Storage Parameters
 //----------------------------------------------------------------------------------------
-const int32 kSimTextureWidth = 512;
-const int32 kSimTextureHeight = 512;
-const int32 kSimTextureDepth = 512;
+const int32 kSimTextureWidth = 256;
+const int32 kSimTextureHeight = 256;
+const int32 kSimTextureDepth = 256;
 const float32 kDx = 1.0f / kSimTextureWidth; // Grid cell length
 
 // Grid Layout Specification
@@ -110,7 +114,7 @@ Grid densityGrid = {
         kSimTextureHeight,      // textureHeight
         kSimTextureDepth,       // textureHeight
         3,                      // textureUnit
-        GL_R16F,                // internalFormat
+        GL_RED,                 // internalFormat
         GL_RED,                 // components
         GL_FLOAT                // dataType
 };
@@ -156,14 +160,14 @@ Grid cellTypeGrid = {
 class GpuSmokeSim3D : public GlfwOpenGlWindow {
 
 public:
-    ~GpuSmokeSim3D() { }
+    ~GpuSmokeSim3D();
 
     static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 
 private:
     GpuSmokeSim3D() = default; // Singleton. Prevent direct construction.
 
-    GraphicsRenderer * graphics;
+    VolumeRenderer * volumeRenderer;
 
     GLuint framebuffer; // Framebuffer Object
     GLuint depth_rbo;   // Renderbuffer Object for depth attachment
@@ -182,12 +186,17 @@ private:
     virtual void keyInput(int key, int action, int mods);
     virtual void cleanup();
 
+    void initCamera();
     void createDepthBufferStorage();
     void createTextureStorage();
     void initTextureData();
     void setupScreenQuadVboData();
     void setupShaderPrograms();
     void setShaderUniforms();
+    void bindFramebufferWithAttachments(GLuint framebuffer,
+                                        GLuint colorTextureName,
+                                        GLuint layer,
+                                        GLuint depthRenderBufferObject = 0);
     void renderScreenQuad(const ShaderProgram & shader);
 
     void swapTextureNames(Grid & grid);

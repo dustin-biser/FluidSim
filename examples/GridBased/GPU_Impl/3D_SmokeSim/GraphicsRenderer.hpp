@@ -7,6 +7,8 @@
 #pragma once
 
 #include <Rigid3D/Rigid3D.hpp>
+#include "VolumeRenderer.hpp"
+
 using namespace Rigid3D;
 
 //----------------------------------------------------------------------------------------
@@ -36,9 +38,9 @@ public:
 private:
     Camera * camera;
 
-    ShaderProgram shaderProgram_cubeEdges;
+    ShaderProgram shaderProgram_LineRender;
 
-    GLuint boundingCube_vao;          // vertex array object
-    GLuint boundingCube_vertexBuffer; // vertex buffer object (to store vertex position offsets in model-space)
-    GLuint boundingCube_indexBuffer;  // element buffer object (indices)
+    GLuint boundingVolume_vao;          // vertex array object
+    GLuint boundingVolume_vertexBuffer; // vertex buffer object (to store vertex position offsets in model-space)
+    GLuint boundingVolume_indexBuffer;  // element buffer object (indices)
 };

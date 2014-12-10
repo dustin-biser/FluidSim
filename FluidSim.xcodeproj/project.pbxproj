@@ -23,8 +23,8 @@
 		0C4002E01A375B1000C76A78 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0C4002E11A375B1000C76A78 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
 		0C4002FE1A375B6B00C76A78 /* GpuSmokeSim3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */; };
-		0C4002FF1A375FB000C76A78 /* GraphicsRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669C5AFC8EB6BF40CF06A8 /* GraphicsRenderer.cpp */; };
 		0C40030F1A378A9700C76A78 /* VolumeRenderingExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */; };
+		0C4003221A38CE4600C76A78 /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
 		0C66656419E305DD00F56EBC /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0C66656519E305DD00F56EBC /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0C66656619E305DD00F56EBC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
@@ -1546,7 +1546,7 @@
 			files = (
 				0C4002D81A375B1000C76A78 /* GlfwOpenGlWindow.cpp in Sources */,
 				0C4002FE1A375B6B00C76A78 /* GpuSmokeSim3D.cpp in Sources */,
-				0C4002FF1A375FB000C76A78 /* GraphicsRenderer.cpp in Sources */,
+				0C4003221A38CE4600C76A78 /* VolumeRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
