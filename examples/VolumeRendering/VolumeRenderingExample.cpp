@@ -34,6 +34,7 @@ void VolumeRenderingExample::init() {
                                         defaultFramebufferWidth(),
                                         defaultFramebufferHeight());
 
+    volumeRenderer->enableDrawBoundingVolumeEdges();
     setupDepthSettings();
     initCamera();
     createTextureStorage();

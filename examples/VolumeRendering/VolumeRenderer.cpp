@@ -1,8 +1,8 @@
 #include "VolumeRenderer.hpp"
 
-#include <cfloat>
-using namespace std;
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+using namespace glm;
 
 //---------------------------------------------------------------------------------------
 VolumeRenderer::VolumeRenderer(
@@ -16,7 +16,8 @@ VolumeRenderer::VolumeRenderer(
         boundingVolumeHeight(boundingVolumeHeight),
         boundingVolumeDepth(boundingVolumeDepth),
         framebufferWidth(framebufferWidth),
-        framebufferHeight(framebufferHeight)
+        framebufferHeight(framebufferHeight),
+        edgeDrawingEnabled(false)
 {
     glGenFramebuffers(1, &framebuffer);
 
@@ -32,11 +33,18 @@ VolumeRenderer::VolumeRenderer(
     glEnableVertexAttribArray(textureCoord_attrib_index);
     glBindVertexArray(0);
 
+    glGenVertexArrays(1, &bvEdgesVao);
+    glBindVertexArray(bvEdgesVao);
+    glEnableVertexAttribArray(position_attrib_index);
+    glBindVertexArray(0);
+
     glViewport(0, 0, framebufferWidth, framebufferHeight);
 
     setupScreenQuadVboData();
 
-    setupBoundingCubeVertexData();
+    setupBoundingVolumeVertexData();
+
+    setupBoundingVolumeEdgesVAO();
 
     setupShaders();
 
@@ -63,8 +71,12 @@ VolumeRenderer::~VolumeRenderer() {
     glDeleteBuffers(1, &bvIndexBuffer);
 
     glDeleteVertexArrays(1, &screenQuadVao);
-    glDeleteBuffers(1, &screenQuadVertBuffer);
+    glDeleteBuffers(1, &screenQuadVertexBuffer);
     glDeleteBuffers(1, &screenQuadIndexBuffer);
+
+    glDeleteVertexArrays(1, &bvEdgesVao);
+    glDeleteBuffers(1, &bvEdgesVertexBuffer);
+    glDeleteBuffers(1, &bvEdgesIndexBuffer);
 
     CHECK_GL_ERRORS;
 }
@@ -163,6 +175,10 @@ void VolumeRenderer::setupShaders() {
     shaderProgram_NoiseGenerator.loadFromFile(
             "examples/VolumeRendering/shaders/NoiseGenerator.vs",
             "examples/VolumeRendering/shaders/NoiseGenerator.fs");
+
+    shaderProgram_LineRender.loadFromFile(
+            "examples/VolumeRendering/shaders/LineRender.vs",
+            "examples/VolumeRendering/shaders/LineRender.fs");
 }
 
 //---------------------------------------------------------------------------------------
@@ -175,14 +191,34 @@ void VolumeRenderer::updateShaderUniforms(const Camera & camera) {
 
     shaderProgram_RayMarch.setUniform("modelView_matrix", camera.getViewMatrix());
     shaderProgram_RayMarch.setUniform("projection_matrix", camera.getProjectionMatrix());
+
+    if (edgeDrawingEnabled) {
+        shaderProgram_LineRender.setUniform("ModelViewMatrix", camera.getViewMatrix());
+        shaderProgram_LineRender.setUniform("ProjectionMatrix", camera.getProjectionMatrix());
+        shaderProgram_LineRender.setUniform("u_LineColor", vec4(0.4, 0.4, 0.4, 1.0));
+
+        // Scale bounding volume
+        {
+            uint32 maxDimension = max(boundingVolumeWidth, boundingVolumeHeight);
+            maxDimension = max(maxDimension, boundingVolumeDepth);
+            float x_scale = boundingVolumeWidth / float(maxDimension);
+            float y_scale = boundingVolumeHeight / float(maxDimension);
+            float z_scale = boundingVolumeDepth / float(maxDimension);
+
+            mat4 modelMatrix = scale(mat4(), vec3(x_scale, y_scale, z_scale));
+
+            shaderProgram_LineRender.setUniform("ModelViewMatrix",
+                    camera.getViewMatrix() * modelMatrix);
+        }
+    }
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::setupBoundingCubeVertexData() {
+void VolumeRenderer::setupBoundingVolumeVertexData() {
 
     // Positions and Color-Coordinates.
     // Colors correspond to textureCoordinates into the 3D data set.
-    float32 boundingVolumeVertices[] = {
+    float32 bvVertices[] = {
             // Positions (x,y,z)   Color-Coordinate(s,t,r)
             -0.5,-0.5, 0.5,         0,1,0, // 0
              0.5,-0.5, 0.5,         1,1,0, // 1
@@ -210,7 +246,7 @@ void VolumeRenderer::setupBoundingCubeVertexData() {
     // Upload Vertex Position Data:
     glGenBuffers(1, &bvVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, bvVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(boundingVolumeVertices), boundingVolumeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(bvVertices), bvVertices, GL_STATIC_DRAW);
 
     // Upload Index Data:
     glGenBuffers(1, &bvIndexBuffer);
@@ -238,13 +274,65 @@ void VolumeRenderer::setupBoundingCubeVertexData() {
 
     CHECK_GL_ERRORS;
 }
+//----------------------------------------------------------------------------------------
+void VolumeRenderer::setupBoundingVolumeEdgesVAO() {
+    //  Bounding volume vertex offsets in model-space
+    float32 bvVertices[] = {
+            -0.5f, -0.5f, -0.5f,    // 0 Left Bottom Back
+             0.5f, -0.5f, -0.5f,    // 1 Right Bottom Back
+            -0.5f, -0.5f,  0.5f,    // 2 Left Bottom Front
+             0.5f, -0.5f,  0.5f,    // 3 Right Bottom Front
+            -0.5f,  0.5f, -0.5f,    // 4 Left Top Back
+             0.5f,  0.5f, -0.5f,    // 5 Right Top Back
+            -0.5f,  0.5f,  0.5f,    // 6 Left Top Front
+             0.5f,  0.5f,  0.5f,    // 7 Right Top Front
+    };
+
+    // Cube indices for GL_LINES
+    GLushort indices [] = {
+            2,3,3,1,1,0,0,2,   // Bottom Face
+            6,7,7,5,5,4,4,6,   // Top Face
+            2,6,    // Left Front Vertical
+            3,7,    // Right Front Vertical
+            0,4,    // Left Back Vertical
+            1,5,    // Right Back Vertical
+
+    };
+
+    // Store vertexAttribute mappings, and bound element buffer
+    glBindVertexArray(bvEdgesVao);
+
+    // Upload Vertex Position Data:
+    glGenBuffers(1, &bvEdgesVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, bvEdgesVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(bvVertices), bvVertices, GL_STATIC_DRAW);
+
+    // Upload Index Data:
+    glGenBuffers(1, &bvEdgesIndexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bvEdgesIndexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+
+    //-- Vertex Position Attribute Mapping:
+    int32 elementsPerVertex = 3;
+    int32 stride = 0;
+    int32 offsetToFirstElement = 0;
+    glVertexAttribPointer(position_attrib_index, elementsPerVertex,
+            GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    CHECK_GL_ERRORS;
+}
 
 //----------------------------------------------------------------------------------------
 void VolumeRenderer::setupScreenQuadVboData() {
     glBindVertexArray(screenQuadVao);
 
-    glGenBuffers(1, &screenQuadVertBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, screenQuadVertBuffer);
+    glGenBuffers(1, &screenQuadVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, screenQuadVertexBuffer);
 
     //-- Create vertex data for screen quad
     {
@@ -293,6 +381,16 @@ void VolumeRenderer::setupScreenQuadVboData() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void VolumeRenderer::enableDrawBoundingVolumeEdges() {
+    edgeDrawingEnabled = true;
+}
+
+//----------------------------------------------------------------------------------------
+void VolumeRenderer::disableDrawBoundingVolumeEdges() {
+    edgeDrawingEnabled = false;
 }
 
 //----------------------------------------------------------------------------------------
@@ -390,6 +488,17 @@ void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
 
     CHECK_GL_ERRORS;
 }
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::renderBoundingVolumeEdges() {
+    glBindVertexArray(bvEdgesVao);
+
+    shaderProgram_LineRender.enable();
+        glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
+    shaderProgram_LineRender.disable();
+
+    glBindVertexArray(0);
+    CHECK_GL_ERRORS;
+}
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::marchRaysForward(
@@ -460,6 +569,7 @@ void VolumeRenderer::accqiurePreviousGLSetings() {
     glGetFloatv(GL_COLOR_CLEAR_VALUE, prev_color_clear_value);
     glGetIntegerv(GL_CULL_FACE, &prev_cull_face);
     glGetIntegerv(GL_CULL_FACE_MODE, &prev_cull_face_mode);
+    glGetBooleanv(GL_DEPTH_TEST, &prev_depth_test_enabled);
 }
 
 //---------------------------------------------------------------------------------------
@@ -470,6 +580,9 @@ void VolumeRenderer::restorePreviousGLSettings() {
             prev_color_clear_value[3]);
     if (prev_cull_face == GL_TRUE) {
         glEnable(GL_CULL_FACE);
+    }
+    if (prev_depth_test_enabled == GL_TRUE) {
+       glEnable(GL_DEPTH_TEST);
     }
     glCullFace(prev_cull_face_mode);
 
@@ -493,6 +606,11 @@ void VolumeRenderer::draw(
     composeRayDirectionTexture();
 
     renderVolume(volumeData_texture3d, rayStepSize);
+
+    if(edgeDrawingEnabled) {
+        glDisable(GL_DEPTH_TEST);
+        renderBoundingVolumeEdges();
+    }
 
     restorePreviousGLSettings();
 }
