@@ -495,7 +495,6 @@
 		EF669634CA270871EEB97444 /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
 		EF6696CD14D916A209CF3484 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF6696E0E23A2B72A3423777 /* GraphicsRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GraphicsRenderer.hpp; sourceTree = "<group>"; };
-		EF6696F4060657B665383BCD /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF66978C574A4E2E64D1A85D /* SmokeSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeSim.hpp; sourceTree = "<group>"; };
 		EF6697F38E9CD07520698D30 /* WriteOutData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = WriteOutData.vs; sourceTree = "<group>"; };
 		EF66983BC2F01F34CEEDB804 /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
@@ -503,7 +502,6 @@
 		EF66984E6B620E19AF5041E3 /* SphSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphSim.cpp; sourceTree = "<group>"; };
 		EF669874E0F8C1BF2326407F /* BvEntry.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = BvEntry.vs; sourceTree = "<group>"; };
 		EF669898651E318914CBB933 /* RayMarch.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = RayMarch.vs; sourceTree = "<group>"; };
-		EF6698A475EC04558593D7DB /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.vs; sourceTree = "<group>"; };
 		EF6698AA53C449105CF1CC12 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF6698CF138E2D1333C00806 /* ColorScreen.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ColorScreen.vs; sourceTree = "<group>"; };
 		EF66990A1A75A4B08EE98B58 /* NoiseGenerator.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = NoiseGenerator.fs; sourceTree = "<group>"; };
@@ -1338,9 +1336,7 @@
 			isa = PBXGroup;
 			children = (
 				EF6693C2BC5EA2718AC83D1F /* ScreenQuad.fs */,
-				EF6696F4060657B665383BCD /* Advect.vs */,
 				EF66962CE14C9BBC8034B83A /* Advect.fs */,
-				EF6698A475EC04558593D7DB /* ComputeRHS.vs */,
 				EF6696CD14D916A209CF3484 /* ComputeRHS.fs */,
 				EF669634CA270871EEB97444 /* ScreenQuad.vs */,
 				EF66983BC2F01F34CEEDB804 /* LineRender.vs */,

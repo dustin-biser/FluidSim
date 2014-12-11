@@ -67,9 +67,9 @@ void GpuSmokeSim3D::init() {
 
     setupShaderPrograms();
 
-    initCamera();
-
     setShaderUniforms();
+
+    initCamera();
 
     glClearColor(0.0, 0.0, 0.0, 1.0f);
     glDisable(GL_DEPTH_TEST);
@@ -157,6 +157,17 @@ void GpuSmokeSim3D::initTextureData() {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    //-- cellTypeGrid:
+    glViewport(0, 0, cellTypeGrid.textureWidth, cellTypeGrid.textureHeight);
+    for(int layer = 0; layer < cellTypeGrid.textureDepth; ++layer) {
+        bindFramebufferWithAttachments(framebuffer,
+                cellTypeGrid.textureName[READ], layer);
+
+        // Inside of volume is all Fluid (Solid = 1, Fluid = 0).
+        glClearColor(0,0,0,0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
     //-- Reset defaults:
     glViewport(0,0, defaultFramebufferWidth(), defaultFramebufferHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -222,11 +233,11 @@ void GpuSmokeSim3D::setupScreenQuadVboData() {
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::setupShaderPrograms() {
     shaderProgram_Advect.loadFromFile (
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.fs");
 
     shaderProgram_ComputeRHS.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeRHS.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeRHS.fs");
 
     shaderProgram_SceneRenderer.loadFromFile(
@@ -244,69 +255,95 @@ void GpuSmokeSim3D::setShaderUniforms() {
         {
             shaderProgram_Advect.setUniform("u_velocityGrid.worldOrigin",
                     u_velocityGrid.worldOrigin);
-
             shaderProgram_Advect.setUniform("u_velocityGrid.cellLength",
                     u_velocityGrid.cellLength);
-
+            shaderProgram_Advect.setUniform("u_velocityGrid.textureUnit",
+                    u_velocityGrid.textureUnit);
         }
-
         //-- v_velocityGrid:
         {
             shaderProgram_Advect.setUniform("v_velocityGrid.worldOrigin",
                     v_velocityGrid.worldOrigin);
-
             shaderProgram_Advect.setUniform("v_velocityGrid.cellLength",
                     v_velocityGrid.cellLength);
+            shaderProgram_Advect.setUniform("v_velocityGrid.textureUnit",
+                    v_velocityGrid.textureUnit);
 
         }
-
         //-- w_velocityGrid:
         {
             shaderProgram_Advect.setUniform("w_velocityGrid.worldOrigin",
                     w_velocityGrid.worldOrigin);
-
             shaderProgram_Advect.setUniform("w_velocityGrid.cellLength",
                     w_velocityGrid.cellLength);
-
+            shaderProgram_Advect.setUniform("w_velocityGrid.textureUnit",
+                    w_velocityGrid.textureUnit);
         }
         shaderProgram_Advect.setUniform("timeStep", kDt);
     }
 
-//    //-- shaderProgram_ComputeRHS:
-//    {
-//        //-- u_velocityGrid:
-//        {
-//            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.worldOrigin",
-//                    u_velocityGrid.worldOrigin);
-//
-//            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.cellLength",
-//                    u_velocityGrid.cellLength);
-//        }
-//
-//        //-- v_velocityGrid:
-//        {
-//            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.worldOrigin",
-//                    v_velocityGrid.worldOrigin);
-//
-//            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.cellLength",
-//                    v_velocityGrid.cellLength);
-//
-//        }
-//
-//        //-- cellTypeGrid:
-//        {
-//            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.worldOrigin",
-//                    cellTypeGrid.worldOrigin);
-//
-//            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.cellLength",
-//                    cellTypeGrid.cellLength);
-//
-//        }
-//        shaderProgram_ComputeRHS.setUniform("timeStep", kDt);
-//        shaderProgram_ComputeRHS.setUniform("density", kDensity);
-//        shaderProgram_ComputeRHS.setUniform("u_solid", 0.0f);
-//        shaderProgram_ComputeRHS.setUniform("v_solid", 0.0f);
-//    }
+
+
+    //-- shaderProgram_ComputeRHS:
+    {
+        //-- u_velocityGrid:
+        {
+            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.cellLength",
+                    u_velocityGrid.cellLength);
+            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureWidth",
+                    u_velocityGrid.textureWidth);
+            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureHeight",
+                    u_velocityGrid.textureHeight);
+            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureDepth",
+                    u_velocityGrid.textureDepth);
+        }
+        //-- v_velocityGrid:
+        {
+
+            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.cellLength",
+                    v_velocityGrid.cellLength);
+            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureWidth",
+                    v_velocityGrid.textureWidth);
+            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureHeight",
+                    v_velocityGrid.textureHeight);
+            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureDepth",
+                    v_velocityGrid.textureDepth);
+
+        }
+        //-- w_velocityGrid:
+        {
+
+            shaderProgram_ComputeRHS.setUniform("w_velocityGrid.cellLength",
+                    w_velocityGrid.cellLength);
+            shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureWidth",
+                    w_velocityGrid.textureWidth);
+            shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureHeight",
+                    w_velocityGrid.textureHeight);
+            shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureDepth",
+                    w_velocityGrid.textureDepth);
+
+        }
+        //-- cellTypeGrid:
+        {
+
+            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.cellLength",
+                    cellTypeGrid.cellLength);
+            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.cellLength",
+                    cellTypeGrid.cellLength);
+            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureWidth",
+                    cellTypeGrid.textureWidth);
+            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureHeight",
+                    cellTypeGrid.textureHeight);
+            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureDepth",
+                    cellTypeGrid.textureDepth);
+
+        }
+        shaderProgram_ComputeRHS.setUniform("timeStep", kDt);
+        shaderProgram_ComputeRHS.setUniform("density", kDensity);
+        shaderProgram_ComputeRHS.setUniform("u_solid", 0.0f);
+        shaderProgram_ComputeRHS.setUniform("v_solid", 0.0f);
+        shaderProgram_ComputeRHS.setUniform("w_solid", 0.0f);
+    }
 
 }
 
@@ -515,9 +552,14 @@ void GpuSmokeSim3D::createTextureStorage() {
 
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+
+        // Border color designates Solid cells (Solid = 1, Fluid = 0)
+        const GLfloat borderColor[4] = {1.0, 0.0, 0.0, 0.0};
+        glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
 
         glBindTexture(GL_TEXTURE_3D, 0);
 
@@ -569,25 +611,20 @@ void GpuSmokeSim3D::renderScreenQuad(const ShaderProgram & shader) {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::advect(Grid & dataGrid) {
+
     // Process only the texels belonging to dataGrid:
     glViewport(0, 0, dataGrid.textureWidth, dataGrid.textureHeight);
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
-    shaderProgram_Advect.setUniform("u_velocityGrid.textureUnit",
-            u_velocityGrid.textureUnit);
 
-    glActiveTexture(GL_TEXTURE0 + 1);
+    glActiveTexture(GL_TEXTURE0 + v_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
-    shaderProgram_Advect.setUniform("v_velocityGrid.textureUnit",
-            v_velocityGrid.textureUnit);
 
-    glActiveTexture(GL_TEXTURE0 + 2);
+    glActiveTexture(GL_TEXTURE0  + w_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
-    shaderProgram_Advect.setUniform("w_velocityGrid.textureUnit",
-            w_velocityGrid.textureUnit);
 
-    glActiveTexture(GL_TEXTURE0 + 3);
+    glActiveTexture(GL_TEXTURE0 + dataGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, dataGrid.textureName[READ]);
     shaderProgram_Advect.setUniform("dataGrid.textureUnit",
             dataGrid.textureUnit);
@@ -614,27 +651,39 @@ void GpuSmokeSim3D::advect(Grid & dataGrid) {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::computeRHS() {
-    // Attach rhsGrid texture to framebuffer for writing.
-    bindFramebufferWithAttachments(framebuffer, rhsGrid.textureName[0], depth_rbo);
 
-    // Set u_velocityGrid texture for reading.
+    // Process only the texels belonging to dataGrid:
+    glViewport(0, 0, rhsGrid.textureWidth, rhsGrid.textureHeight);
+
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[READ]);
+    glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
+    shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureUnit",
+            u_velocityGrid.textureUnit);
 
-    // Set v_velocityGrid texture for reading.
     glActiveTexture(GL_TEXTURE0 + v_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[READ]);
+    glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
+    shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureUnit",
+            v_velocityGrid.textureUnit);
 
-    // Set cellTypeGrid texture for reading.
+    glActiveTexture(GL_TEXTURE0 + w_velocityGrid.textureUnit);
+    glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
+    shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureUnit",
+            w_velocityGrid.textureUnit);
+
     glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_2D, cellTypeGrid.textureName[READ]);
+    glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
+    shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureUnit",
+            cellTypeGrid.textureUnit);
 
-    glViewport(0, 0, kSimTextureWidth, kSimTextureHeight);
+    for (uint32 layer = 0; layer < rhsGrid.textureDepth; ++layer) {
+        // Attach rhsGrid texture to framebuffer for writing.
+        bindFramebufferWithAttachments(framebuffer, rhsGrid.textureName[0], layer);
 
-    renderScreenQuad(shaderProgram_ComputeRHS);
+        renderScreenQuad(shaderProgram_ComputeRHS);
+    }
 
     //-- Restore defaults:
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_3D, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -705,19 +754,20 @@ void GpuSmokeSim3D::draw() {
 
     timer.start();
 
-        advect(u_velocityGrid);
-        advect(v_velocityGrid);
-        advect(w_velocityGrid);
-        swapTextureNames(u_velocityGrid);
-        swapTextureNames(v_velocityGrid);
-        swapTextureNames(w_velocityGrid);
+    advect(u_velocityGrid);
+    advect(v_velocityGrid);
+    advect(w_velocityGrid);
+    swapTextureNames(u_velocityGrid);
+    swapTextureNames(v_velocityGrid);
+    swapTextureNames(w_velocityGrid);
 
-        advect(densityGrid);
-        swapTextureNames(densityGrid);
+    advect(densityGrid);
+    swapTextureNames(densityGrid);
 
     timer.stop();
 
 //    computeRHS();
+
 //    inspectGridData(rhsGrid);
 
     // Render to entire window

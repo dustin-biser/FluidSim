@@ -105,19 +105,19 @@ Grid w_velocityGrid = {
 };
 
 Grid densityGrid = {
-        0.5f*vec3(kDx,kDx,kDx), // worldOrigin
+        0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
         kDx,                    // cellLength
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
         kSimTextureDepth,       // textureHeight
         3,                      // textureUnit
-        GL_RED,                 // internalFormat
+        GL_R16F,                // internalFormat
         GL_RED,                 // components
         GL_FLOAT                // dataType
 };
 
 Grid pressureGrid = {
-        0.5f*vec3(kDx,kDx,kDx), // worldOrigin
+        0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
         kDx,                    // cellLength
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
@@ -130,7 +130,7 @@ Grid pressureGrid = {
 
 // Store right-hand-side (RHS) of Poisson-Pressure Solve, Ap = b.
 Grid rhsGrid = {
-        0.5f*vec3(kDx,kDx,kDx), // worldOrigin
+        0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
         kDx,                    // cellLength
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
@@ -143,13 +143,13 @@ Grid rhsGrid = {
 
 // For determining which cells are solid or fluid.
 Grid cellTypeGrid = {
-        0.5f * vec3(kDx, kDx, kDx), // worldOrigin
+        0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
         kDx,                    // cellLength
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
         kSimTextureDepth,       // textureHeight
         6,                      // textureUnit
-        GL_R16F,                // internalFormat
+        GL_R8,                  // internalFormat
         GL_RED,                 // components
         GL_FLOAT                // dataType
 };
@@ -203,7 +203,6 @@ private:
 
 
     // TODO Dustin - Remove these after testing is complete:
-        void fillTexturesWithData();
         void inspectGridData(Grid & grid);
         Timer timer;
 };
