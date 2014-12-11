@@ -472,6 +472,7 @@
 		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
 		EF6690426336D679DDB9E84D /* GpuSmokeSim3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim3D.hpp; sourceTree = "<group>"; };
 		EF669049A888B3DE6CBC241F /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
+		EF6690C4889FBF75C64DB2A2 /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
 		EF6690F6392364937643B7EF /* VolumeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderer.hpp; sourceTree = "<group>"; };
 		EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GpuSmokeSim3D.cpp; sourceTree = "<group>"; };
 		EF66928B88C58F02B9B13E84 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
@@ -489,6 +490,7 @@
 		EF66956B30FE952698BC6449 /* Smoke2DAdvect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Smoke2DAdvect.vs; sourceTree = "<group>"; };
 		EF66957F168B082FB85E87C8 /* Grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Grid.hpp; sourceTree = "<group>"; };
 		EF6695B2D92486A64416268B /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
+		EF6695B5EB2E9F973946D617 /* Timer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.inl; path = Timer.inl; sourceTree = "<group>"; };
 		EF66962CE14C9BBC8034B83A /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF669634CA270871EEB97444 /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
 		EF6696CD14D916A209CF3484 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.fs; sourceTree = "<group>"; };
@@ -1215,6 +1217,8 @@
 				EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */,
 				EF669CA7F1AE33CDF028C87B /* GlfwOpenGlWindow.hpp */,
 				EF669C782B3D39601A8B2986 /* Utils.hpp */,
+				EF6690C4889FBF75C64DB2A2 /* Timer.hpp */,
+				EF6695B5EB2E9F973946D617 /* Timer.inl */,
 			);
 			path = Utils;
 			sourceTree = "<group>";

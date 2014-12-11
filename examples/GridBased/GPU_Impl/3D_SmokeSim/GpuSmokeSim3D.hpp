@@ -14,9 +14,7 @@ using namespace FluidSim;
 #include <Rigid3D/Graphics/ShaderProgram.hpp>
 using namespace Rigid3D;
 
-#include <chrono>
-using namespace std::chrono;
-
+#include "Timer.hpp"
 
 // Forward Declaration
 class VolumeRenderer;
@@ -49,9 +47,9 @@ const int32 kAttribIndex_texCoords = 1;
 //----------------------------------------------------------------------------------------
 // Texture Storage Parameters
 //----------------------------------------------------------------------------------------
-const int32 kSimTextureWidth = 256;
-const int32 kSimTextureHeight = 256;
-const int32 kSimTextureDepth = 256;
+const int32 kSimTextureWidth = 128;
+const int32 kSimTextureHeight = 128;
+const int32 kSimTextureDepth = 128;
 const float32 kDx = 1.0f / kSimTextureWidth; // Grid cell length
 
 // Grid Layout Specification
@@ -207,4 +205,5 @@ private:
     // TODO Dustin - Remove these after testing is complete:
         void fillTexturesWithData();
         void inspectGridData(Grid & grid);
+        Timer timer;
 };

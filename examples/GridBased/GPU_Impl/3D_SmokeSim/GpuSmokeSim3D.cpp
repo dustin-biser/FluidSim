@@ -9,6 +9,8 @@ using namespace Rigid3D;
 using namespace glm;
 
 
+#include <chrono>
+using namespace std::chrono;
 #include <sstream>
 using namespace std;
 
@@ -570,46 +572,43 @@ void GpuSmokeSim3D::advect(Grid & dataGrid) {
     // Process only the texels belonging to dataGrid:
     glViewport(0, 0, dataGrid.textureWidth, dataGrid.textureHeight);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
+    shaderProgram_Advect.setUniform("u_velocityGrid.textureUnit",
+            u_velocityGrid.textureUnit);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
+    shaderProgram_Advect.setUniform("v_velocityGrid.textureUnit",
+            v_velocityGrid.textureUnit);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
+    shaderProgram_Advect.setUniform("w_velocityGrid.textureUnit",
+            w_velocityGrid.textureUnit);
+
+    glActiveTexture(GL_TEXTURE0 + 3);
+    glBindTexture(GL_TEXTURE_3D, dataGrid.textureName[READ]);
+    shaderProgram_Advect.setUniform("dataGrid.textureUnit",
+            dataGrid.textureUnit);
+
+    shaderProgram_Advect.setUniform("dataGrid.worldOrigin",
+            dataGrid.worldOrigin);
+    shaderProgram_Advect.setUniform("dataGrid.cellLength",
+            dataGrid.cellLength);
+
+    shaderProgram_Advect.setUniform("dataGridDepth", float(dataGrid.textureDepth));
+
     // Loop over all layers of the 3D texture, processing one at a time:
     for(uint32 layer(0); layer < dataGrid.textureDepth; ++layer) {
         bindFramebufferWithAttachments(framebuffer, dataGrid.textureName[WRITE], layer);
-        glClearColor(0,0,0,0);
-        glClear(GL_COLOR_BUFFER_BIT);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
-        shaderProgram_Advect.setUniform("u_velocityGrid.textureUnit",
-                u_velocityGrid.textureUnit);
-
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
-        shaderProgram_Advect.setUniform("v_velocityGrid.textureUnit",
-                v_velocityGrid.textureUnit);
-
-        glActiveTexture(GL_TEXTURE0 + 2);
-        glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
-        shaderProgram_Advect.setUniform("w_velocityGrid.textureUnit",
-                w_velocityGrid.textureUnit);
-
-        glActiveTexture(GL_TEXTURE0 + 3);
-        glBindTexture(GL_TEXTURE_3D, dataGrid.textureName[READ]);
-        shaderProgram_Advect.setUniform("dataGrid.textureUnit",
-                dataGrid.textureUnit);
-
-        shaderProgram_Advect.setUniform("dataGrid.worldOrigin",
-                dataGrid.worldOrigin);
-        shaderProgram_Advect.setUniform("dataGrid.cellLength",
-                dataGrid.cellLength);
         shaderProgram_Advect.setUniform("dataGridLayer", layer);
-        shaderProgram_Advect.setUniform("dataGridDepth", float(dataGrid.textureDepth));
-
 
         renderScreenQuad(shaderProgram_Advect);
-
-
-        glBindTexture(GL_TEXTURE_3D, 0);
     }
 
+    glBindTexture(GL_TEXTURE_3D, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -703,15 +702,20 @@ void GpuSmokeSim3D::draw() {
     // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
     // 7. Render
 
-    advect(u_velocityGrid);
-    advect(v_velocityGrid);
-    advect(w_velocityGrid);
-    swapTextureNames(u_velocityGrid);
-    swapTextureNames(v_velocityGrid);
-    swapTextureNames(w_velocityGrid);
 
-    advect(densityGrid);
-    swapTextureNames(densityGrid);
+    timer.start();
+
+        advect(u_velocityGrid);
+        advect(v_velocityGrid);
+        advect(w_velocityGrid);
+        swapTextureNames(u_velocityGrid);
+        swapTextureNames(v_velocityGrid);
+        swapTextureNames(w_velocityGrid);
+
+        advect(densityGrid);
+        swapTextureNames(densityGrid);
+
+    timer.stop();
 
 //    computeRHS();
 //    inspectGridData(rhsGrid);
@@ -730,6 +734,8 @@ void GpuSmokeSim3D::keyInput(int key, int action, int mods) {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::cleanup() {
+    cout << "average advect time: " << timer.getAverageElapsedTime() << endl;
+
     glDeleteFramebuffers(1, &framebuffer);
 
     glDeleteBuffers(1, &screenQuadVertBuffer);
