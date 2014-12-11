@@ -5,7 +5,6 @@
 
 /**
  * Timer class records timing information in seconds.
- * typename T - type format for seconds (e.g. double, float, int).
  */
 class Timer {
 
