@@ -67,41 +67,46 @@ void main() {
 
     ivec3 cellIndex = ivec3(f_textureCoord.s * cellTypeGrid.textureWidth,
                             f_textureCoord.t * cellTypeGrid.textureHeight,
-                            currentLayer * cellTypeGrid.textureDepth);
+                            currentLayer);
 
     float delta_u =  u(cellIndex+ivec3(1,0,0)) - u(cellIndex);
     float delta_v =  v(cellIndex+ivec3(0,1,0)) - v(cellIndex);
+    float delta_w =  w(cellIndex+ivec3(0,0,1)) - w(cellIndex);
 
-        // TODO Dustin - remove this after testing:
-            float garbage = u_solid * v_solid * w_solid * w_velocityGrid.cellLength;
-            scale = 1.0;
-            result = scale;//texture(v_velocityGrid.textureUnit, f_textureCoord).r;
+    result =  scale * (delta_u + delta_v + delta_w);
 
-//    result =  scale * (delta_u + delta_v);
-
-//    //-- Update RHS based on solid boundaries:
-//    // Left Neighbor
-//    if ( cellIsSolid(cellIndex - ivec2(1,0)) ) {
-//        result += scale * (u(cellIndex) - u_solid);
-//    }
-//    // Right Neighbor
-//    if ( cellIsSolid(cellIndex + ivec2(1,0)) ) {
-//        result -= scale * (u(cellIndex + ivec2(1,0)) - u_solid);
-//    }
-//    // Bottom Neighbor
-//    if ( cellIsSolid(cellIndex - ivec2(0,1)) ) {
-//        result += scale * (v(cellIndex) - v_solid);
-//    }
-//    // Top Neighbor
-//    if ( cellIsSolid(cellIndex + ivec2(0,1)) ) {
-//        result -= scale * (v(cellIndex + ivec2(0,1)) - v_solid);
-//    }
+    //-- Update RHS based on solid boundaries:
+    // -X Neighbor Cell
+    if ( cellIsSolid(cellIndex - ivec3(1,0,0)) ) {
+        result += scale * (u(cellIndex) - u_solid);
+    }
+    // +X Neighbor Cell
+    if ( cellIsSolid(cellIndex + ivec3(1,0,0)) ) {
+        result -= scale * (u(cellIndex + ivec3(1,0,0)) - u_solid);
+    }
+    // -Y Neighbor Cell
+    if ( cellIsSolid(cellIndex - ivec3(0,1,0)) ) {
+        result += scale * (v(cellIndex) - v_solid);
+    }
+    // +Y Neighbor Cell
+    if ( cellIsSolid(cellIndex + ivec3(0,1,0)) ) {
+        result -= scale * (v(cellIndex + ivec3(0,1,0)) - v_solid);
+    }
+    // -Z Neighbor Cell
+    if ( cellIsSolid(cellIndex - ivec3(0,0,1)) ) {
+        result += scale * (w(cellIndex) - w_solid);
+    }
+    // +Z Neighbor Cell
+    if ( cellIsSolid(cellIndex + ivec3(0,0,1)) ) {
+        result -= scale * (w(cellIndex + ivec3(0,0,1)) - w_solid);
+    }
 
 }
+// TESTS
+// 1. PASSED - Check that cellIndex.xyz goes from [0-127] in all directions.
+// 2. PASSED - Check cellIsSolid gives correct results given cellIndex.
 
-// TESTS:
-// 1. PASSED, cellIndex calculation matches grid dimensions 512x512
-// 2. PASSED, cellIsFluid()
-
-// 3. v(cellIndex) values match input data.
+// TESTS TO TRY:
+// 3. Ramp up u_velocity from 0 to 2, then set result = u(cellIndex) to check
+//    that converting from cellIndex to textureCoords is working.
 

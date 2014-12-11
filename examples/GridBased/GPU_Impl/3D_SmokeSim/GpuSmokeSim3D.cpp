@@ -102,6 +102,9 @@ void GpuSmokeSim3D::initTextureData() {
         }
     }
 
+    // TODO Dustin - remove after testing:
+
+
     //-- v_velocityGrid:
     glViewport(0, 0, v_velocityGrid.textureWidth, v_velocityGrid.textureHeight);
     for(int i(0); i < 2; ++i) {
@@ -296,6 +299,8 @@ void GpuSmokeSim3D::setShaderUniforms() {
                     u_velocityGrid.textureHeight);
             shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureDepth",
                     u_velocityGrid.textureDepth);
+            shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureUnit",
+                    u_velocityGrid.textureUnit);
         }
         //-- v_velocityGrid:
         {
@@ -308,6 +313,8 @@ void GpuSmokeSim3D::setShaderUniforms() {
                     v_velocityGrid.textureHeight);
             shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureDepth",
                     v_velocityGrid.textureDepth);
+            shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureUnit",
+                    v_velocityGrid.textureUnit);
 
         }
         //-- w_velocityGrid:
@@ -321,6 +328,8 @@ void GpuSmokeSim3D::setShaderUniforms() {
                     w_velocityGrid.textureHeight);
             shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureDepth",
                     w_velocityGrid.textureDepth);
+            shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureUnit",
+                    w_velocityGrid.textureUnit);
 
         }
         //-- cellTypeGrid:
@@ -336,6 +345,8 @@ void GpuSmokeSim3D::setShaderUniforms() {
                     cellTypeGrid.textureHeight);
             shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureDepth",
                     cellTypeGrid.textureDepth);
+            shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureUnit",
+                    cellTypeGrid.textureUnit);
 
         }
         shaderProgram_ComputeRHS.setUniform("timeStep", kDt);
@@ -657,27 +668,22 @@ void GpuSmokeSim3D::computeRHS() {
 
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
-    shaderProgram_ComputeRHS.setUniform("u_velocityGrid.textureUnit",
-            u_velocityGrid.textureUnit);
 
     glActiveTexture(GL_TEXTURE0 + v_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
-    shaderProgram_ComputeRHS.setUniform("v_velocityGrid.textureUnit",
-            v_velocityGrid.textureUnit);
 
     glActiveTexture(GL_TEXTURE0 + w_velocityGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
-    shaderProgram_ComputeRHS.setUniform("w_velocityGrid.textureUnit",
-            w_velocityGrid.textureUnit);
 
     glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
-    shaderProgram_ComputeRHS.setUniform("cellTypeGrid.textureUnit",
-            cellTypeGrid.textureUnit);
 
+    // Loop over all layers of the 3D texture, processing one at a time:
     for (uint32 layer = 0; layer < rhsGrid.textureDepth; ++layer) {
         // Attach rhsGrid texture to framebuffer for writing.
         bindFramebufferWithAttachments(framebuffer, rhsGrid.textureName[0], layer);
+
+        shaderProgram_ComputeRHS.setUniform("currentLayer", layer);
 
         renderScreenQuad(shaderProgram_ComputeRHS);
     }
@@ -721,14 +727,19 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     glGetTexImage(GL_TEXTURE_3D, 0, grid.components, grid.dataType, data);
 
     float max_value = 0;
+    float min_value = INT_MAX;
+    float value;
     for(int i(0); i < width; ++i) {
         for(int j(0); j < height; ++j) {
             for(int k(0); k < depth; ++k) {
-                max_value = glm::max(max_value, data[k*(width*height) + j*width + i]);
+                value = data[k*(width*height) + j*width + i];
+                max_value = glm::max(max_value, value);
+                min_value = glm::min(min_value, value);
             }
         }
     }
     cout << "max_value: " << max_value << endl;
+    cout << "min_value: " << min_value << endl;
 
 
     delete [] data;
@@ -766,14 +777,14 @@ void GpuSmokeSim3D::draw() {
 
     timer.stop();
 
-//    computeRHS();
+    computeRHS();
 
 //    inspectGridData(rhsGrid);
 
     // Render to entire window
     glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
 
-    volumeRenderer->draw(camera, 0.05, densityGrid.textureName[READ]);
+    volumeRenderer->draw(camera, 0.05, rhsGrid.textureName[READ]);
 
     CHECK_GL_ERRORS;
 }
