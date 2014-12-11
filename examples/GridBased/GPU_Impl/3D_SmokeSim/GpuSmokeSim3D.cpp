@@ -5,10 +5,12 @@ using namespace Rigid3D;
 
 #include "VolumeRenderer.hpp"
 
-#include <chrono>
+#include <glm/glm.hpp>
+using namespace glm;
+
+
 #include <sstream>
 using namespace std;
-using namespace std::chrono;
 
 
 //----------------------------------------------------------------------------------------
@@ -41,8 +43,8 @@ void GpuSmokeSim3D::init() {
     volumeRenderer = new VolumeRenderer(kSimTextureWidth,
                                         kSimTextureHeight,
                                         kSimTextureDepth,
-                                        defaultFramebufferWidth(),
-                                        defaultFramebufferHeight());
+                                        uint(defaultFramebufferWidth()),
+                                        uint(defaultFramebufferHeight()));
 
     glGenFramebuffers(1, &framebuffer);
 
@@ -68,6 +70,8 @@ void GpuSmokeSim3D::init() {
     setShaderUniforms();
 
     glClearColor(0.0, 0.0, 0.0, 1.0f);
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
 
     CHECK_GL_ERRORS;
 }
@@ -87,20 +91,20 @@ void GpuSmokeSim3D::initCamera() {
 void GpuSmokeSim3D::initTextureData() {
 
     //-- u_velocityGrid:
+    glViewport(0, 0, u_velocityGrid.textureWidth, u_velocityGrid.textureHeight);
     for(int i(0); i < 2; ++i) {
         for(int layer = 0; layer < u_velocityGrid.textureDepth; ++layer) {
             bindFramebufferWithAttachments(framebuffer, u_velocityGrid.textureName[i], layer);
-            glViewport(0, 0, u_velocityGrid.textureWidth, u_velocityGrid.textureHeight);
-            glClearColor(0,0,0,0);
+            glClearColor(0, 0, 0, 0);
             glClear(GL_COLOR_BUFFER_BIT);
         }
     }
 
     //-- v_velocityGrid:
+    glViewport(0, 0, v_velocityGrid.textureWidth, v_velocityGrid.textureHeight);
     for(int i(0); i < 2; ++i) {
         for(int layer = 0; layer < v_velocityGrid.textureDepth; ++layer) {
             bindFramebufferWithAttachments(framebuffer, v_velocityGrid.textureName[i], layer);
-            glViewport(0, 0, v_velocityGrid.textureWidth, v_velocityGrid.textureHeight);
             glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
         }
@@ -108,10 +112,10 @@ void GpuSmokeSim3D::initTextureData() {
 
     //-- w_velocityGrid:
     // Initial value is constant upwards at every cell
+    glViewport(0, 0, w_velocityGrid.textureWidth, w_velocityGrid.textureHeight);
     for(int i(0); i < 2; ++i) {
         for(int layer = 0; layer < w_velocityGrid.textureDepth; ++layer) {
             bindFramebufferWithAttachments(framebuffer, w_velocityGrid.textureName[i], layer);
-            glViewport(0, 0, w_velocityGrid.textureWidth, w_velocityGrid.textureHeight);
             glClearColor(0.5*kDx,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
         }
@@ -119,12 +123,12 @@ void GpuSmokeSim3D::initTextureData() {
 
     //-- densityGrid:
     // Set constant density at bottom layer
+    glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
     for(int i(0); i < 2; ++i) {
         for(int layer = 0; layer < densityGrid.textureDepth; ++layer) {
             bindFramebufferWithAttachments(framebuffer, densityGrid.textureName[i], layer);
-            glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
 
-            if(layer < 10) {
+            if(layer < 10 && layer < 50) {
                 glClearColor(10.0f,0,0,0);
             } else {
                 glClearColor(0,0,0,0);
@@ -134,19 +138,19 @@ void GpuSmokeSim3D::initTextureData() {
     }
 
     //-- pressureGrid:
+    glViewport(0, 0, pressureGrid.textureWidth, pressureGrid.textureHeight);
     for(int layer = 0; layer < pressureGrid.textureDepth; ++layer) {
         bindFramebufferWithAttachments(framebuffer,
                 pressureGrid.textureName[READ],  layer);
-        glViewport(0, 0, pressureGrid.textureWidth, pressureGrid.textureHeight);
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
     //-- rhsGrid:
+    glViewport(0, 0, rhsGrid.textureWidth, rhsGrid.textureHeight);
     for(int layer = 0; layer < rhsGrid.textureDepth; ++layer) {
         bindFramebufferWithAttachments(framebuffer,
                 rhsGrid.textureName[READ], layer);
-        glViewport(0, 0, rhsGrid.textureWidth, rhsGrid.textureHeight);
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
@@ -206,9 +210,9 @@ void GpuSmokeSim3D::setupScreenQuadVboData() {
 
     }
 
+    glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
     CHECK_GL_ERRORS;
 }
@@ -566,34 +570,46 @@ void GpuSmokeSim3D::advect(Grid & dataGrid) {
     // Process only the texels belonging to dataGrid:
     glViewport(0, 0, dataGrid.textureWidth, dataGrid.textureHeight);
 
-    bindFramebufferWithAttachments(framebuffer, dataGrid.textureName[WRITE], depth_rbo);
+    // Loop over all layers of the 3D texture, processing one at a time:
+    for(uint32 layer(0); layer < dataGrid.textureDepth; ++layer) {
+        bindFramebufferWithAttachments(framebuffer, dataGrid.textureName[WRITE], layer);
+        glClearColor(0,0,0,0);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
+        shaderProgram_Advect.setUniform("u_velocityGrid.textureUnit",
+                u_velocityGrid.textureUnit);
 
-    glActiveTexture(GL_TEXTURE0 + v_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
+        shaderProgram_Advect.setUniform("v_velocityGrid.textureUnit",
+                v_velocityGrid.textureUnit);
 
-    glActiveTexture(GL_TEXTURE0 + w_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
+        glActiveTexture(GL_TEXTURE0 + 2);
+        glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
+        shaderProgram_Advect.setUniform("w_velocityGrid.textureUnit",
+                w_velocityGrid.textureUnit);
 
-    glActiveTexture(GL_TEXTURE0 + dataGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_3D, dataGrid.textureName[READ]);
+        glActiveTexture(GL_TEXTURE0 + 3);
+        glBindTexture(GL_TEXTURE_3D, dataGrid.textureName[READ]);
+        shaderProgram_Advect.setUniform("dataGrid.textureUnit",
+                dataGrid.textureUnit);
 
-    shaderProgram_Advect.setUniform("dataGrid.worldOrigin",
-            dataGrid.worldOrigin);
-
-    shaderProgram_Advect.setUniform("dataGrid.cellLength",
-            dataGrid.cellLength);
-
-    shaderProgram_Advect.setUniform("dataGrid.textureUnit",
-            dataGrid.textureUnit);
-
-    renderScreenQuad(shaderProgram_Advect);
+        shaderProgram_Advect.setUniform("dataGrid.worldOrigin",
+                dataGrid.worldOrigin);
+        shaderProgram_Advect.setUniform("dataGrid.cellLength",
+                dataGrid.cellLength);
+        shaderProgram_Advect.setUniform("dataGridLayer", layer);
+        shaderProgram_Advect.setUniform("dataGridDepth", float(dataGrid.textureDepth));
 
 
-    //-- Reset back to defaults:
-    glBindTexture(GL_TEXTURE_3D, 0);
+        renderScreenQuad(shaderProgram_Advect);
+
+
+        glBindTexture(GL_TEXTURE_3D, 0);
+    }
+
     CHECK_GL_ERRORS;
 }
 
@@ -640,20 +656,35 @@ void GpuSmokeSim3D::render(const Grid &dataGrid) {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::inspectGridData(Grid & grid) {
-    float * data = new float[grid.textureWidth * grid.textureHeight];
-    for(int i(0); i < grid.textureHeight; ++i) {
-        for(int j(0); j < grid.textureWidth; ++j) {
-            data[i * grid.textureWidth + j] = 0.0f;
+    int width = grid.textureWidth;
+    int height = grid.textureHeight;
+    int depth = grid.textureDepth;
+    float * data = new float[width * height * depth];
+    for(int i(0); i < width; ++i) {
+        for(int j(0); j < height; ++j) {
+            for(int k(0); k < depth; ++k) {
+                data[k*(width*height) + j*width + i] = 0.0f;
+            }
         }
     }
 
     glFinish();
-    glBindTexture(GL_TEXTURE_2D, grid.textureName[READ]);
-    glGetTexImage(GL_TEXTURE_2D, 0, grid.components, grid.dataType, data);
+    glBindTexture(GL_TEXTURE_3D, grid.textureName[READ]);
+    glGetTexImage(GL_TEXTURE_3D, 0, grid.components, grid.dataType, data);
+
+    float max_value = 0;
+    for(int i(0); i < width; ++i) {
+        for(int j(0); j < height; ++j) {
+            for(int k(0); k < depth; ++k) {
+                max_value = glm::max(max_value, data[k*(width*height) + j*width + i]);
+            }
+        }
+    }
+    cout << "max_value: " << max_value << endl;
 
 
     delete [] data;
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_3D, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -672,15 +703,15 @@ void GpuSmokeSim3D::draw() {
     // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
     // 7. Render
 
-//    advect(u_velocityGrid);
-//    advect(v_velocityGrid);
-//    advect(w_velocityGrid);
-//    swapTextureNames(u_velocityGrid);
-//    swapTextureNames(v_velocityGrid);
-//    swapTextureNames(w_velocityGrid);
-//
-//    advect(densityGrid);
-//    swapTextureNames(densityGrid);
+    advect(u_velocityGrid);
+    advect(v_velocityGrid);
+    advect(w_velocityGrid);
+    swapTextureNames(u_velocityGrid);
+    swapTextureNames(v_velocityGrid);
+    swapTextureNames(w_velocityGrid);
+
+    advect(densityGrid);
+    swapTextureNames(densityGrid);
 
 //    computeRHS();
 //    inspectGridData(rhsGrid);

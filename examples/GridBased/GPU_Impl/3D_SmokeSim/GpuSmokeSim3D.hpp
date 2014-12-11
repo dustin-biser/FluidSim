@@ -18,15 +18,14 @@ using namespace Rigid3D;
 using namespace std::chrono;
 
 
-// Forward Declarations:
-class GraphicsRenderer;
+// Forward Declaration
 class VolumeRenderer;
 
 
 //----------------------------------------------------------------------------------------
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
-const float32 kSecondsPerFrame = 1/100.0f;
+const float32 kSecondsPerFrame = 1/80.0f;
 const float32 kDt = 0.008;
 const int32 solver_iterations = 60;
 const int32 kScreenWidth = 1024;
@@ -62,7 +61,7 @@ struct Grid {
     int32 textureWidth;    // Given in number of cells
     int32 textureHeight;   // Given in number of cells
     int32 textureDepth;    // Given in number of cells
-    GLuint textureUnit;    // Active texture unit
+    GLint textureUnit;     // Active texture unit
     GLenum internalFormat; // Storage type
     GLenum components;     // Color channels requested
     GLenum dataType;

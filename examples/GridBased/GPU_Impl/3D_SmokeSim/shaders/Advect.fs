@@ -1,8 +1,8 @@
 // Advect.fs
 #version 410
 
-// (s,t,r) texture-coordinates into dataGrid
-out vec3 dataCoord;
+// (s,t) texture-coordinate
+in vec2 f_textureCoord;
 
 out float result;
 
@@ -17,6 +17,8 @@ uniform Grid w_velocityGrid; // w vertical component
 uniform Grid dataGrid;       // Data to be advected
 
 uniform float timeStep;
+uniform float dataGridDepth;
+uniform uint dataGridLayer; // Layer within dataGrid that is currently being  processed.
 
 // Converts the texture coordinates 'texCoord' into a world position given the
 // worldOrigin and cellLength of 'grid'.
@@ -36,6 +38,9 @@ float linearInterp(in Grid grid, in vec3 worldPosition) {
 
 
 void main () {
+    // Normalized texture coordinate into dataGrid
+    vec3 dataCoord = vec3(f_textureCoord, dataGridLayer / dataGridDepth);
+
     // Compute world position of 'dataCoord' within 'dataGrid'.
     vec3 worldPosition = getWorldPosition(dataGrid, dataCoord);
 
@@ -56,5 +61,6 @@ void main () {
     worldPosition = worldPosition - (timeStep * velocity);
 
     result = linearInterp(dataGrid, worldPosition);
+
 }
 
