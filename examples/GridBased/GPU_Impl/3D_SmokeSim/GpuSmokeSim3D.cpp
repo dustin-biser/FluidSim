@@ -120,11 +120,11 @@ void GpuSmokeSim3D::initTextureData() {
     //-- densityGrid:
     // Set constant density at bottom layer
     for(int i(0); i < 2; ++i) {
-        for(int layer = 1; layer < densityGrid.textureDepth; ++layer) {
+        for(int layer = 0; layer < densityGrid.textureDepth; ++layer) {
             bindFramebufferWithAttachments(framebuffer, densityGrid.textureName[i], layer);
             glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
 
-            if(layer > 0 && layer < 10) {
+            if(layer < 10) {
                 glClearColor(10.0f,0,0,0);
             } else {
                 glClearColor(0,0,0,0);
@@ -151,7 +151,9 @@ void GpuSmokeSim3D::initTextureData() {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    //-- Reset defaults:
     glViewport(0,0, defaultFramebufferWidth(), defaultFramebufferHeight());
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -251,6 +253,16 @@ void GpuSmokeSim3D::setShaderUniforms() {
                     v_velocityGrid.cellLength);
 
         }
+
+        //-- w_velocityGrid:
+        {
+            shaderProgram_Advect.setUniform("w_velocityGrid.worldOrigin",
+                    w_velocityGrid.worldOrigin);
+
+            shaderProgram_Advect.setUniform("w_velocityGrid.cellLength",
+                    w_velocityGrid.cellLength);
+
+        }
         shaderProgram_Advect.setUniform("timeStep", kDt);
     }
 
@@ -329,6 +341,7 @@ void GpuSmokeSim3D::createTextureStorage() {
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
             glBindTexture(GL_TEXTURE_3D, 0);
             CHECK_GL_ERRORS;
@@ -356,6 +369,7 @@ void GpuSmokeSim3D::createTextureStorage() {
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
             glBindTexture(GL_TEXTURE_3D, 0);
             CHECK_GL_ERRORS;
@@ -383,6 +397,7 @@ void GpuSmokeSim3D::createTextureStorage() {
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
             glBindTexture(GL_TEXTURE_3D, 0);
             CHECK_GL_ERRORS;
@@ -410,6 +425,7 @@ void GpuSmokeSim3D::createTextureStorage() {
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
             const GLfloat borderColor[4] = {0.0, 0.0, 0.0, 0.0};
             glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
@@ -436,8 +452,11 @@ void GpuSmokeSim3D::createTextureStorage() {
 
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+        const GLfloat borderColor[4] = {0.0, 0.0, 0.0, 0.0};
+        glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
         glBindTexture(GL_TEXTURE_3D, 0);
         CHECK_GL_ERRORS;
@@ -461,8 +480,11 @@ void GpuSmokeSim3D::createTextureStorage() {
 
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+        const GLfloat borderColor[4] = {0.0, 0.0, 0.0, 0.0};
+        glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
         glBindTexture(GL_TEXTURE_3D, 0);
 
@@ -489,6 +511,7 @@ void GpuSmokeSim3D::createTextureStorage() {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         glBindTexture(GL_TEXTURE_3D, 0);
 
@@ -546,25 +569,22 @@ void GpuSmokeSim3D::advect(Grid & dataGrid) {
     bindFramebufferWithAttachments(framebuffer, dataGrid.textureName[WRITE], depth_rbo);
 
     glActiveTexture(GL_TEXTURE0 + u_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_2D, u_velocityGrid.textureName[READ]);
+    glBindTexture(GL_TEXTURE_3D, u_velocityGrid.textureName[READ]);
 
     glActiveTexture(GL_TEXTURE0 + v_velocityGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_2D, v_velocityGrid.textureName[READ]);
+    glBindTexture(GL_TEXTURE_3D, v_velocityGrid.textureName[READ]);
+
+    glActiveTexture(GL_TEXTURE0 + w_velocityGrid.textureUnit);
+    glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
 
     glActiveTexture(GL_TEXTURE0 + dataGrid.textureUnit);
-    glBindTexture(GL_TEXTURE_2D, dataGrid.textureName[READ]);
+    glBindTexture(GL_TEXTURE_3D, dataGrid.textureName[READ]);
 
     shaderProgram_Advect.setUniform("dataGrid.worldOrigin",
             dataGrid.worldOrigin);
 
     shaderProgram_Advect.setUniform("dataGrid.cellLength",
             dataGrid.cellLength);
-
-    shaderProgram_Advect.setUniform("dataGrid.textureWidth",
-            dataGrid.textureWidth);
-
-    shaderProgram_Advect.setUniform("dataGrid.textureHeight",
-            dataGrid.textureHeight);
 
     shaderProgram_Advect.setUniform("dataGrid.textureUnit",
             dataGrid.textureUnit);
@@ -573,7 +593,7 @@ void GpuSmokeSim3D::advect(Grid & dataGrid) {
 
 
     //-- Reset back to defaults:
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_3D, 0);
     CHECK_GL_ERRORS;
 }
 
@@ -654,19 +674,19 @@ void GpuSmokeSim3D::draw() {
 
 //    advect(u_velocityGrid);
 //    advect(v_velocityGrid);
+//    advect(w_velocityGrid);
 //    swapTextureNames(u_velocityGrid);
 //    swapTextureNames(v_velocityGrid);
+//    swapTextureNames(w_velocityGrid);
 //
 //    advect(densityGrid);
 //    swapTextureNames(densityGrid);
-//
-////    computeRHS();
-////    inspectGridData(rhsGrid);
-//
-//    // Render to entire window
-//    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
-//
-//    render(densityGrid);
+
+//    computeRHS();
+//    inspectGridData(rhsGrid);
+
+    // Render to entire window
+    glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
 
     volumeRenderer->draw(camera, 0.05, densityGrid.textureName[READ]);
 
