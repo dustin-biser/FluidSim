@@ -102,8 +102,6 @@ void GpuSmokeSim3D::initTextureData() {
         }
     }
 
-    // TODO Dustin - remove after testing:
-
 
     //-- v_velocityGrid:
     glViewport(0, 0, v_velocityGrid.textureWidth, v_velocityGrid.textureHeight);
@@ -115,6 +113,7 @@ void GpuSmokeSim3D::initTextureData() {
         }
     }
 
+
     //-- w_velocityGrid:
     // Initial value is constant upwards at every cell
     glViewport(0, 0, w_velocityGrid.textureWidth, w_velocityGrid.textureHeight);
@@ -124,6 +123,29 @@ void GpuSmokeSim3D::initTextureData() {
             glClearColor(0.5*kDx,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
         }
+    }
+
+    // TODO Dustin - remove after testing:
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        int width = w_velocityGrid.textureWidth;
+        int height = w_velocityGrid.textureHeight;
+        int depth = w_velocityGrid.textureDepth;
+        float * data = new float[width * height * depth];
+        for (int i(0); i < width; ++i) {
+            for (int j(0); j < height; ++j) {
+                for (int k(0); k < depth; ++k) {
+                    data[k*(width * height) + j*width + i] = k;
+                }
+            }
+        }
+
+        glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
+        glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RED,
+                GL_FLOAT, data);
+        delete [] data;
+
+        glBindTexture(GL_TEXTURE_3D, 0);
     }
 
     //-- densityGrid:
@@ -240,7 +262,7 @@ void GpuSmokeSim3D::setupShaderPrograms() {
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.fs");
 
     shaderProgram_ComputeRHS.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeRHS.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeRHS.fs");
 
     shaderProgram_SceneRenderer.loadFromFile(
@@ -713,18 +735,18 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     int width = grid.textureWidth;
     int height = grid.textureHeight;
     int depth = grid.textureDepth;
-    float * data = new float[width * height * depth];
+    float * gridData = new float[width * height * depth];
     for(int i(0); i < width; ++i) {
         for(int j(0); j < height; ++j) {
             for(int k(0); k < depth; ++k) {
-                data[k*(width*height) + j*width + i] = 0.0f;
+                gridData[k*(width*height) + j*width + i] = 0.0f;
             }
         }
     }
 
     glFinish();
     glBindTexture(GL_TEXTURE_3D, grid.textureName[READ]);
-    glGetTexImage(GL_TEXTURE_3D, 0, grid.components, grid.dataType, data);
+    glGetTexImage(GL_TEXTURE_3D, 0, grid.components, grid.dataType, gridData);
 
     float max_value = 0;
     float min_value = INT_MAX;
@@ -732,7 +754,7 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     for(int i(0); i < width; ++i) {
         for(int j(0); j < height; ++j) {
             for(int k(0); k < depth; ++k) {
-                value = data[k*(width*height) + j*width + i];
+                value = gridData[k*(width*height) + j*width + i];
                 max_value = glm::max(max_value, value);
                 min_value = glm::min(min_value, value);
             }
@@ -742,7 +764,7 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     cout << "min_value: " << min_value << endl;
 
 
-    delete [] data;
+    delete [] gridData;
     glBindTexture(GL_TEXTURE_3D, 0);
     CHECK_GL_ERRORS;
 }
@@ -762,9 +784,6 @@ void GpuSmokeSim3D::draw() {
     // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
     // 7. Render
 
-
-    timer.start();
-
     advect(u_velocityGrid);
     advect(v_velocityGrid);
     advect(w_velocityGrid);
@@ -775,8 +794,6 @@ void GpuSmokeSim3D::draw() {
     advect(densityGrid);
     swapTextureNames(densityGrid);
 
-    timer.stop();
-
     computeRHS();
 
 //    inspectGridData(rhsGrid);
@@ -784,7 +801,7 @@ void GpuSmokeSim3D::draw() {
     // Render to entire window
     glViewport(0, 0, defaultFramebufferWidth(), defaultFramebufferHeight());
 
-    volumeRenderer->draw(camera, 0.05, rhsGrid.textureName[READ]);
+    volumeRenderer->draw(camera, 0.05, w_velocityGrid.textureName[READ]);
 
     CHECK_GL_ERRORS;
 }
