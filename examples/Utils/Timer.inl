@@ -52,5 +52,9 @@ inline double Timer::getElapsedTime() const {
 * start() and stop() calls.
 */
 inline double Timer::getAverageElapsedTime() const {
-    return totalElapsedTime.count() / double(counter);
+    if (counter > 0) {
+        return totalElapsedTime.count() / double(counter);
+    } else {
+        return 0.0;
+    }
 }
