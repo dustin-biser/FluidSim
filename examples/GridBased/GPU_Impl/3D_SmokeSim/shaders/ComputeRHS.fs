@@ -64,44 +64,50 @@ void main() {
 
     vec3 cellIndex = vec3(gl_FragCoord.x, gl_FragCoord.y, currentLayer+0.5);
 
-    float delta_u =  u(cellIndex+vec3(1,0,0)) - u(cellIndex);
-    float delta_v =  v(cellIndex+vec3(0,1,0)) - v(cellIndex);
-    float delta_w =  w(cellIndex+vec3(0,0,1)) - w(cellIndex);
+    const vec3 one_s = vec3(1,0,0);
+    const vec3 one_t = vec3(0,1,0);
+    const vec3 one_r = vec3(0,0,1);
+
+    float delta_u =  u(cellIndex + one_s) - u(cellIndex);
+    float delta_v =  v(cellIndex + one_t) - v(cellIndex);
+    float delta_w =  w(cellIndex + one_r) - w(cellIndex);
 
     result =  scale * (delta_u + delta_v + delta_w);
 
     //-- Update RHS based on solid boundaries:
     // -X Neighbor Cell
-    if ( cellIsSolid(cellIndex - vec3(1,0,0)) ) {
+    if ( cellIsSolid(cellIndex - one_s) ) {
         result += scale * (u(cellIndex) - u_solid);
     }
     // +X Neighbor Cell
-    if ( cellIsSolid(cellIndex + vec3(1,0,0)) ) {
-        result -= scale * (u(cellIndex + vec3(1,0,0)) - u_solid);
+    if ( cellIsSolid(cellIndex + one_s) ) {
+        result -= scale * (u(cellIndex + one_s) - u_solid);
     }
     // -Y Neighbor Cell
-    if ( cellIsSolid(cellIndex - vec3(0,1,0)) ) {
+    if ( cellIsSolid(cellIndex - one_t) ) {
         result += scale * (v(cellIndex) - v_solid);
     }
     // +Y Neighbor Cell
-    if ( cellIsSolid(cellIndex + vec3(0,1,0)) ) {
-        result -= scale * (v(cellIndex + vec3(0,1,0)) - v_solid);
+    if ( cellIsSolid(cellIndex + one_t) ) {
+        result -= scale * (v(cellIndex + one_t) - v_solid);
     }
     // -Z Neighbor Cell
-    if ( cellIsSolid(cellIndex - vec3(0,0,1)) ) {
+    if ( cellIsSolid(cellIndex - one_r) ) {
         result += scale * (w(cellIndex) - w_solid);
     }
     // +Z Neighbor Cell
-    if ( cellIsSolid(cellIndex + vec3(0,0,1)) ) {
-        result -= scale * (w(cellIndex + vec3(0,0,1)) - w_solid);
+    if ( cellIsSolid(cellIndex + one_r) ) {
+        result -= scale * (w(cellIndex + one_r) - w_solid);
     }
 
 }
 
-// TESTS
-// 1. PASSED - Check that cellIndex.xyz goes from [0-127] in all directions.
-// 2. PASSED - Check cellIsSolid gives correct results given cellIndex.
-// 3. PASSED - delta_u
-// 4. PASSED - delta_v
-// 5. PASSED - delta_w
+// TESTS PASSED:
+// 1. Check that cellIndex.xyz goes from [0-127] in all directions.
+// 2. Check cellIsSolid gives correct results given cellIndex.
+// 3. delta_u
+// 4. delta_v
+// 5. delta_w
+// 6. Check actual data for cellIsFluid() and cellisSolid() is correct
+// 7. cellIndex matches world coordinate system
 

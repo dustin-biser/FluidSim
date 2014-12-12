@@ -125,29 +125,6 @@ void GpuSmokeSim3D::initTextureData() {
         }
     }
 
-    // TODO Dustin - remove after testing:
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        int width = w_velocityGrid.textureWidth;
-        int height = w_velocityGrid.textureHeight;
-        int depth = w_velocityGrid.textureDepth;
-        float * data = new float[width * height * depth];
-        for (int i(0); i < width; ++i) {
-            for (int j(0); j < height; ++j) {
-                for (int k(0); k < depth; ++k) {
-                    data[k*(width * height) + j*width + i] = k;
-                }
-            }
-        }
-
-        glBindTexture(GL_TEXTURE_3D, w_velocityGrid.textureName[READ]);
-        glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RED,
-                GL_FLOAT, data);
-        delete [] data;
-
-        glBindTexture(GL_TEXTURE_3D, 0);
-    }
-
     //-- densityGrid:
     // Set constant density at bottom layer
     glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
@@ -735,18 +712,18 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     int width = grid.textureWidth;
     int height = grid.textureHeight;
     int depth = grid.textureDepth;
-    float * gridData = new float[width * height * depth];
+    float * data = new float[width * height * depth];
     for(int i(0); i < width; ++i) {
         for(int j(0); j < height; ++j) {
             for(int k(0); k < depth; ++k) {
-                gridData[k*(width*height) + j*width + i] = 0.0f;
+                data[k*(width*height) + j*width + i] = 0.0f;
             }
         }
     }
 
     glFinish();
     glBindTexture(GL_TEXTURE_3D, grid.textureName[READ]);
-    glGetTexImage(GL_TEXTURE_3D, 0, grid.components, grid.dataType, gridData);
+    glGetTexImage(GL_TEXTURE_3D, 0, grid.components, grid.dataType, data);
 
     float max_value = 0;
     float min_value = INT_MAX;
@@ -754,7 +731,7 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     for(int i(0); i < width; ++i) {
         for(int j(0); j < height; ++j) {
             for(int k(0); k < depth; ++k) {
-                value = gridData[k*(width*height) + j*width + i];
+                value = data[k*(width*height) + j*width + i];
                 max_value = glm::max(max_value, value);
                 min_value = glm::min(min_value, value);
             }
@@ -764,7 +741,7 @@ void GpuSmokeSim3D::inspectGridData(Grid & grid) {
     cout << "min_value: " << min_value << endl;
 
 
-    delete [] gridData;
+    delete [] data;
     glBindTexture(GL_TEXTURE_3D, 0);
     CHECK_GL_ERRORS;
 }
@@ -812,7 +789,7 @@ void GpuSmokeSim3D::keyInput(int key, int action, int mods) {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::cleanup() {
-    cout << "average advect time: " << timer.getAverageElapsedTime() << endl;
+    cout << endl << "average time: " << timer.getAverageElapsedTime() << endl;
 
     glDeleteFramebuffers(1, &framebuffer);
 
