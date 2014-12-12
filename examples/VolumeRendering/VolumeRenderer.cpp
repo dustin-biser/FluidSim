@@ -203,14 +203,14 @@ void VolumeRenderer::setupBoundingVolumeVertexData() {
     // Colors correspond to textureCoordinates into the 3D data set.
     float32 bvVertices[] = {
             // Positions (x,y,z)   Color-Coordinate(s,t,r)
-            -0.5,-0.5, 0.5,         0,1,0, // 0
+            -0.5,-0.5, 0.5,         1,0,0, // 0
              0.5,-0.5, 0.5,         1,1,0, // 1
              0.5, 0.5, 0.5,         1,1,1, // 2
-            -0.5, 0.5, 0.5,         0,1,1, // 3
-             0.5,-0.5, -0.5,        1,0,0, // 4
+            -0.5, 0.5, 0.5,         1,0,1, // 3
+             0.5,-0.5, -0.5,        0,1,0, // 4
             -0.5,-0.5, -0.5,        0,0,0, // 5
             -0.5, 0.5, -0.5,        0,0,1, // 6
-             0.5, 0.5, -0.5,        1,0,1  // 7
+             0.5, 0.5, -0.5,        0,1,1  // 7
     };
 
     // Cube indices for GL_TRIANGLES
