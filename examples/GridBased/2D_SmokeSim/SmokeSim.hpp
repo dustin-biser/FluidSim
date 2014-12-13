@@ -27,7 +27,7 @@ const int32 solver_iterations = 60;
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
 //----------------------------------------------------------------------------------------
-const float32 temp_0 = 273.0f; // Ambient Temperature in Kelvin
+const float32 kTemp_0 = 273.0f; // Ambient Temperature in Kelvin
 const float32 kBuoyant_d = 0.8f;// Density coefficient for buoyant force.
 const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
 const float32 kDensity = 1.0f;

@@ -189,6 +189,7 @@ private:
     ShaderProgram shaderProgram_BuoyantForce;
     ShaderProgram shaderProgram_ComputeRHS;
     ShaderProgram shaderProgram_SceneRenderer;
+    ShaderProgram shaderProgram_InjectData;
 
     virtual void init();
     virtual void logic();
@@ -214,6 +215,7 @@ private:
     void advectQuantities();
     void addBuoyantForce();
     void computeRHS();
+    void injectDensityAndTemperature();
     void render(const Grid & dataGrid);
 
 

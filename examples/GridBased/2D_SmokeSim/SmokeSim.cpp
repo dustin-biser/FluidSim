@@ -84,7 +84,7 @@ void SmokeSim::initGridData() {
         gridSpec.origin = vec2(kDx,kDx) * 0.5f; // Store values at grid centers.
 
         temperatureGrid = Grid<float32>(gridSpec);
-        temperatureGrid.setAll(temp_0); // Set to ambient temperature
+        temperatureGrid.setAll(kTemp_0); // Set to ambient temperature
     }
 
     //-- Cell Grid
@@ -203,7 +203,7 @@ void SmokeSim::addForces() {
            density = bilinear(densityGrid, worldPos);
            temp = bilinear(temperatureGrid, worldPos);
 
-           force = -kBuoyant_d * density + kBuoyant_t * (temp - temp_0);
+           force = -kBuoyant_d * density + kBuoyant_t * (temp - kTemp_0);
 
            velocityGrid.v(col,row) += kDt * force;
        }
@@ -400,7 +400,7 @@ void SmokeSim::logic() {
     static uint counter = 0;
     if (counter < 60) {
         fillGrid(densityGrid, 35, 10, 1, 6, 1.0f);
-        fillGrid(temperatureGrid, 35, 10, 1, 6, temp_0 + 200);
+        fillGrid(temperatureGrid, 35, 10, 1, 6, kTemp_0 + 200);
         counter++;
     }
 

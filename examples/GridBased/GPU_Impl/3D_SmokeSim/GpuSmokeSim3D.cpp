@@ -4,8 +4,10 @@
 using namespace Rigid3D;
 
 #include "VolumeRenderer.hpp"
+#include "matrix_transform_2d.hpp"
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
 
@@ -138,12 +140,7 @@ void GpuSmokeSim3D::initTextureData() {
             bindFramebufferWithAttachments(framebuffer,
                 densityGrid.textureName[i], layer);
 
-            // Set constant density near bottom layers
-            if(layer > 0 && layer < 10) {
-                glClearColor(layer,0,0,0);
-            } else {
-                glClearColor(0,0,0,0);
-            }
+            glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
         }
     }
@@ -271,6 +268,10 @@ void GpuSmokeSim3D::setupShaderPrograms() {
     shaderProgram_SceneRenderer.loadFromFile(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.fs");
+
+    shaderProgram_InjectData.loadFromFile(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.fs");
 
     CHECK_GL_ERRORS;
 }
@@ -868,6 +869,48 @@ void GpuSmokeSim3D::addBuoyantForce() {
     CHECK_GL_ERRORS;
 
 }
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim3D::injectDensityAndTemperature() {
+
+    float width = 20;
+    float height = 20;
+    float depth = 5;
+
+    //-- densityGrid:
+    {
+        shaderProgram_InjectData.setUniform("value", 5.0f);
+        vec3 scaleFactor;
+        scaleFactor.x = width / densityGrid.textureWidth;
+        scaleFactor.y = height / densityGrid.textureHeight;
+        shaderProgram_InjectData.setUniform("modelMatrix", glm::scale(mat4(), scaleFactor));
+
+        glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
+        for (int layer = 0; layer < depth; ++layer) {
+            bindFramebufferWithAttachments(framebuffer,
+                    densityGrid.textureName[READ], layer);
+
+            renderScreenQuad(shaderProgram_InjectData);
+
+        }
+    }
+
+    //-- temperatureGrid:
+    {
+        shaderProgram_InjectData.setUniform("value", kTemp_0 + 200.0f);
+        vec3 scaleFactor;
+        scaleFactor.x = width / temperatureGrid.textureWidth;
+        scaleFactor.y = height / temperatureGrid.textureHeight;
+        shaderProgram_InjectData.setUniform("modelMatrix", glm::scale(mat4(), scaleFactor));
+        glViewport(0, 0, temperatureGrid.textureWidth, temperatureGrid.textureHeight);
+        for (int layer = 0; layer < depth; ++layer) {
+            bindFramebufferWithAttachments(framebuffer,
+                    temperatureGrid.textureName[READ], layer);
+
+            renderScreenQuad(shaderProgram_InjectData);
+        }
+    }
+
+}
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::advectQuantities() {
@@ -893,6 +936,12 @@ void GpuSmokeSim3D::logic() {
     // 5. Compute Pressure
     // 6. Subtract Pressure Gradient from velocity (use tmpTexture)
     // 7. Render
+
+    static int counter = 0;
+    if (counter < 60) {
+        injectDensityAndTemperature();
+        ++counter;
+    }
 
     advectQuantities();
 //    addBuoyantForce();
