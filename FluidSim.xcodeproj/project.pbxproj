@@ -493,6 +493,7 @@
 		EF6695B5EB2E9F973946D617 /* Timer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.inl; path = Timer.inl; sourceTree = "<group>"; };
 		EF66962CE14C9BBC8034B83A /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF669634CA270871EEB97444 /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
+		EF66965D721C817FDDE7191C /* BuoyantForce.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = BuoyantForce.vs; sourceTree = "<group>"; };
 		EF6696CD14D916A209CF3484 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF6696E0E23A2B72A3423777 /* GraphicsRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GraphicsRenderer.hpp; sourceTree = "<group>"; };
 		EF66978C574A4E2E64D1A85D /* SmokeSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeSim.hpp; sourceTree = "<group>"; };
@@ -517,6 +518,7 @@
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
 		EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderingExample.cpp; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
+		EF669B84DD3C4BC0ECBBE470 /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669BC63BF08A24AB91B2E1 /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
 		EF669C182C48E938F3CA6546 /* RayMarch.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayMarch.fs; sourceTree = "<group>"; };
 		EF669C28717301A7D7206D49 /* SphGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphGraphics.cpp; sourceTree = "<group>"; };
@@ -536,6 +538,7 @@
 		EF669E7BFC946B1F8A0034F5 /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.vs; sourceTree = "<group>"; };
 		EF669EB410FDB179D4990FCD /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669EBEF8FC4E7D665574E5 /* SmokeSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim.cpp; sourceTree = "<group>"; };
+		EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BuoyantForce.fs; sourceTree = "<group>"; };
 		EF669ED67D1B98CA4360AA6B /* SphSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphSim.hpp; sourceTree = "<group>"; };
 		EF669EFC819F6190C0D57CEF /* RayDirection.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = RayDirection.vs; sourceTree = "<group>"; };
 		EF669F19BA336DC6C1C8168A /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
@@ -1343,6 +1346,9 @@
 				EF66983BC2F01F34CEEDB804 /* LineRender.vs */,
 				EF669049A888B3DE6CBC241F /* LineRender.fs */,
 				EF669E7BFC946B1F8A0034F5 /* ComputeRHS.vs */,
+				EF669B84DD3C4BC0ECBBE470 /* Advect.vs */,
+				EF66965D721C817FDDE7191C /* BuoyantForce.vs */,
+				EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

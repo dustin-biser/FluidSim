@@ -32,7 +32,7 @@ const int32 kScreenHeight = 768;
 //----------------------------------------------------------------------------------------
 // Fluid Parameters
 //----------------------------------------------------------------------------------------
-const float32 temp_0 = 273.0f; // Ambient Temperature in Kelvin
+const float32 kTemp_0 = 273.0f; // Ambient Temperature in Kelvin
 const float32 kBuoyant_d = 0.8f;// Density coefficient for buoyant force.
 const float32 kBuoyant_t = 0.34f; // Temperature coefficient for buoyant force.
 const float32 kDensity = 1.0f;
@@ -47,9 +47,9 @@ const int32 kAttribIndex_texCoords = 1;
 //----------------------------------------------------------------------------------------
 // Texture Storage Parameters
 //----------------------------------------------------------------------------------------
-const int32 kSimTextureWidth = 128;
-const int32 kSimTextureHeight = 128;
-const int32 kSimTextureDepth = 128;
+const int32 kSimTextureWidth = 64;
+const int32 kSimTextureHeight = 64;
+const int32 kSimTextureDepth = 64;
 const float32 kDx = 1.0f / kSimTextureWidth; // Grid cell length
 
 // Grid Layout Specification
@@ -116,13 +116,25 @@ Grid densityGrid = {
         GL_FLOAT                // dataType
 };
 
-Grid pressureGrid = {
+Grid temperatureGrid = {
         0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
         kDx,                    // cellLength
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
         kSimTextureDepth,       // textureHeight
         4,                      // textureUnit
+        GL_R16F,                // internalFormat
+        GL_RED,                 // components
+        GL_FLOAT                // dataType
+};
+
+Grid pressureGrid = {
+        0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
+        kDx,                    // cellLength
+        kSimTextureWidth,       // textureWidth
+        kSimTextureHeight,      // textureHeight
+        kSimTextureDepth,       // textureHeight
+        5,                      // textureUnit
         GL_R16F,                // internalFormat
         GL_RED,                 // components
         GL_FLOAT                // dataType
@@ -135,7 +147,7 @@ Grid rhsGrid = {
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
         kSimTextureDepth,       // textureHeight
-        5,                      // textureUnit
+        6,                      // textureUnit
         GL_R16F,                // internalFormat
         GL_RED,                 // components
         GL_FLOAT                // dataType
@@ -148,7 +160,7 @@ Grid cellTypeGrid = {
         kSimTextureWidth,       // textureWidth
         kSimTextureHeight,      // textureHeight
         kSimTextureDepth,       // textureHeight
-        6,                      // textureUnit
+        7,                      // textureUnit
         GL_R8,                  // internalFormat
         GL_RED,                 // components
         GL_FLOAT                // dataType
@@ -174,6 +186,7 @@ private:
     GLuint screenQuadIndexBuffer; // Element Buffer Object
 
     ShaderProgram shaderProgram_Advect;
+    ShaderProgram shaderProgram_BuoyantForce;
     ShaderProgram shaderProgram_ComputeRHS;
     ShaderProgram shaderProgram_SceneRenderer;
 
@@ -198,6 +211,8 @@ private:
 
     void swapTextureNames(Grid & grid);
     void advect(Grid & dataGrid);
+    void advectQuantities();
+    void addBuoyantForce();
     void computeRHS();
     void render(const Grid & dataGrid);
 

@@ -39,7 +39,7 @@ float linearInterp(in Grid grid, in vec3 worldPosition) {
 
 void main () {
     // Normalized texture coordinate into dataGrid
-    vec3 dataCoord = vec3(f_textureCoord, dataGridLayer / dataGridDepth);
+    vec3 dataCoord = vec3(f_textureCoord, (dataGridLayer+0.5)/dataGridDepth);
 
     // Compute world position of 'dataCoord' within 'dataGrid'.
     vec3 worldPosition = getWorldPosition(dataGrid, dataCoord);
