@@ -878,38 +878,82 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- densityGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 5.0f);
+        shaderProgram_InjectData.setUniform("value", 0.5f);
+
         vec3 scaleFactor;
         scaleFactor.x = width / densityGrid.textureWidth;
         scaleFactor.y = height / densityGrid.textureHeight;
-        shaderProgram_InjectData.setUniform("modelMatrix", glm::scale(mat4(), scaleFactor));
+        scaleFactor.z = 1.0f;
+        mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
+        shaderProgram_InjectData.setUniform("modelMatrix", scaleMatrix);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
+                densityGrid.textureWidth);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
+                densityGrid.textureHeight);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
+                densityGrid.textureDepth);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
+                densityGrid.textureUnit);
+
+        glActiveTexture(GL_TEXTURE0 + densityGrid.textureUnit);
+        glBindTexture(GL_TEXTURE_3D, densityGrid.textureName[READ]);
 
         glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
+
         for (int layer = 0; layer < depth; ++layer) {
             bindFramebufferWithAttachments(framebuffer,
-                    densityGrid.textureName[READ], layer);
+                    densityGrid.textureName[WRITE], layer);
+
+            shaderProgram_InjectData.setUniform("currentLayer", float(layer));
 
             renderScreenQuad(shaderProgram_InjectData);
-
         }
     }
+    swapTextureNames(densityGrid);
 
     //-- temperatureGrid:
     {
-        shaderProgram_InjectData.setUniform("value", kTemp_0 + 200.0f);
+        shaderProgram_InjectData.setUniform("value", 20.0f);
         vec3 scaleFactor;
         scaleFactor.x = width / temperatureGrid.textureWidth;
         scaleFactor.y = height / temperatureGrid.textureHeight;
+        scaleFactor.z = 1.0f;
         shaderProgram_InjectData.setUniform("modelMatrix", glm::scale(mat4(), scaleFactor));
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
+                temperatureGrid.textureWidth);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
+                temperatureGrid.textureHeight);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
+                temperatureGrid.textureDepth);
+
+        shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
+                temperatureGrid.textureUnit);
+
+        glActiveTexture(GL_TEXTURE0 + temperatureGrid.textureUnit);
+        glBindTexture(GL_TEXTURE_3D, temperatureGrid.textureName[READ]);
+
         glViewport(0, 0, temperatureGrid.textureWidth, temperatureGrid.textureHeight);
+
         for (int layer = 0; layer < depth; ++layer) {
             bindFramebufferWithAttachments(framebuffer,
-                    temperatureGrid.textureName[READ], layer);
+                    temperatureGrid.textureName[WRITE], layer);
+
+            shaderProgram_InjectData.setUniform("currentLayer", float(layer));
 
             renderScreenQuad(shaderProgram_InjectData);
         }
     }
+    swapTextureNames(temperatureGrid);
 
+    glBindTexture(GL_TEXTURE_3D, 0);
+    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
@@ -938,7 +982,7 @@ void GpuSmokeSim3D::logic() {
     // 7. Render
 
     static int counter = 0;
-    if (counter < 60) {
+    if (counter < 120) {
         injectDensityAndTemperature();
         ++counter;
     }
@@ -947,7 +991,7 @@ void GpuSmokeSim3D::logic() {
 //    addBuoyantForce();
     computeRHS();
 
-//    inspectGridData(densityGrid);
+    inspectGridData(densityGrid);
 }
 
 //----------------------------------------------------------------------------------------
@@ -974,7 +1018,9 @@ void GpuSmokeSim3D::cleanup() {
 
     glDeleteTextures(2, u_velocityGrid.textureName);
     glDeleteTextures(2, v_velocityGrid.textureName);
+    glDeleteTextures(2, w_velocityGrid.textureName);
     glDeleteTextures(2, densityGrid.textureName);
+    glDeleteTextures(2, temperatureGrid.textureName);
     glDeleteTextures(1, &pressureGrid.textureName[0]);
     glDeleteTextures(1, &cellTypeGrid.textureName[0]);
 

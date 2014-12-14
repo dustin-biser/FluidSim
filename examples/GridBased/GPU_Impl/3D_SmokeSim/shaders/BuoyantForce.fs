@@ -56,4 +56,8 @@ void main () {
 
     float w_vel = linearInterp(w_velocityGrid, worldPosition);
     result = w_vel + timeStep*force;
+
+
+    // TODO Dustin - Remove after testing:
+    result = 0.0;
 }
