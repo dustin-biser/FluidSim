@@ -9,6 +9,9 @@ out float result;
 struct Grid {
     vec3 worldOrigin;
     float cellLength;      // Length of each cell
+    int textureWidth;
+    int textureHeight;
+    int textureDepth;
     sampler3D textureUnit; // Active texture unit
 };
 uniform Grid u_velocityGrid; // u velocity component
@@ -17,18 +20,34 @@ uniform Grid w_velocityGrid; // w vertical component
 uniform Grid dataGrid;       // Data to be advected
 
 uniform float timeStep;
-uniform float dataGridDepth;
-uniform uint dataGridLayer; // Layer within dataGrid that is currently being  processed.
+uniform uint currentLayer; // Layer within dataGrid that is currently being  processed.
 
-// Converts the texture coordinates 'texCoord' into a world position given the
-// worldOrigin and cellLength of 'grid'.
+// Converts the texture coordinates 'texCoord' into a world position.
 vec3 getWorldPosition(in Grid grid, in vec3 texCoord) {
+    // Offset due to values being at center of texture cells.
+    vec3 texOffset = vec3(0.5/grid.textureWidth,
+                          0.5/grid.textureHeight,
+                          0.5/grid.textureDepth);
+    // Move from center of texel to lower left of texel.
+    texCoord -= texOffset;
+
+    texCoord *= vec3(grid.textureWidth, grid.textureHeight, grid.textureDepth);
     texCoord *= grid.cellLength;
+
     return grid.worldOrigin + texCoord;
 }
 
 vec3 getTextureCoords(in Grid grid, in vec3 worldPosition) {
-    return (worldPosition - grid.worldOrigin) / vec3(grid.cellLength);
+    vec3 texCoord = worldPosition - grid.worldOrigin;
+    texCoord /= grid.cellLength;
+    texCoord /= vec3(grid.textureWidth, grid.textureHeight, grid.textureDepth);
+
+    // Offset due to values being at center of texture cells.
+    vec3 texOffset = vec3(0.5/grid.textureWidth,
+                          0.5/grid.textureHeight,
+                          0.5/grid.textureDepth);
+
+    return texCoord + texOffset;
 }
 
 float linearInterp(in Grid grid, in vec3 worldPosition) {
@@ -36,13 +55,13 @@ float linearInterp(in Grid grid, in vec3 worldPosition) {
     return texture(grid.textureUnit, texCoords).r;
 }
 
-
 void main () {
-    // Normalized texture coordinate into dataGrid
-    vec3 dataCoord = vec3(f_textureCoord, (dataGridLayer+0.5)/dataGridDepth);
+    // Normalized texture coordinate within w_velocityGrid
+    vec3 textureCoord;
+    textureCoord.xy = f_textureCoord;
+    textureCoord.z = (currentLayer+0.5) / dataGrid.textureDepth;
 
-    // Compute world position of 'dataCoord' within 'dataGrid'.
-    vec3 worldPosition = getWorldPosition(dataGrid, dataCoord);
+    vec3 worldPosition = getWorldPosition(dataGrid, textureCoord);
 
     // Interpolate (u,v) velocity at this world location.
     float u = linearInterp(u_velocityGrid, worldPosition);
@@ -61,6 +80,5 @@ void main () {
     worldPosition = worldPosition - (timeStep * velocity);
 
     result = linearInterp(dataGrid, worldPosition);
-
 }
 
