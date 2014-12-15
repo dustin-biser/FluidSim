@@ -1,4 +1,4 @@
-// ComputeRHS.fs
+// ComputeDivergence.fs
 #version 410
 
 out float result;

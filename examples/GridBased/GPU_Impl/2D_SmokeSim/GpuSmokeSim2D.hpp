@@ -22,7 +22,7 @@ using namespace std::chrono;
 //----------------------------------------------------------------------------------------
 const float32 kSecondsPerFrame = 1/100.0f;
 const float32 kDt = 0.008;
-const int32 solver_iterations = 60;
+const int32 kJacobiIterations = 60;
 const int32 kScreenWidth = 1024;
 const int32 kScreenHeight = 768;
 

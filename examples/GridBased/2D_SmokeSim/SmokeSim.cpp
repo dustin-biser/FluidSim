@@ -271,7 +271,7 @@ void SmokeSim::computePressure() {
     float32 neighborPressureSum;
 
     //-- Apply Gauss-Seidel iterations to Poisson-pressure problem:
-    for(int32 iteration(0); iteration < solver_iterations; ++iteration) {
+    for(int32 iteration(0); iteration < kJacobiIterations; ++iteration) {
 
         for (int32 row(0); row < cellGrid.height(); ++row) {
             for (int32 col(0); col < cellGrid.width(); ++col) {

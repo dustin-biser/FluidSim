@@ -22,7 +22,7 @@ using namespace glm;
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
 const float32 kDt = 0.008;
-const int32 solver_iterations = 60;
+const int32 kJacobiIterations = 60;
 
 //----------------------------------------------------------------------------------------
 // Fluid Parameters

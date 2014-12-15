@@ -25,7 +25,7 @@ class VolumeRenderer;
 //----------------------------------------------------------------------------------------
 const float32 kSecondsPerFrame = 1/80.0f;
 const float32 kDt = kSecondsPerFrame;//0.008;
-const int32 solver_iterations = 60;
+const int32 kJacobiIterations = 60;
 const int32 kScreenWidth = 1024;
 const int32 kScreenHeight = 768;
 
@@ -141,7 +141,7 @@ Grid pressureGrid = {
 };
 
 // Store right-hand-side (RHS) of Poisson-Pressure Solve, Ap = b.
-Grid rhsGrid = {
+Grid divergenceGrid = {
         0.5f*vec3(kDx,kDx,kDx), // worldOrigin, at center of voxel.
         kDx,                    // cellLength
         kSimTextureWidth,       // textureWidth
@@ -187,9 +187,10 @@ private:
 
     ShaderProgram shaderProgram_Advect;
     ShaderProgram shaderProgram_BuoyantForce;
-    ShaderProgram shaderProgram_ComputeRHS;
+    ShaderProgram shaderProgram_ComputeDivergence;
     ShaderProgram shaderProgram_SceneRenderer;
     ShaderProgram shaderProgram_InjectData;
+    ShaderProgram shaderProgram_PressureSolve;
 
     virtual void init();
     virtual void logic();
@@ -214,8 +215,10 @@ private:
     void advect(Grid & dataGrid);
     void advectQuantities();
     void addBuoyantForce();
-    void computeRHS();
+    void computeDivergence();
     void injectDensityAndTemperature();
+    void computePressure();
+    void projectVelocity();
     void render(const Grid & dataGrid);
 
 
