@@ -1,9 +1,6 @@
 // PressureSolve.fs
 #version 410
 
-// (s,t) texture-coordinate
-in vec2 f_textureCoord;
-
 out float result;
 
 struct Grid {
