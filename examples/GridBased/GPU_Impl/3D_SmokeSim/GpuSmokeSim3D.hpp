@@ -191,6 +191,9 @@ private:
     ShaderProgram shaderProgram_SceneRenderer;
     ShaderProgram shaderProgram_InjectData;
     ShaderProgram shaderProgram_PressureSolve;
+    ShaderProgram shaderProgram_ProjectU;
+    ShaderProgram shaderProgram_ProjectV;
+    ShaderProgram shaderProgram_ProjectW;
 
     virtual void init();
     virtual void logic();
@@ -219,6 +222,7 @@ private:
     void injectDensityAndTemperature();
     void computePressure();
     void projectVelocity();
+    void subtractPressureGradient(Grid & grid, ShaderProgram & shader);
     void render(const Grid & dataGrid);
 
 

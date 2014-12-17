@@ -89,6 +89,34 @@ void GpuSmokeSim3D::initCamera() {
 }
 
 //----------------------------------------------------------------------------------------
+// TODO Dustin - Can remove this after testing:
+static void fillGridWithData(const Grid & grid) {
+    int width = grid.textureWidth;
+    int height = grid.textureHeight;
+    int depth = grid.textureDepth;
+
+    float * data = new float[width * height * depth];
+
+    for (int i(0); i < width; ++i) {
+        for (int j(0); j < height; ++j) {
+            for (int k(0); k < depth; ++k) {
+                data[k * (width * height) + j * width + i] = k+1;
+            }
+        }
+    }
+
+    glBindTexture(GL_TEXTURE_3D, grid.textureName[READ]);
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, grid.textureWidth, grid.textureHeight,
+            grid.textureDepth, grid.components, grid.dataType, data);
+
+
+    glBindTexture(GL_TEXTURE_3D, 0);
+    delete [] data;
+
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
 /**
 * Fill simulation textures with initial data.
 */
@@ -168,6 +196,14 @@ void GpuSmokeSim3D::initTextureData() {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    // TODO Dustin - Remove after testing:
+    {
+        fillGridWithData(pressureGrid);
+    }
+
+
+
+
     //-- divergenceGrid:
     glViewport(0, 0, divergenceGrid.textureWidth, divergenceGrid.textureHeight);
     for(int layer = 0; layer < divergenceGrid.textureDepth; ++layer) {
@@ -184,7 +220,7 @@ void GpuSmokeSim3D::initTextureData() {
         bindFramebufferWithAttachments(framebuffer,
                 cellTypeGrid.textureName[READ], layer);
 
-        // Inside of volume is all Fluid (Solid = 1, Fluid = 0).
+        // Inside volume is all Fluid (Solid = 1, Fluid = 0).
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
@@ -255,19 +291,19 @@ void GpuSmokeSim3D::setupScreenQuadVboData() {
 void GpuSmokeSim3D::setupShaderPrograms() {
 
     shaderProgram_SceneRenderer.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.fs");
 
     shaderProgram_Advect.loadFromFile (
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.fs");
 
     shaderProgram_BuoyantForce.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/BuoyantForce.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/BuoyantForce.fs");
 
     shaderProgram_ComputeDivergence.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeDivergence.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeDivergence.fs");
 
     shaderProgram_InjectData.loadFromFile(
@@ -275,8 +311,20 @@ void GpuSmokeSim3D::setupShaderPrograms() {
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.fs");
 
     shaderProgram_PressureSolve.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/PressureSolve.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/PressureSolve.fs");
+
+    shaderProgram_ProjectU.loadFromFile(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectU.fs");
+
+    shaderProgram_ProjectV.loadFromFile(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectV.fs");
+
+    shaderProgram_ProjectW.loadFromFile(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectW.fs");
 
     CHECK_GL_ERRORS;
 }
@@ -483,6 +531,105 @@ void GpuSmokeSim3D::setShaderUniforms() {
         shaderProgram_PressureSolve.setUniform("cellTypeGrid.textureDepth",
                 cellTypeGrid.textureDepth);
 
+    }
+
+    //-- shaderProgram_ProjectU
+    {
+        shaderProgram_ProjectU.setUniform("pressureGrid.textureWidth",
+                pressureGrid.textureWidth);
+        shaderProgram_ProjectU.setUniform("pressureGrid.textureHeight",
+                pressureGrid.textureHeight);
+        shaderProgram_ProjectU.setUniform("pressureGrid.textureDepth",
+                pressureGrid.textureDepth);
+        shaderProgram_ProjectU.setUniform("pressureGrid.textureUnit",
+                pressureGrid.textureUnit);
+
+        shaderProgram_ProjectU.setUniform("cellTypeGrid.textureWidth",
+                cellTypeGrid.textureWidth);
+        shaderProgram_ProjectU.setUniform("cellTypeGrid.textureHeight",
+                cellTypeGrid.textureHeight);
+        shaderProgram_ProjectU.setUniform("cellTypeGrid.textureDepth",
+                cellTypeGrid.textureDepth);
+        shaderProgram_ProjectU.setUniform("cellTypeGrid.textureUnit",
+                cellTypeGrid.textureUnit);
+
+        shaderProgram_ProjectU.setUniform("u_velocityGrid.textureWidth",
+                u_velocityGrid.textureWidth);
+        shaderProgram_ProjectU.setUniform("u_velocityGrid.textureHeight",
+                u_velocityGrid.textureHeight);
+        shaderProgram_ProjectU.setUniform("u_velocityGrid.textureDepth",
+                u_velocityGrid.textureDepth);
+        shaderProgram_ProjectU.setUniform("u_velocityGrid.textureUnit",
+                u_velocityGrid.textureUnit);
+
+        shaderProgram_ProjectU.setUniform("solid_velocity", 0.0f);
+        shaderProgram_ProjectU.setUniform("scale", kDt/(kDensity*kDx));
+    }
+
+    //-- shaderProgram_ProjectV
+    {
+        shaderProgram_ProjectV.setUniform("pressureGrid.textureWidth",
+                pressureGrid.textureWidth);
+        shaderProgram_ProjectV.setUniform("pressureGrid.textureHeight",
+                pressureGrid.textureHeight);
+        shaderProgram_ProjectV.setUniform("pressureGrid.textureDepth",
+                pressureGrid.textureDepth);
+        shaderProgram_ProjectV.setUniform("pressureGrid.textureUnit",
+                pressureGrid.textureUnit);
+
+        shaderProgram_ProjectV.setUniform("cellTypeGrid.textureWidth",
+                cellTypeGrid.textureWidth);
+        shaderProgram_ProjectV.setUniform("cellTypeGrid.textureHeight",
+                cellTypeGrid.textureHeight);
+        shaderProgram_ProjectV.setUniform("cellTypeGrid.textureDepth",
+                cellTypeGrid.textureDepth);
+        shaderProgram_ProjectV.setUniform("cellTypeGrid.textureUnit",
+                cellTypeGrid.textureUnit);
+
+        shaderProgram_ProjectV.setUniform("v_velocityGrid.textureWidth",
+                v_velocityGrid.textureWidth);
+        shaderProgram_ProjectV.setUniform("v_velocityGrid.textureHeight",
+                v_velocityGrid.textureHeight);
+        shaderProgram_ProjectV.setUniform("v_velocityGrid.textureDepth",
+                v_velocityGrid.textureDepth);
+        shaderProgram_ProjectV.setUniform("v_velocityGrid.textureUnit",
+                v_velocityGrid.textureUnit);
+
+        shaderProgram_ProjectV.setUniform("solid_velocity", 0.0f);
+        shaderProgram_ProjectV.setUniform("scale", kDt/(kDensity*kDx));
+    }
+
+    //-- shaderProgram_ProjectW
+    {
+        shaderProgram_ProjectW.setUniform("pressureGrid.textureWidth",
+                pressureGrid.textureWidth);
+        shaderProgram_ProjectW.setUniform("pressureGrid.textureHeight",
+                pressureGrid.textureHeight);
+        shaderProgram_ProjectW.setUniform("pressureGrid.textureDepth",
+                pressureGrid.textureDepth);
+        shaderProgram_ProjectW.setUniform("pressureGrid.textureUnit",
+                pressureGrid.textureUnit);
+
+        shaderProgram_ProjectW.setUniform("cellTypeGrid.textureWidth",
+                cellTypeGrid.textureWidth);
+        shaderProgram_ProjectW.setUniform("cellTypeGrid.textureHeight",
+                cellTypeGrid.textureHeight);
+        shaderProgram_ProjectW.setUniform("cellTypeGrid.textureDepth",
+                cellTypeGrid.textureDepth);
+        shaderProgram_ProjectW.setUniform("cellTypeGrid.textureUnit",
+                cellTypeGrid.textureUnit);
+
+        shaderProgram_ProjectW.setUniform("w_velocityGrid.textureWidth",
+                w_velocityGrid.textureWidth);
+        shaderProgram_ProjectW.setUniform("w_velocityGrid.textureHeight",
+                w_velocityGrid.textureHeight);
+        shaderProgram_ProjectW.setUniform("w_velocityGrid.textureDepth",
+                w_velocityGrid.textureDepth);
+        shaderProgram_ProjectW.setUniform("w_velocityGrid.textureUnit",
+                w_velocityGrid.textureUnit);
+
+        shaderProgram_ProjectW.setUniform("solid_velocity", 0.0f);
+        shaderProgram_ProjectW.setUniform("scale", kDt/(kDensity*kDx));
     }
 
 }
@@ -733,6 +880,7 @@ void GpuSmokeSim3D::createTextureStorage() {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
 
         // Border color designates Solid cells (Solid = 1, Fluid = 0)
+        // Using red channel only.
         const GLfloat borderColor[4] = {1.0, 0.0, 0.0, 0.0};
         glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
@@ -1073,23 +1221,57 @@ void GpuSmokeSim3D::computePressure() {
 }
 
 //----------------------------------------------------------------------------------------
+/**
+* Subtracts off the gradient of pressure in order to make the current velocity
+* divergence free.
+*/
+void GpuSmokeSim3D::subtractPressureGradient(Grid & grid, ShaderProgram & shader) {
+    glViewport(0, 0, grid.textureWidth, grid.textureHeight);
+
+    glActiveTexture(GL_TEXTURE0 + pressureGrid.textureUnit);
+    glBindTexture(GL_TEXTURE_3D, pressureGrid.textureName[READ]);
+
+    glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
+    glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
+
+    glActiveTexture(GL_TEXTURE0 + grid.textureUnit);
+    glBindTexture(GL_TEXTURE_3D, grid.textureName[READ]);
+
+    // Process each layer of grid, one at a time:
+    for (uint layer = 0; layer < grid.textureDepth; ++layer) {
+        bindFramebufferWithAttachments(framebuffer, grid.textureName[WRITE],
+                layer);
+
+        shader.setUniform("currentLayer", layer);
+
+        renderScreenQuad(shader);
+    }
+    swapTextureNames(grid);
+
+    glBindTexture(GL_TEXTURE_3D, 0);
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::projectVelocity() {
-    // TODO Dustin - Implement this!
+    subtractPressureGradient(u_velocityGrid, shaderProgram_ProjectU);
+    subtractPressureGradient(v_velocityGrid, shaderProgram_ProjectV);
+    subtractPressureGradient(w_velocityGrid, shaderProgram_ProjectW);
 }
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::advectQuantities() {
-    advect(u_velocityGrid);
-    advect(v_velocityGrid);
-    advect(w_velocityGrid);
-    swapTextureNames(u_velocityGrid);
-    swapTextureNames(v_velocityGrid);
-    swapTextureNames(w_velocityGrid);
-
-    advect(densityGrid);
-    swapTextureNames(densityGrid);
-    advect(temperatureGrid);
-    swapTextureNames(temperatureGrid);
+//    advect(u_velocityGrid);
+//    advect(v_velocityGrid);
+//    advect(w_velocityGrid);
+//    swapTextureNames(u_velocityGrid);
+//    swapTextureNames(v_velocityGrid);
+//    swapTextureNames(w_velocityGrid);
+//
+//    advect(densityGrid);
+//    swapTextureNames(densityGrid);
+//    advect(temperatureGrid);
+//    swapTextureNames(temperatureGrid);
 }
 
 //----------------------------------------------------------------------------------------
@@ -1109,14 +1291,13 @@ void GpuSmokeSim3D::logic() {
         ++counter;
     }
 
-    advectQuantities();
-    addBuoyantForce();
-    computeDivergence();
-    computePressure();
+//    advectQuantities();
+//    addBuoyantForce();
+//    computeDivergence();
+//    computePressure();
     projectVelocity();
 
-
-//    inspectGridData(densityGrid);
+    inspectGridData(w_velocityGrid);
 }
 
 //----------------------------------------------------------------------------------------

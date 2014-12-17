@@ -494,10 +494,9 @@
 		EF6695B5EB2E9F973946D617 /* Timer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.inl; path = Timer.inl; sourceTree = "<group>"; };
 		EF6695CAA8EC66038654D8E7 /* InjectData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = InjectData.vs; sourceTree = "<group>"; };
 		EF66962CE14C9BBC8034B83A /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
-		EF669634CA270871EEB97444 /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
-		EF66965D721C817FDDE7191C /* BuoyantForce.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = BuoyantForce.vs; sourceTree = "<group>"; };
 		EF6696CD14D916A209CF3484 /* ComputeDivergence.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeDivergence.fs; sourceTree = "<group>"; };
 		EF6696E0E23A2B72A3423777 /* GraphicsRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GraphicsRenderer.hpp; sourceTree = "<group>"; };
+		EF66977066F3BCF7A0674074 /* ProjectV.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ProjectV.fs; sourceTree = "<group>"; };
 		EF66978C574A4E2E64D1A85D /* SmokeSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeSim.hpp; sourceTree = "<group>"; };
 		EF6697F38E9CD07520698D30 /* WriteOutData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = WriteOutData.vs; sourceTree = "<group>"; };
 		EF66983BC2F01F34CEEDB804 /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
@@ -508,7 +507,6 @@
 		EF6698AA53C449105CF1CC12 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF6698CF138E2D1333C00806 /* ColorScreen.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ColorScreen.vs; sourceTree = "<group>"; };
 		EF66990A1A75A4B08EE98B58 /* NoiseGenerator.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = NoiseGenerator.fs; sourceTree = "<group>"; };
-		EF669935E1B97C1E3D1F3EA8 /* PressureSolve.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = PressureSolve.vs; sourceTree = "<group>"; };
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlfwOpenGlWindow.cpp; sourceTree = "<group>"; };
 		EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderer.cpp; sourceTree = "<group>"; };
@@ -516,12 +514,13 @@
 		EF669A438020C6836504C8A8 /* VolumeRenderingExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderingExample.hpp; sourceTree = "<group>"; };
 		EF669A7E9DCDD468C467B09D /* BvEntry.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BvEntry.fs; sourceTree = "<group>"; };
 		EF669A80041D212360A52AD2 /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.vs; sourceTree = "<group>"; };
+		EF669A968767A522565C0C25 /* ProjectW.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ProjectW.fs; sourceTree = "<group>"; };
 		EF669A9D08C95C2145FC1DA7 /* RayDirection.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayDirection.fs; sourceTree = "<group>"; };
 		EF669AAB2BBD4415E3864349 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
 		EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderingExample.cpp; sourceTree = "<group>"; };
+		EF669B37BD6C786576629114 /* ForwardVertexData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ForwardVertexData.vs; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
-		EF669B84DD3C4BC0ECBBE470 /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669BC63BF08A24AB91B2E1 /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
 		EF669BF2991738CF77AE3D41 /* PressureSolve.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = PressureSolve.fs; sourceTree = "<group>"; };
 		EF669C182C48E938F3CA6546 /* RayMarch.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayMarch.fs; sourceTree = "<group>"; };
@@ -539,10 +538,10 @@
 		EF669DFE3E21E8EFDAAB7108 /* Interp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interp.hpp; sourceTree = "<group>"; };
 		EF669E1C1F8D15FB4AB5E390 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
 		EF669E21FED0704F12D9A135 /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
-		EF669E7BFC946B1F8A0034F5 /* ComputeDivergence.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeDivergence.vs; sourceTree = "<group>"; };
 		EF669EB410FDB179D4990FCD /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669EBEF8FC4E7D665574E5 /* SmokeSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim.cpp; sourceTree = "<group>"; };
 		EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BuoyantForce.fs; sourceTree = "<group>"; };
+		EF669ED02CDB79E5733D285C /* ProjectU.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ProjectU.fs; sourceTree = "<group>"; };
 		EF669ED67D1B98CA4360AA6B /* SphSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphSim.hpp; sourceTree = "<group>"; };
 		EF669EFC819F6190C0D57CEF /* RayDirection.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = RayDirection.vs; sourceTree = "<group>"; };
 		EF669F19BA336DC6C1C8168A /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
@@ -1346,17 +1345,16 @@
 				EF6693C2BC5EA2718AC83D1F /* ScreenQuad.fs */,
 				EF66962CE14C9BBC8034B83A /* Advect.fs */,
 				EF6696CD14D916A209CF3484 /* ComputeDivergence.fs */,
-				EF669634CA270871EEB97444 /* ScreenQuad.vs */,
 				EF66983BC2F01F34CEEDB804 /* LineRender.vs */,
 				EF669049A888B3DE6CBC241F /* LineRender.fs */,
-				EF669E7BFC946B1F8A0034F5 /* ComputeDivergence.vs */,
-				EF669B84DD3C4BC0ECBBE470 /* Advect.vs */,
-				EF66965D721C817FDDE7191C /* BuoyantForce.vs */,
 				EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */,
 				EF6695CAA8EC66038654D8E7 /* InjectData.vs */,
 				EF669501964B405D93F4CD2B /* InjectData.fs */,
-				EF669935E1B97C1E3D1F3EA8 /* PressureSolve.vs */,
 				EF669BF2991738CF77AE3D41 /* PressureSolve.fs */,
+				EF669ED02CDB79E5733D285C /* ProjectU.fs */,
+				EF669B37BD6C786576629114 /* ForwardVertexData.vs */,
+				EF66977066F3BCF7A0674074 /* ProjectV.fs */,
+				EF669A968767A522565C0C25 /* ProjectW.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
