@@ -196,14 +196,6 @@ void GpuSmokeSim3D::initTextureData() {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    // TODO Dustin - Remove after testing:
-    {
-        fillGridWithData(pressureGrid);
-    }
-
-
-
-
     //-- divergenceGrid:
     glViewport(0, 0, divergenceGrid.textureWidth, divergenceGrid.textureHeight);
     for(int layer = 0; layer < divergenceGrid.textureDepth; ++layer) {
@@ -1096,11 +1088,11 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     float width = 20;
     float height = 20;
-    float depth = 5;
+    float depth = 10;
 
     //-- densityGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 2.0f);
+        shaderProgram_InjectData.setUniform("value", 20.0f);
 
         vec3 scaleFactor;
         scaleFactor.x = width / densityGrid.textureWidth;
@@ -1111,13 +1103,10 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
         shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
                 densityGrid.textureWidth);
-
         shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
                 densityGrid.textureHeight);
-
         shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
                 densityGrid.textureDepth);
-
         shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
                 densityGrid.textureUnit);
 
@@ -1139,7 +1128,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- temperatureGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 150.0f);
+        shaderProgram_InjectData.setUniform("value", 200.0f);
         vec3 scaleFactor;
         scaleFactor.x = width / temperatureGrid.textureWidth;
         scaleFactor.y = height / temperatureGrid.textureHeight;
@@ -1148,13 +1137,10 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
         shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
                 temperatureGrid.textureWidth);
-
         shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
                 temperatureGrid.textureHeight);
-
         shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
                 temperatureGrid.textureDepth);
-
         shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
                 temperatureGrid.textureUnit);
 
@@ -1185,10 +1171,13 @@ void GpuSmokeSim3D::computePressure() {
 
     // Zero out all pressures values, which will be the initial guess for Jacobi
     // iteration.
-    for (int layer = 0; layer < pressureGrid.textureDepth; ++layer) {
-        bindFramebufferWithAttachments(framebuffer, pressureGrid.textureName[READ], layer);
-        glClearColor(0,0,0,0);
-        glClear(GL_COLOR_BUFFER_BIT);
+    for (int i = 0; i < 2; ++i) {
+        for (int layer = 0; layer < pressureGrid.textureDepth; ++layer) {
+            bindFramebufferWithAttachments(framebuffer, pressureGrid.textureName[i],
+                    layer);
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
     }
 
     glActiveTexture(GL_TEXTURE0 + pressureGrid.textureUnit);
@@ -1205,7 +1194,8 @@ void GpuSmokeSim3D::computePressure() {
 
         // Process each layer of pressureGrid one at a time:
         for (uint layer = 0; layer < pressureGrid.textureDepth; ++layer) {
-            bindFramebufferWithAttachments(framebuffer, pressureGrid.textureName[READ], layer);
+            bindFramebufferWithAttachments(framebuffer, pressureGrid.textureName[WRITE],
+                    layer);
 
             shaderProgram_PressureSolve.setUniform("currentLayer", layer);
 
@@ -1261,17 +1251,17 @@ void GpuSmokeSim3D::projectVelocity() {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::advectQuantities() {
-//    advect(u_velocityGrid);
-//    advect(v_velocityGrid);
-//    advect(w_velocityGrid);
-//    swapTextureNames(u_velocityGrid);
-//    swapTextureNames(v_velocityGrid);
-//    swapTextureNames(w_velocityGrid);
-//
-//    advect(densityGrid);
-//    swapTextureNames(densityGrid);
-//    advect(temperatureGrid);
-//    swapTextureNames(temperatureGrid);
+    advect(u_velocityGrid);
+    advect(v_velocityGrid);
+    advect(w_velocityGrid);
+    swapTextureNames(u_velocityGrid);
+    swapTextureNames(v_velocityGrid);
+    swapTextureNames(w_velocityGrid);
+
+    advect(densityGrid);
+    swapTextureNames(densityGrid);
+    advect(temperatureGrid);
+    swapTextureNames(temperatureGrid);
 }
 
 //----------------------------------------------------------------------------------------
@@ -1286,18 +1276,18 @@ void GpuSmokeSim3D::logic() {
     //  Render
 
     static int counter = 0;
-    if (counter < 120) {
+    if (counter < 2) {
         injectDensityAndTemperature();
         ++counter;
     }
 
-//    advectQuantities();
-//    addBuoyantForce();
-//    computeDivergence();
-//    computePressure();
+    advectQuantities();
+    addBuoyantForce();
+    computeDivergence();
+    computePressure();
     projectVelocity();
 
-    inspectGridData(w_velocityGrid);
+//    inspectGridData(w_velocityGrid);
 }
 
 //----------------------------------------------------------------------------------------
