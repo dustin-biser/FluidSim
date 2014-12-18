@@ -71,6 +71,8 @@ void GpuSmokeSim3D::init() {
 
     setShaderUniforms();
 
+    createSolidCells();
+
     initCamera();
 
     glClearColor(0.0, 0.0, 0.0, 1.0f);
@@ -222,6 +224,48 @@ void GpuSmokeSim3D::initTextureData() {
     glViewport(0,0, defaultFramebufferWidth(), defaultFramebufferHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     CHECK_GL_ERRORS;
+}
+//----------------------------------------------------------------------------------------
+void GpuSmokeSim3D::createSolidCells() {
+    float width = 20;
+    float height  = 20;
+
+    vec3 scaleFactor;
+    scaleFactor.x = width / cellTypeGrid.textureWidth;
+    scaleFactor.y = height / cellTypeGrid.textureHeight;
+    scaleFactor.z = 1.0f;
+    mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
+    mat4 transMatrix = glm::translate(mat4(), vec3(0,0,0));
+    mat4 modelMatrix = transMatrix * scaleMatrix;
+
+    // Make Solid Cells, Solid = 1.
+    shaderProgram_InjectData.setUniform("value", 1.0f);
+
+    shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
+
+    shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
+            cellTypeGrid.textureWidth);
+    shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
+            cellTypeGrid.textureHeight);
+    shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
+            cellTypeGrid.textureDepth);
+    shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
+            cellTypeGrid.textureUnit);
+
+    glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
+    glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
+
+    glViewport(0, 0, cellTypeGrid.textureWidth, cellTypeGrid.textureHeight);
+
+    for (int layer = 40; layer < 45; ++layer) {
+        bindFramebufferWithAttachments(framebuffer,
+                cellTypeGrid.textureName[READ], layer);
+
+        shaderProgram_InjectData.setUniform("currentLayer", float(layer));
+
+        renderScreenQuad(shaderProgram_InjectData);
+    }
+
 }
 
 //----------------------------------------------------------------------------------------
@@ -1089,19 +1133,23 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     float width = 10;
     float height = 10;
-    float depth = 4;
+    float depth = 5;
+    int startLayer = 1;
+    depth += startLayer;
+
 
     vec3 scaleFactor;
     scaleFactor.x = width / temperatureGrid.textureWidth;
     scaleFactor.y = height / temperatureGrid.textureHeight;
     scaleFactor.z = 1.0f;
     mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
-    mat4 transMatrix = glm::translate(mat4(), vec3(0.0));
+    mat4 transMatrix = glm::translate(mat4(), vec3(-0.5,-0.5,0));
     mat4 modelMatrix = transMatrix * scaleMatrix;
+
 
     //-- densityGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 15.0f);
+        shaderProgram_InjectData.setUniform("value", 25.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
@@ -1119,7 +1167,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
         glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
 
-        for (int layer = 0; layer < depth; ++layer) {
+        for (int layer = startLayer; layer < depth; ++layer) {
             bindFramebufferWithAttachments(framebuffer,
                     densityGrid.textureName[WRITE], layer);
 
@@ -1132,7 +1180,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- temperatureGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 320.0f);
+        shaderProgram_InjectData.setUniform("value", 520.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
@@ -1150,7 +1198,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
         glViewport(0, 0, temperatureGrid.textureWidth, temperatureGrid.textureHeight);
 
-        for (int layer = 0; layer < depth; ++layer) {
+        for (int layer = startLayer; layer < depth; ++layer) {
             bindFramebufferWithAttachments(framebuffer,
                     temperatureGrid.textureName[WRITE], layer);
 
@@ -1160,52 +1208,6 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
         }
     }
     swapTextureNames(temperatureGrid);
-
-
-    // TODO Dustin - Remove this:
-    //-- cellTypeGrid:
-    {
-        float width = 20;
-        float height  = 20;
-
-        vec3 scaleFactor;
-        scaleFactor.x = width / cellTypeGrid.textureWidth;
-        scaleFactor.y = height / cellTypeGrid.textureHeight;
-        scaleFactor.z = 1.0f;
-        mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
-        mat4 transMatrix = glm::translate(mat4(), vec3(0,0,0));
-        mat4 modelMatrix = transMatrix * scaleMatrix;
-
-        // Make Solid Cells:
-        shaderProgram_InjectData.setUniform("value", 1.0f);
-
-        shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
-
-        shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
-                cellTypeGrid.textureWidth);
-        shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
-                cellTypeGrid.textureHeight);
-        shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
-                cellTypeGrid.textureDepth);
-        shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
-                cellTypeGrid.textureUnit);
-
-        glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
-        glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
-
-        glViewport(0, 0, cellTypeGrid.textureWidth, cellTypeGrid.textureHeight);
-
-        for (int layer = 40; layer < 45; ++layer) {
-            bindFramebufferWithAttachments(framebuffer,
-                    cellTypeGrid.textureName[READ], layer);
-
-            shaderProgram_InjectData.setUniform("currentLayer", float(layer));
-
-            renderScreenQuad(shaderProgram_InjectData);
-        }
-    }
-
-
 
 
     glBindTexture(GL_TEXTURE_3D, 0);

@@ -25,7 +25,7 @@ class VolumeRenderer;
 //----------------------------------------------------------------------------------------
 const float32 kSecondsPerFrame = 1/80.0f;
 const float32 kDt = 0.008;
-const int32 kJacobiIterations = 60;
+const int32 kJacobiIterations = 80;
 const int32 kScreenWidth = 1024;
 const int32 kScreenHeight = 768;
 
@@ -205,6 +205,7 @@ private:
     void createDepthBufferStorage();
     void createTextureStorage();
     void initTextureData();
+    void createSolidCells();
     void setupScreenQuadVboData();
     void setupShaderPrograms();
     void setShaderUniforms();
