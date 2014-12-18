@@ -243,15 +243,6 @@ void GpuSmokeSim3D::createSolidCells() {
 
     shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
-    shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
-            cellTypeGrid.textureWidth);
-    shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
-            cellTypeGrid.textureHeight);
-    shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
-            cellTypeGrid.textureDepth);
-    shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
-            cellTypeGrid.textureUnit);
-
     glActiveTexture(GL_TEXTURE0 + cellTypeGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, cellTypeGrid.textureName[READ]);
 
@@ -260,8 +251,6 @@ void GpuSmokeSim3D::createSolidCells() {
     for (int layer = 40; layer < 45; ++layer) {
         bindFramebufferWithAttachments(framebuffer,
                 cellTypeGrid.textureName[READ], layer);
-
-        shaderProgram_InjectData.setUniform("currentLayer", float(layer));
 
         renderScreenQuad(shaderProgram_InjectData);
     }
@@ -1131,9 +1120,9 @@ void GpuSmokeSim3D::addBuoyantForce() {
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::injectDensityAndTemperature() {
 
-    float width = 10;
-    float height = 10;
-    float depth = 5;
+    float width = 6;
+    float height = 6;
+    float depth = 2;
     int startLayer = 1;
     depth += startLayer;
 
@@ -1143,71 +1132,51 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
     scaleFactor.y = height / temperatureGrid.textureHeight;
     scaleFactor.z = 1.0f;
     mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
-    mat4 transMatrix = glm::translate(mat4(), vec3(-0.5,-0.5,0));
+    mat4 transMatrix = glm::translate(mat4(), vec3(0,0,0));
     mat4 modelMatrix = transMatrix * scaleMatrix;
 
 
     //-- densityGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 25.0f);
+        shaderProgram_InjectData.setUniform("value", 450.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
-
-        shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
-                densityGrid.textureWidth);
-        shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
-                densityGrid.textureHeight);
-        shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
-                densityGrid.textureDepth);
-        shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
-                densityGrid.textureUnit);
 
         glActiveTexture(GL_TEXTURE0 + densityGrid.textureUnit);
         glBindTexture(GL_TEXTURE_3D, densityGrid.textureName[READ]);
 
         glViewport(0, 0, densityGrid.textureWidth, densityGrid.textureHeight);
 
-        for (int layer = startLayer; layer < depth; ++layer) {
-            bindFramebufferWithAttachments(framebuffer,
-                    densityGrid.textureName[WRITE], layer);
+        for (int i = 0; i < 2; ++i) {
+            for (int layer = startLayer; layer < depth; ++layer) {
+                bindFramebufferWithAttachments(framebuffer,
+                        densityGrid.textureName[i], layer);
 
-            shaderProgram_InjectData.setUniform("currentLayer", float(layer));
-
-            renderScreenQuad(shaderProgram_InjectData);
+                renderScreenQuad(shaderProgram_InjectData);
+            }
         }
     }
-    swapTextureNames(densityGrid);
 
     //-- temperatureGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 520.0f);
+        shaderProgram_InjectData.setUniform("value", 720.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
-
-        shaderProgram_InjectData.setUniform("dataGrid.textureWidth",
-                temperatureGrid.textureWidth);
-        shaderProgram_InjectData.setUniform("dataGrid.textureHeight",
-                temperatureGrid.textureHeight);
-        shaderProgram_InjectData.setUniform("dataGrid.textureDepth",
-                temperatureGrid.textureDepth);
-        shaderProgram_InjectData.setUniform("dataGrid.textureUnit",
-                temperatureGrid.textureUnit);
 
         glActiveTexture(GL_TEXTURE0 + temperatureGrid.textureUnit);
         glBindTexture(GL_TEXTURE_3D, temperatureGrid.textureName[READ]);
 
         glViewport(0, 0, temperatureGrid.textureWidth, temperatureGrid.textureHeight);
 
-        for (int layer = startLayer; layer < depth; ++layer) {
-            bindFramebufferWithAttachments(framebuffer,
-                    temperatureGrid.textureName[WRITE], layer);
+        for (int i = 0; i < 2; ++i) {
+            for (int layer = startLayer; layer < depth; ++layer) {
+                bindFramebufferWithAttachments(framebuffer,
+                        temperatureGrid.textureName[i], layer);
 
-            shaderProgram_InjectData.setUniform("currentLayer", float(layer));
-
-            renderScreenQuad(shaderProgram_InjectData);
+                renderScreenQuad(shaderProgram_InjectData);
+            }
         }
     }
-    swapTextureNames(temperatureGrid);
 
 
     glBindTexture(GL_TEXTURE_3D, 0);
@@ -1326,7 +1295,7 @@ void GpuSmokeSim3D::logic() {
     //  Render
 
     static int counter = 0;
-    if (counter < 2) {
+    if (counter < 60) {
         injectDensityAndTemperature();
         ++counter;
     }
