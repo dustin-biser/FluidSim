@@ -227,8 +227,8 @@ void GpuSmokeSim3D::initTextureData() {
 }
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::createSolidCells() {
-    float width = 20;
-    float height  = 20;
+    float width = 10;
+    float height  = 10;
 
     vec3 scaleFactor;
     scaleFactor.x = width / cellTypeGrid.textureWidth;
@@ -248,7 +248,7 @@ void GpuSmokeSim3D::createSolidCells() {
 
     glViewport(0, 0, cellTypeGrid.textureWidth, cellTypeGrid.textureHeight);
 
-    for (int layer = 40; layer < 45; ++layer) {
+    for (int layer = 20; layer < 35; ++layer) {
         bindFramebufferWithAttachments(framebuffer,
                 cellTypeGrid.textureName[READ], layer);
 
@@ -1138,7 +1138,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- densityGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 450.0f);
+        shaderProgram_InjectData.setUniform("value", 100.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
@@ -1159,7 +1159,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- temperatureGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 720.0f);
+        shaderProgram_InjectData.setUniform("value", 420.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
