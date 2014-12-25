@@ -18,8 +18,9 @@ void SphGraphics::init(const vector<Particle> & particles) {
 
 //----------------------------------------------------------------------------------------
 void SphGraphics::SetupShaders() {
-    shaderProgram.loadFromFile("data/shaders/InstancedCircles.vs",
-                               "data/shaders/InstancedCircles.fs");
+    shaderProgram.attachVertexShader("data/shaders/InstancedCircles.vs");
+    shaderProgram.attachFragmentShader("data/shaders/InstancedCircles.fs");
+    shaderProgram.link();
 }
 
 //----------------------------------------------------------------------------------------

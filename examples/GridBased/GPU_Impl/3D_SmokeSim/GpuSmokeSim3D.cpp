@@ -316,41 +316,59 @@ void GpuSmokeSim3D::setupScreenQuadVboData() {
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::setupShaderPrograms() {
 
-    shaderProgram_SceneRenderer.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_SceneRenderer.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_SceneRenderer.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.fs");
+    shaderProgram_SceneRenderer.link();
 
-    shaderProgram_Advect.loadFromFile (
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_Advect.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_Advect.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.fs");
+    shaderProgram_Advect.link();
 
-    shaderProgram_BuoyantForce.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_BuoyantForce.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_BuoyantForce.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/BuoyantForce.fs");
+    shaderProgram_BuoyantForce.link();
 
-    shaderProgram_ComputeDivergence.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_ComputeDivergence.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_ComputeDivergence.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeDivergence.fs");
+    shaderProgram_ComputeDivergence.link();
 
-    shaderProgram_InjectData.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.vs",
+    shaderProgram_InjectData.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.vs");
+    shaderProgram_InjectData.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.fs");
+    shaderProgram_InjectData.link();
 
-    shaderProgram_PressureSolve.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_PressureSolve.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_PressureSolve.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/PressureSolve.fs");
+    shaderProgram_PressureSolve.link();
 
-    shaderProgram_ProjectU.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_ProjectU.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_ProjectU.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectU.fs");
+    shaderProgram_ProjectU.link();
 
-    shaderProgram_ProjectV.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_ProjectV.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_ProjectV.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectV.fs");
+    shaderProgram_ProjectV.link();
 
-    shaderProgram_ProjectW.loadFromFile(
-            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs",
+    shaderProgram_ProjectW.attachVertexShader(
+            "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
+    shaderProgram_ProjectW.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectW.fs");
+    shaderProgram_ProjectW.link();
 
     CHECK_GL_ERRORS;
 }

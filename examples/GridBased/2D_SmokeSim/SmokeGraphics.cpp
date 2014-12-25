@@ -28,11 +28,13 @@ void SmokeGraphics::init(const Grid<float32> & inkGrid) {
 
 //----------------------------------------------------------------------------------------
 void SmokeGraphics::setupShaders() {
-    screenQuad_shaderProgram.loadFromFile("data/shaders/Smoke2DAdvect.vs",
-                                          "data/shaders/Smoke2DAdvect.fs");
+    screenQuad_shaderProgram.attachVertexShader("data/shaders/Smoke2DAdvect.vs");
+    screenQuad_shaderProgram.attachFragmentShader("data/shaders/Smoke2DAdvect.fs");
+    screenQuad_shaderProgram.link();
 
-    solidCell_shaderProgram.loadFromFile("data/shaders/SolidCell.vs",
-                                         "data/shaders/SolidCell.fs");
+    solidCell_shaderProgram.attachVertexShader("data/shaders/SolidCell.vs");
+    solidCell_shaderProgram.attachFragmentShader("data/shaders/SolidCell.fs");
+    solidCell_shaderProgram.link();
 }
 
 //----------------------------------------------------------------------------------------
