@@ -9,6 +9,7 @@ layout (location = 1) in float zLayer; // In the range [0..1].
 
 uniform sampler3D densityTexture;
 
+out float densityValue;
 
 void main() {
 	vec4 f0123; // Density values at all
@@ -18,10 +19,7 @@ void main() {
 
 	uvw = vec3(uvCoord, zLayer);
 
-	float densityValue = texture(densityTexture, uvw).r;
-
-	gl_Position = vec4(densityValue, 0.0, 0.0, 1.0);
-
+	densityValue = texture(densityTexture, uvw).r;
 
 	// Convert from texture-space to [-1..1] range in world-space.
 //	vec3 ws_Position = 2.0*vec3(uvCoord,zLayer)-vec3(1.0);

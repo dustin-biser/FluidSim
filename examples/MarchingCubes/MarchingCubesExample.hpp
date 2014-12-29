@@ -17,9 +17,9 @@ class MarchingCubesRenderer;
 const int kScreenWidth = 1024;
 const int kScreenHeight = 768;
 
-const int kBoundingVolumeWidth  = 128;
-const int kBoundingVolumeHeight = 128;
-const int kBoundingVolumeDepth  = 128;
+const int kBoundingVolumeWidth  = 8;
+const int kBoundingVolumeHeight = 8;
+const int kBoundingVolumeDepth  = 8;
 
 class MarchingCubesExample : public GlfwOpenGlWindow {
 

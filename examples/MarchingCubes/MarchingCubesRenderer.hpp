@@ -46,6 +46,7 @@ private:
     GLuint vao;
     GLuint vbo_voxelUvCoords;  // texture coordinate for lower-left corner of each voxel.
     GLuint vbo_voxelZLayer;  // texture z layer of each voxel.
+    GLuint tbo; // transform feedback buffer.
 
     void setupVoxelUvCoordVboData();
     void setupVao();
@@ -53,5 +54,7 @@ private:
     void setShaderUniforms();
     void setupVoxelZLayerVboData();
     void setupSamplerObject();
+    void setupTransformFeedbackBuffer();
+    void inspectTransformFeedbackBuffer();
 
 };
