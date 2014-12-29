@@ -18,6 +18,7 @@ MarchingCubesRenderer::MarchingCubesRenderer(
     setupVoxelZLayerVboData();
     setupVao();
     setupSamplerObject();
+    setupTransformFeedbackBuffer();
 }
 
 //---------------------------------------------------------------------------------------
@@ -27,12 +28,19 @@ MarchingCubesRenderer::~MarchingCubesRenderer() {
 
 //---------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setupShaders() {
+    shaderProgram.generateProgramObject();
     shaderProgram.attachVertexShader
             ("examples/MarchingCubes/shaders/MarchingCubes.vs");
-    shaderProgram.attachGeometryShader
-            ("examples/MarchingCubes/shaders/MarchingCubes.gs");
-    shaderProgram.attachFragmentShader
-            ("examples/MarchingCubes/shaders/PhongLighting.fs");
+
+//    shaderProgram.attachGeometryShader
+//            ("examples/MarchingCubes/shaders/MarchingCubes.gs");
+//    shaderProgram.attachFragmentShader
+//            ("examples/MarchingCubes/shaders/PhongLighting.fs");
+
+    const GLchar * feedbackVaryings[] = {"densityValue"};
+    glTransformFeedbackVaryings(shaderProgram.getProgramObject(), 1, feedbackVaryings,
+            GL_INTERLEAVED_ATTRIBS);
+
     shaderProgram.link();
 }
 
@@ -106,6 +114,7 @@ void MarchingCubesRenderer::setupVao() {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glEnableVertexAttribArray(uvCoord_attrib_index);
+    glEnableVertexAttribArray(zLayerCoord_attrib_index);
 
     //-- voxel uv coordinates:
     {
@@ -131,10 +140,8 @@ void MarchingCubesRenderer::setupVao() {
         glVertexAttribPointer(zLayerCoord_attrib_index, elementsPerVertex, GL_FLOAT,
                 GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
 
-        // Advance after (gridWidth-1)*(gridHeight-1) GL_POINT primitives have been
-        // rendered, which corresponds to one 2D layer of GL_POINTS.
-        glVertexAttribDivisor(zLayerCoord_attrib_index, (gridWidth-1)*(gridHeight-1));
-
+        // Advance once per 2D layer of GL_POINT primitives
+        glVertexAttribDivisor(zLayerCoord_attrib_index, 1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         CHECK_GL_ERRORS;
@@ -152,15 +159,26 @@ void MarchingCubesRenderer::render(
         const Rigid3D::Camera & camera,
         GLuint volumeData_texture3d
 ){
+    // Prevent rasterization.
+    glEnable(GL_RASTERIZER_DISCARD);
+
     glBindVertexArray(vao);
 
     glActiveTexture(GL_TEXTURE0 + textureUnitOffset);
     glBindTexture(GL_TEXTURE_3D, volumeData_texture3d);
     glBindSampler(textureUnitOffset, sampler_volumeData);
 
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tbo);
+
     shaderProgram.enable();
-    glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth-1);
+		glBeginTransformFeedback(GL_POINTS);
+		glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
+		glEndTransformFeedback();
     shaderProgram.disable();
+    glFlush();
+
+    // TODO Dustin - remove this after testing:
+		inspectTransformFeedbackBuffer();
 
     glBindVertexArray(0);
     CHECK_GL_ERRORS;
@@ -173,4 +191,28 @@ void MarchingCubesRenderer::setupSamplerObject() {
     glSamplerParameterf(sampler_volumeData, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
+    glGenBuffers(1, &tbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tbo);
+
+    GLsizei dataSize = sizeof(float) * (gridWidth-1) * (gridHeight-1) * (gridDepth - 1);
+    glBufferData(GL_ARRAY_BUFFER, dataSize, nullptr, GL_STATIC_READ);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
+    GLsizei numFloats =  (gridWidth-1) * (gridHeight-1) * (gridDepth-1);
+    GLfloat * feedbackData = new float[numFloats];
+
+    glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float)*numFloats, feedbackData);
+
+    delete [] feedbackData;
+    CHECK_GL_ERRORS;
+
 }
