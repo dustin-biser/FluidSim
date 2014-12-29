@@ -23,19 +23,19 @@ VolumeRenderer::VolumeRenderer(
 
     glGenVertexArrays(1, &bvVao);
     glBindVertexArray(bvVao);
-    glEnableVertexAttribArray(position_attrib_index);
+    glEnableVertexAttribArray(uvCoord_attrib_index);
     glEnableVertexAttribArray(color_attrib_index);
     glBindVertexArray(0);
 
     glGenVertexArrays(1, &screenQuadVao);
     glBindVertexArray(screenQuadVao);
-    glEnableVertexAttribArray(position_attrib_index);
-    glEnableVertexAttribArray(textureCoord_attrib_index);
+    glEnableVertexAttribArray(uvCoord_attrib_index);
+    glEnableVertexAttribArray(zLayerCoord_attrib_index);
     glBindVertexArray(0);
 
     glGenVertexArrays(1, &bvEdgesVao);
     glBindVertexArray(bvEdgesVao);
-    glEnableVertexAttribArray(position_attrib_index);
+    glEnableVertexAttribArray(uvCoord_attrib_index);
     glBindVertexArray(0);
 
     glViewport(0, 0, framebufferWidth, framebufferHeight);
@@ -259,7 +259,7 @@ void VolumeRenderer::setupBoundingVolumeVertexData() {
     int32 elementsPerVertex = 3;
     int32 stride = 6 * sizeof(float32);
     int32 offsetToFirstElement = 0;
-    glVertexAttribPointer(position_attrib_index, elementsPerVertex,
+    glVertexAttribPointer(uvCoord_attrib_index, elementsPerVertex,
             GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
 
     //-- Vertex Color Attribute Mapping:
@@ -318,7 +318,7 @@ void VolumeRenderer::setupBoundingVolumeEdgesVAO() {
     int32 elementsPerVertex = 3;
     int32 stride = 0;
     int32 offsetToFirstElement = 0;
-    glVertexAttribPointer(position_attrib_index, elementsPerVertex,
+    glVertexAttribPointer(uvCoord_attrib_index, elementsPerVertex,
             GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
 
     glBindVertexArray(0);
@@ -354,14 +354,14 @@ void VolumeRenderer::setupScreenQuadVboData() {
         elementsPerVertex = 2;
         stride = 4*sizeof(float32);
         offsetToFirstElement = 0;
-        glVertexAttribPointer(position_attrib_index, elementsPerVertex, GL_FLOAT,
+        glVertexAttribPointer(uvCoord_attrib_index, elementsPerVertex, GL_FLOAT,
                 GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
 
         //-- Texture Coordinate Data:
         elementsPerVertex = 2;
         stride = 4*sizeof(float32);
         offsetToFirstElement = 2*sizeof(float32);
-        glVertexAttribPointer(textureCoord_attrib_index, elementsPerVertex, GL_FLOAT,
+        glVertexAttribPointer(zLayerCoord_attrib_index, elementsPerVertex, GL_FLOAT,
                 GL_FALSE, stride, reinterpret_cast<void *>(offsetToFirstElement));
     }
 
