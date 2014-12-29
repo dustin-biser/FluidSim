@@ -316,54 +316,63 @@ void GpuSmokeSim3D::setupScreenQuadVboData() {
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::setupShaderPrograms() {
 
+    shaderProgram_SceneRenderer.generateProgramObject();
     shaderProgram_SceneRenderer.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_SceneRenderer.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ScreenQuad.fs");
     shaderProgram_SceneRenderer.link();
 
+    shaderProgram_Advect.generateProgramObject();
     shaderProgram_Advect.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_Advect.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/Advect.fs");
     shaderProgram_Advect.link();
 
+    shaderProgram_BuoyantForce.generateProgramObject();
     shaderProgram_BuoyantForce.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_BuoyantForce.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/BuoyantForce.fs");
     shaderProgram_BuoyantForce.link();
 
+    shaderProgram_ComputeDivergence.generateProgramObject();
     shaderProgram_ComputeDivergence.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_ComputeDivergence.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ComputeDivergence.fs");
     shaderProgram_ComputeDivergence.link();
 
+    shaderProgram_InjectData.generateProgramObject();
     shaderProgram_InjectData.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.vs");
     shaderProgram_InjectData.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/InjectData.fs");
     shaderProgram_InjectData.link();
 
+    shaderProgram_PressureSolve.generateProgramObject();
     shaderProgram_PressureSolve.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_PressureSolve.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/PressureSolve.fs");
     shaderProgram_PressureSolve.link();
 
+    shaderProgram_ProjectU.generateProgramObject();
     shaderProgram_ProjectU.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_ProjectU.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectU.fs");
     shaderProgram_ProjectU.link();
 
+    shaderProgram_ProjectV.generateProgramObject();
     shaderProgram_ProjectV.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_ProjectV.attachFragmentShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ProjectV.fs");
     shaderProgram_ProjectV.link();
 
+    shaderProgram_ProjectW.generateProgramObject();
     shaderProgram_ProjectW.attachVertexShader(
             "examples/GridBased/GPU_Impl/3D_SmokeSim/shaders/ForwardVertexData.vs");
     shaderProgram_ProjectW.attachFragmentShader(

@@ -139,36 +139,42 @@ void VolumeRenderer::createTextureStorage() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::setupShaders() {
+    shaderProgram_BvEntry.generateProgramObject();
     shaderProgram_BvEntry.attachVertexShader(
             "examples/VolumeRendering/shaders/BvEntry.vs");
     shaderProgram_BvEntry.attachFragmentShader(
             "examples/VolumeRendering/shaders/BvEntry.fs");
     shaderProgram_BvEntry.link();
 
+    shaderProgram_RayDirection.generateProgramObject();
     shaderProgram_RayDirection.attachVertexShader(
             "examples/VolumeRendering/shaders/RayDirection.vs");
     shaderProgram_RayDirection.attachFragmentShader(
             "examples/VolumeRendering/shaders/RayDirection.fs");
     shaderProgram_RayDirection.link();
 
+    shaderProgram_RayMarch.generateProgramObject();
     shaderProgram_RayMarch.attachVertexShader(
             "examples/VolumeRendering/shaders/RayMarch.vs");
     shaderProgram_RayMarch.attachFragmentShader(
             "examples/VolumeRendering/shaders/RayMarch.fs");
     shaderProgram_RayMarch.link();
 
+    shaderProgram_RenderTexture.generateProgramObject();
     shaderProgram_RenderTexture.attachVertexShader(
             "examples/VolumeRendering/shaders/ScreenQuad.vs");
     shaderProgram_RenderTexture.attachFragmentShader(
             "examples/VolumeRendering/shaders/ScreenQuad.fs");
     shaderProgram_RenderTexture.link();
 
+    shaderProgram_NoiseGenerator.generateProgramObject();
     shaderProgram_NoiseGenerator.attachVertexShader(
             "examples/VolumeRendering/shaders/NoiseGenerator.vs");
     shaderProgram_NoiseGenerator.attachFragmentShader(
             "examples/VolumeRendering/shaders/NoiseGenerator.fs");
     shaderProgram_NoiseGenerator.link();
 
+    shaderProgram_LineRender.generateProgramObject();
     shaderProgram_LineRender.attachVertexShader(
             "examples/VolumeRendering/shaders/LineRender.vs");
     shaderProgram_LineRender.attachFragmentShader(
