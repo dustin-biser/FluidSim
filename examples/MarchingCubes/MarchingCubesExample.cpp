@@ -77,12 +77,21 @@ void MarchingCubesExample::fillVolumeDensityTexture() {
     for(int k(0); k < kBoundingVolumeDepth; ++k) {
         for(int j(0); j < kBoundingVolumeHeight; ++j) {
             for(int i(0); i < kBoundingVolumeWidth; ++i) {
-
-                data[(k * height * width) + (j * width) + i] = i + j + k;
-
+                data[(k * height * width) + (j * width) + i] = 0;
             }
         }
     }
+
+    // Initialize first voxel:
+    data[(0 * height * width) + (0 * width) + 0] = 0;  // Vertex 0
+    data[(0 * height * width) + (1 * width) + 0] = 2;  // Vertex 1
+    data[(0 * height * width) + (1 * width) + 1] = 2;  // Vertex 2
+    data[(0 * height * width) + (0 * width) + 1] = 2;  // Vertex 3
+
+    data[(1 * height * width) + (0 * width) + 0] = 2;  // Vertex 4
+    data[(1 * height * width) + (1 * width) + 0] = 2;  // Vertex 5
+    data[(1 * height * width) + (1 * width) + 1] = 2;  // Vertex 6
+    data[(1 * height * width) + (0 * width) + 1] = 2;  // Vertex 7
 
     glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kBoundingVolumeWidth,
             kBoundingVolumeHeight, kBoundingVolumeDepth, GL_RED, GL_FLOAT, data);
@@ -101,7 +110,8 @@ void MarchingCubesExample::logic() {
 
 //---------------------------------------------------------------------------------------
 void MarchingCubesExample::draw() {
-    marchingCubesRenderer->render(camera, volumeDensity_texture3d);
+    float isoSurfaceThreshold = 1.0f;
+    marchingCubesRenderer->render(camera, volumeDensity_texture3d, isoSurfaceThreshold);
 }
 
 //---------------------------------------------------------------------------------------

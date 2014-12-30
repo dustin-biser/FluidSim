@@ -31,7 +31,9 @@ public:
 
     ~MarchingCubesRenderer();
 
-    void render(const Rigid3D::Camera & camera, GLuint volumeData_texture3d);
+    void render(const Rigid3D::Camera & camera,
+                GLuint volumeData_texture3d,
+                Rigid3D::float32 isoSurfaceThreshold);
 
 private:
     Rigid3D::float32 gridWidth;
@@ -55,6 +57,9 @@ private:
     void setupVoxelZLayerVboData();
     void setupSamplerObject();
     void setupTransformFeedbackBuffer();
+
+
+    // TODO Dustin - remove after testing:
     void inspectTransformFeedbackBuffer();
 
 };

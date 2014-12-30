@@ -37,7 +37,7 @@ void MarchingCubesRenderer::setupShaders() {
 //    shaderProgram.attachFragmentShader
 //            ("examples/MarchingCubes/shaders/PhongLighting.fs");
 
-    const GLchar * feedbackVaryings[] = {"densityValue"};
+    const GLchar * feedbackVaryings[] = {"mc_case"};
     glTransformFeedbackVaryings(shaderProgram.getProgramObject(), 1, feedbackVaryings,
             GL_INTERLEAVED_ATTRIBS);
 
@@ -47,7 +47,10 @@ void MarchingCubesRenderer::setupShaders() {
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setShaderUniforms() {
 
-    shaderProgram.setUniform("densityTexture", textureUnitOffset);
+    shaderProgram.setUniform("volumeData", textureUnitOffset);
+    shaderProgram.setUniform("gridWidth", gridWidth);
+    shaderProgram.setUniform("gridHeight", gridHeight);
+    shaderProgram.setUniform("gridDepth", gridDepth);
 }
 
 //----------------------------------------------------------------------------------------
@@ -63,8 +66,8 @@ void MarchingCubesRenderer::setupVoxelUvCoordVboData() {
 
     // i spans [0..gridWidth-2]
     // j spans [0..gridHeight-2]
-    for (int32 i = 0; i <= gridWidth-2; ++i) {
-        for (int32 j = 0; j <= gridHeight-2; ++j) {
+    for (int32 j = 0; j <= gridHeight-2; ++j) {
+		for (int32 i = 0; i <= gridWidth-2; ++i) {
 
             // texel center coordinates
             uv.x = (i + 0.5f) / gridWidth;
@@ -157,8 +160,11 @@ void MarchingCubesRenderer::setupVao() {
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::render(
         const Rigid3D::Camera & camera,
-        GLuint volumeData_texture3d
+        GLuint volumeData_texture3d,
+        float32 isoSurfaceThreshold
 ){
+    shaderProgram.setUniform("isoSurfaceThreshold", isoSurfaceThreshold);
+
     // Prevent rasterization.
     glEnable(GL_RASTERIZER_DISCARD);
 
@@ -177,10 +183,13 @@ void MarchingCubesRenderer::render(
     shaderProgram.disable();
     glFlush();
 
-    // TODO Dustin - remove this after testing:
-		inspectTransformFeedbackBuffer();
+    inspectTransformFeedbackBuffer();
 
+    //-- Restore defaults:
     glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_3D, 0);
+    glBindSampler(textureUnitOffset, 0);
+    glDisable(GL_RASTERIZER_DISCARD);
     CHECK_GL_ERRORS;
 }
 
@@ -198,7 +207,7 @@ void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
     glGenBuffers(1, &tbo);
     glBindBuffer(GL_ARRAY_BUFFER, tbo);
 
-    GLsizei dataSize = sizeof(float) * (gridWidth-1) * (gridHeight-1) * (gridDepth - 1);
+    GLsizei dataSize = sizeof(GLuint) * (gridWidth-1) * (gridHeight-1) *  (gridDepth-1);
     glBufferData(GL_ARRAY_BUFFER, dataSize, nullptr, GL_STATIC_READ);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -207,10 +216,11 @@ void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
 
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
-    GLsizei numFloats =  (gridWidth-1) * (gridHeight-1) * (gridDepth-1);
-    GLfloat * feedbackData = new float[numFloats];
+    GLsizei numElements =  (gridWidth-1) * (gridHeight-1) * (gridDepth-1);
+    GLuint * feedbackData = new GLuint[numElements];
 
-    glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float)*numFloats, feedbackData);
+    glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLuint)*numElements,
+            feedbackData);
 
     delete [] feedbackData;
     CHECK_GL_ERRORS;
