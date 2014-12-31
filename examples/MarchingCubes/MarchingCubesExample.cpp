@@ -6,7 +6,7 @@ using std::shared_ptr;
 //----------------------------------------------------------------------------------------
 int main() {
     shared_ptr<GlfwOpenGlWindow> demo =  MarchingCubesExample::getInstance();
-    demo->create(kScreenWidth, kScreenHeight, "Volume Rendering Demo", 1/80.0f);
+    demo->create(kScreenWidth, kScreenHeight, "Marching Cubes Demo", 1/80.0f);
 
     return 0;
 }

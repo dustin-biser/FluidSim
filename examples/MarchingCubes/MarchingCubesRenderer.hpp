@@ -54,6 +54,7 @@ private:
     void setupVao();
     void setupShaders();
     void setShaderUniforms();
+    void uploadUniformArrays();
     void setupVoxelZLayerVboData();
     void setupSamplerObject();
     void setupTransformFeedbackBuffer();
