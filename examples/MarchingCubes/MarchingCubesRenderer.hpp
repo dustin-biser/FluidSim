@@ -11,7 +11,8 @@
 const GLuint uvCoord_attrib_index = 0;
 const GLuint zLayerCoord_attrib_index = 1;
 
-const GLint textureUnitOffset = 0;
+const GLint volumeData_texUnitOffset = 0;
+const GLint triTable_texUnitOffset = 1;
 
 
 /**
@@ -40,6 +41,7 @@ private:
     Rigid3D::float32 gridHeight;
     Rigid3D::float32 gridDepth;
     GLsizei numVoxelsPerLayer;
+    GLsizei transformFeedbackBufferSize;
 
     Rigid3D::ShaderProgram shaderProgram;
 
@@ -49,6 +51,7 @@ private:
     GLuint vbo_voxelUvCoords;  // texture coordinate for lower-left corner of each voxel.
     GLuint vbo_voxelZLayer;  // texture z layer of each voxel.
     GLuint tbo; // transform feedback buffer.
+    GLuint triTable_texture2d;
 
     void setupVoxelUvCoordVboData();
     void setupVao();
@@ -58,6 +61,7 @@ private:
     void setupVoxelZLayerVboData();
     void setupSamplerObject();
     void setupTransformFeedbackBuffer();
+    void generateTriTableTexture();
 
 
     // TODO Dustin - remove after testing:
