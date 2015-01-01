@@ -10,9 +10,11 @@ MarchingCubesRenderer::MarchingCubesRenderer(
     : gridWidth(gridWidth),
       gridHeight(gridHeight),
       gridDepth(gridDepth),
-      numVoxelsPerLayer(0)
+      numVoxelsPerLayer(0),
+	  transformFeedbackBufferSize(0)
 {
     setupShaders();
+	generateTriTableTexture();
     setShaderUniforms();
     setupVoxelUvCoordVboData();
     setupVoxelZLayerVboData();
@@ -34,10 +36,8 @@ void MarchingCubesRenderer::setupShaders() {
 
     shaderProgram.attachGeometryShader
             ("examples/MarchingCubes/shaders/MarchingCubes.gs");
-//    shaderProgram.attachFragmentShader
-//            ("examples/MarchingCubes/shaders/PhongLighting.fs");
 
-    const GLchar * feedbackVaryings[] = {"value"};
+    const GLchar * feedbackVaryings[] = {"outWsPosition"};
     glTransformFeedbackVaryings(shaderProgram.getProgramObject(), 1, feedbackVaryings,
             GL_INTERLEAVED_ATTRIBS);
 
@@ -47,7 +47,8 @@ void MarchingCubesRenderer::setupShaders() {
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setShaderUniforms() {
 
-    shaderProgram.setUniform("volumeData", textureUnitOffset);
+    shaderProgram.setUniform("volumeData", volumeData_texUnitOffset);
+	shaderProgram.setUniform("triTable", triTable_texUnitOffset);
     shaderProgram.setUniform("gridWidth", gridWidth);
     shaderProgram.setUniform("gridHeight", gridHeight);
     shaderProgram.setUniform("gridDepth", gridDepth);
@@ -57,7 +58,186 @@ void MarchingCubesRenderer::setShaderUniforms() {
 
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::uploadUniformArrays() {
+	uint32 case_to_numTriangles[256] = {
+			0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 2, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3,
+			3, 4, 3, 4, 4, 3, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 3, 2, 3, 3, 2,
+			3, 4, 4, 3, 3, 4, 4, 3, 4, 5, 5, 2, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4,
+			4, 3, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 4, 2, 3, 3, 4, 3, 4, 2, 3,
+			3, 4, 4, 5, 4, 5, 3, 2, 3, 4, 4, 3, 4, 5, 3, 2, 4, 5, 5, 4, 5, 2, 4, 1, 1, 2,
+			2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 3, 2, 3, 3, 4, 3, 4, 4, 5, 3, 2, 4, 3,
+			4, 3, 5, 2, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 4, 3, 4, 4, 3, 4, 5,
+			5, 4, 4, 3, 5, 2, 5, 4, 2, 1, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 2, 3, 3, 2,
+			3, 4, 4, 5, 4, 5, 5, 2, 4, 3, 5, 4, 3, 2, 4, 1, 3, 4, 4, 5, 4, 5, 3, 4, 4, 5,
+			5, 2, 3, 4, 2, 1, 2, 3, 3, 2, 3, 4, 2, 1, 3, 2, 4, 1, 2, 1, 1, 0
+	};
 
+	GLint case_to_numTriangles_location =
+			shaderProgram.getUniformLocation("case_to_numTriangles");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform1uiv(case_to_numTriangles_location, 256, case_to_numTriangles);
+	CHECK_GL_ERRORS;
+
+
+
+	// Position within voxel of edge's starting vertexA, with vertex0 as origin.
+	int edge_start[12 * 3] = {
+			0, 0, 0,
+			1, 0, 0,
+			1, 1, 0,
+			0, 1, 0,
+			0, 0, 1,
+			1, 0, 1,
+			1, 1, 1,
+			0, 1, 1,
+			0, 0, 0,
+			1, 0, 0,
+			1, 1, 0,
+			0, 1, 0
+	};
+
+	GLint edge_start_location = shaderProgram.getUniformLocation("edge_start");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform3iv(edge_start_location, 12, edge_start);
+	CHECK_GL_ERRORS;
+
+
+
+	// Edge direction from vertexA to vertexB
+	int edge_dir[12 * 3] = {
+			1, 0, 0,
+			0, 1, 0,
+			-1, 0, 0,
+			0, 1, 0, 
+			1, 0, 0,
+			0, 1, 0,
+			-1, 0, 0,
+			0, 1, 0,
+			0, 0, 1,
+			0, 0, 1,
+			0, 0, 1,
+			0, 0, 1
+	};
+
+	GLint edge_dir_location = shaderProgram.getUniformLocation("edge_dir");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform3iv(edge_dir_location, 12, edge_dir);
+	CHECK_GL_ERRORS;
+
+	
+	
+	// Given an edge number, returns 1 at the vertex component location corresponding to
+	// edge's starting vertexA.
+	// .xyzw corresponds to vertex 0,1,2,3.
+	float32 cornerAmask0123[12 * 4] = {
+			1, 0, 0, 0,     // edge 0, starts at vertex 0
+			0, 1, 0, 0,     // edge 1, starts at vertex 1
+			0, 0, 1, 0,     // edge 2, starts at vertex 2
+			1, 0, 0, 0,     // edge 3, starts at vertex 0
+
+			0, 0, 0, 0,     // edge 4, starts at vertex 4
+			0, 0, 0, 0,     // edge 5, starts at vertex 5
+			0, 0, 0, 0,     // edge 6, starts at vertex 6
+			0, 0, 0, 0,     // edge 7, starts at vertex 4
+
+			1, 0, 0, 0,     // edge 8, starts at vertex 0
+			0, 1, 0, 0,     // edge 9, starts at vertex 1
+			0, 0, 1, 0,     // edge 10, starts at vertex 2
+			0, 0, 0, 1,     // edge 11, starts at vertex 3
+	};
+	
+	GLint cornerAmask0123_location = shaderProgram.getUniformLocation("cornerAmask0123");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform4fv(cornerAmask0123_location, 12, cornerAmask0123);
+	CHECK_GL_ERRORS;
+
+
+	// Given an edge number, returns 1 at the vertex component location corresponding to
+	// edge's starting vertexA.
+	// .xyzw corresponds to vertex 4,5,6,7.
+	float32 cornerAmask4567[12 * 4] = {
+			0, 0, 0, 0,     // edge 0, starts at vertex 0
+			0, 0, 0, 0,     // edge 1, starts at vertex 1
+			0, 0, 0, 0,     // edge 2, starts at vertex 2
+			0, 0, 0, 0,     // edge 3, starts at vertex 3
+
+			1, 0, 0, 0,     // edge 4, starts at vertex 4
+			0, 1, 0, 0,     // edge 5, starts at vertex 5
+			0, 0, 1, 0,     // edge 6, starts at vertex 6
+			1, 0, 0, 0,     // edge 7, starts at vertex 4
+
+			0, 0, 0, 0,     // edge 8, starts at vertex 0
+			0, 0, 0, 0,     // edge 9, starts at vertex 1
+			0, 0, 0, 0,     // edge 10, starts at vertex 2
+			0, 0, 0, 0,     // edge 11, starts at vertex 3
+	};
+
+	GLint cornerAmask4567_location = shaderProgram.getUniformLocation("cornerAmask4567");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform4fv(cornerAmask4567_location, 12, cornerAmask4567);
+	CHECK_GL_ERRORS;
+
+
+
+	// Given an edge number, returns 1 at the vertex component location corresponding to
+	// edge's ending vertexB.
+	// .xyzw corresponds to vertex 0,1,2,3.
+	float32 cornerBmask0123[12 * 4] = {
+			0, 1, 0, 0,     // edge 0, ends at vertex 1
+			0, 0, 1, 0,     // edge 1, ends at vertex 2
+			0, 0, 0, 1,     // edge 2, ends at vertex 3
+			0, 0, 0, 1,     // edge 3, ends at vertex 3
+
+			0, 0, 0, 0,     // edge 4, ends at vertex 5
+			0, 0, 0, 0,     // edge 5, ends at vertex 6
+			0, 0, 0, 0,     // edge 6, ends at vertex 7
+			0, 0, 0, 0,     // edge 7, ends at vertex 7
+
+			0, 0, 0, 0,     // edge 8, ends at vertex 4
+			0, 0, 0, 0,     // edge 9, ends at vertex 5
+			0, 0, 0, 0,     // edge 10, ends at vertex 6
+			0, 0, 0, 0,     // edge 11, ends at vertex 7
+	};
+
+	GLint cornerBmask0123_location = shaderProgram.getUniformLocation("cornerBmask0123");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform4fv(cornerBmask0123_location, 12, cornerBmask0123);
+	CHECK_GL_ERRORS;
+
+
+
+	// Given an edge number, returns 1 at the vertex component location corresponding to
+	// edge's ending vertexB.
+	// .xyzw corresponds to vertex 4,5,6,7.
+	float32 cornerBmask4567[12 * 4] = {
+			0, 0, 0, 0,     // edge 0, ends at vertex 1
+			0, 0, 0, 0,     // edge 1, ends at vertex 2
+			0, 0, 0, 0,     // edge 2, ends at vertex 3
+			0, 0, 0, 0,     // edge 3, ends at vertex 3
+
+			0, 1, 0, 0,     // edge 4, ends at vertex 5
+			0, 0, 1, 0,     // edge 5, ends at vertex 6
+			0, 0, 0, 1,     // edge 6, ends at vertex 7
+			0, 0, 0, 1,     // edge 7, ends at vertex 7
+
+			1, 0, 0, 0,     // edge 8, ends at vertex 4
+			0, 1, 0, 0,     // edge 9, ends at vertex 5
+			0, 0, 1, 0,     // edge 10, ends at vertex 6
+			0, 0, 0, 1,     // edge 11, ends at vertex 7
+	};
+
+	GLint cornerBmask4567_location = shaderProgram.getUniformLocation("cornerBmask4567");
+	glUseProgram(shaderProgram.getProgramObject());
+	glUniform4fv(cornerBmask4567_location, 12, cornerBmask4567);
+	CHECK_GL_ERRORS;
+
+
+
+    glUseProgram(0);
+    CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::generateTriTableTexture() {
 	// Maps mc_case to sets of 3 cut edges.
 	int triTable[256 * 15] = {
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -318,189 +498,20 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 	};
 
-    GLint triTable_location = shaderProgram.getUniformLocation("triTable");
-    glUseProgram(shaderProgram.getProgramObject());
-    glUniform3iv(triTable_location, 256*5, triTable);
+	glGenTextures(1, &triTable_texture2d);
+	glBindTexture(GL_TEXTURE_2D, triTable_texture2d);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 5 /*width*/, 256 /*height*/,
+			0, GL_RGB, GL_INT, triTable);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	// Default border color = (0,0,0,0).
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERRORS;
-
-
-
-	uint32 case_to_numTriangles[256] = {
-			0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 2, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3,
-			3, 4, 3, 4, 4, 3, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 3, 2, 3, 3, 2,
-			3, 4, 4, 3, 3, 4, 4, 3, 4, 5, 5, 2, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4,
-			4, 3, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 4, 2, 3, 3, 4, 3, 4, 2, 3,
-			3, 4, 4, 5, 4, 5, 3, 2, 3, 4, 4, 3, 4, 5, 3, 2, 4, 5, 5, 4, 5, 2, 4, 1, 1, 2,
-			2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 3, 2, 3, 3, 4, 3, 4, 4, 5, 3, 2, 4, 3,
-			4, 3, 5, 2, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 4, 3, 4, 4, 3, 4, 5,
-			5, 4, 4, 3, 5, 2, 5, 4, 2, 1, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 2, 3, 3, 2,
-			3, 4, 4, 5, 4, 5, 5, 2, 4, 3, 5, 4, 3, 2, 4, 1, 3, 4, 4, 5, 4, 5, 3, 4, 4, 5,
-			5, 2, 3, 4, 2, 1, 2, 3, 3, 2, 3, 4, 2, 1, 3, 2, 4, 1, 2, 1, 1, 0
-	};
-
-	GLint case_to_numTriangles_location =
-			shaderProgram.getUniformLocation("case_to_numTriangles");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform1uiv(case_to_numTriangles_location, 256, case_to_numTriangles);
-	CHECK_GL_ERRORS;
-
-
-
-	// Position within voxel of edge's starting vertexA, with vertex0 as origin.
-	int edge_start[12 * 3] = {
-			0, 0, 0,
-			1, 0, 0,
-			1, 1, 0,
-			0, 1, 0,
-			0, 0, 1,
-			1, 0, 1,
-			1, 1, 1,
-			0, 1, 1,
-			0, 0, 0,
-			1, 0, 0,
-			1, 1, 0,
-			0, 1, 0
-	};
-
-	GLint edge_start_location = shaderProgram.getUniformLocation("edge_start");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform3iv(edge_start_location, 12, edge_start);
-	CHECK_GL_ERRORS;
-
-
-
-	// Edge direction from vertexA to vertexB
-	int edge_dir[12 * 3] = {
-			1, 0, 0,
-			0, 1, 0,
-			-1, 0, 0,
-			0, 1, 0, 
-			1, 0, 0,
-			0, 1, 0,
-			-1, 0, 0,
-			0, 1, 0,
-			0, 0, 1,
-			0, 0, 1,
-			0, 0, 1,
-			0, 0, 1
-	};
-
-	GLint edge_dir_location = shaderProgram.getUniformLocation("edge_dir");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform3iv(edge_dir_location, 12, edge_dir);
-	CHECK_GL_ERRORS;
-
-	
-	
-	// Given an edge number, returns 1 at the vertex component location corresponding to
-	// edge's starting vertexA.
-	// .xyzw corresponds to vertex 0,1,2,3.
-	float32 cornerAmask0123[12 * 4] = {
-			1, 0, 0, 0,     // edge 0, starts at vertex 0
-			0, 1, 0, 0,     // edge 1, starts at vertex 1
-			0, 0, 1, 0,     // edge 2, starts at vertex 2
-			1, 0, 0, 0,     // edge 3, starts at vertex 0
-
-			0, 0, 0, 0,     // edge 4, starts at vertex 4
-			0, 0, 0, 0,     // edge 5, starts at vertex 5
-			0, 0, 0, 0,     // edge 6, starts at vertex 6
-			0, 0, 0, 0,     // edge 7, starts at vertex 4
-
-			1, 0, 0, 0,     // edge 8, starts at vertex 0
-			0, 1, 0, 0,     // edge 9, starts at vertex 1
-			0, 0, 1, 0,     // edge 10, starts at vertex 2
-			0, 0, 0, 1,     // edge 11, starts at vertex 3
-	};
-	
-	GLint cornerAmask0123_location = shaderProgram.getUniformLocation("cornerAmask0123");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform4fv(cornerAmask0123_location, 12, cornerAmask0123);
-	CHECK_GL_ERRORS;
-
-
-	// Given an edge number, returns 1 at the vertex component location corresponding to
-	// edge's starting vertexA.
-	// .xyzw corresponds to vertex 4,5,6,7.
-	float32 cornerAmask4567[12 * 4] = {
-			0, 0, 0, 0,     // edge 0, starts at vertex 0
-			0, 0, 0, 0,     // edge 1, starts at vertex 1
-			0, 0, 0, 0,     // edge 2, starts at vertex 2
-			0, 0, 0, 0,     // edge 3, starts at vertex 3
-
-			1, 0, 0, 0,     // edge 4, starts at vertex 4
-			0, 1, 0, 0,     // edge 5, starts at vertex 5
-			0, 0, 1, 0,     // edge 6, starts at vertex 6
-			1, 0, 0, 0,     // edge 7, starts at vertex 4
-
-			0, 0, 0, 0,     // edge 8, starts at vertex 0
-			0, 0, 0, 0,     // edge 9, starts at vertex 1
-			0, 0, 0, 0,     // edge 10, starts at vertex 2
-			0, 0, 0, 0,     // edge 11, starts at vertex 3
-	};
-
-	GLint cornerAmask4567_location = shaderProgram.getUniformLocation("cornerAmask4567");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform4fv(cornerAmask4567_location, 12, cornerAmask4567);
-	CHECK_GL_ERRORS;
-
-
-
-	// Given an edge number, returns 1 at the vertex component location corresponding to
-	// edge's ending vertexB.
-	// .xyzw corresponds to vertex 0,1,2,3.
-	float32 cornerBmask0123[12 * 4] = {
-			0, 1, 0, 0,     // edge 0, ends at vertex 1
-			0, 0, 1, 0,     // edge 1, ends at vertex 2
-			0, 0, 0, 1,     // edge 2, ends at vertex 3
-			0, 0, 0, 1,     // edge 3, ends at vertex 3
-
-			0, 0, 0, 0,     // edge 4, ends at vertex 5
-			0, 0, 0, 0,     // edge 5, ends at vertex 6
-			0, 0, 0, 0,     // edge 6, ends at vertex 7
-			0, 0, 0, 0,     // edge 7, ends at vertex 7
-
-			0, 0, 0, 0,     // edge 8, ends at vertex 4
-			0, 0, 0, 0,     // edge 9, ends at vertex 5
-			0, 0, 0, 0,     // edge 10, ends at vertex 6
-			0, 0, 0, 0,     // edge 11, ends at vertex 7
-	};
-
-	GLint cornerBmask0123_location = shaderProgram.getUniformLocation("cornerBmask0123");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform4fv(cornerBmask0123_location, 12, cornerBmask0123);
-	CHECK_GL_ERRORS;
-
-
-
-	// Given an edge number, returns 1 at the vertex component location corresponding to
-	// edge's ending vertexB.
-	// .xyzw corresponds to vertex 4,5,6,7.
-	float32 cornerBmask4567[12 * 4] = {
-			0, 0, 0, 0,     // edge 0, ends at vertex 1
-			0, 0, 0, 0,     // edge 1, ends at vertex 2
-			0, 0, 0, 0,     // edge 2, ends at vertex 3
-			0, 0, 0, 0,     // edge 3, ends at vertex 3
-
-			0, 1, 0, 0,     // edge 4, ends at vertex 5
-			0, 0, 1, 0,     // edge 5, ends at vertex 6
-			0, 0, 0, 1,     // edge 6, ends at vertex 7
-			0, 0, 0, 1,     // edge 7, ends at vertex 7
-
-			1, 0, 0, 0,     // edge 8, ends at vertex 4
-			0, 1, 0, 0,     // edge 9, ends at vertex 5
-			0, 0, 1, 0,     // edge 10, ends at vertex 6
-			0, 0, 0, 1,     // edge 11, ends at vertex 7
-	};
-
-	GLint cornerBmask4567_location = shaderProgram.getUniformLocation("cornerBmask4567");
-	glUseProgram(shaderProgram.getProgramObject());
-	glUniform4fv(cornerBmask4567_location, 12, cornerBmask4567);
-	CHECK_GL_ERRORS;
-
-
-
-    glUseProgram(0);
-    CHECK_GL_ERRORS;
 }
 
 //----------------------------------------------------------------------------------------
@@ -621,8 +632,14 @@ void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
     glGenBuffers(1, &tbo);
     glBindBuffer(GL_ARRAY_BUFFER, tbo);
 
-    GLsizei dataSize = sizeof(GLfloat) * (gridWidth-1) * (gridHeight-1) *  (gridDepth-1);
-    glBufferData(GL_ARRAY_BUFFER, dataSize, nullptr, GL_STATIC_READ);
+	// TODO Dustin - Need a better way to determine how much GPU Memory will be required
+	// for holding vertex buffers output from GS.
+
+	//-- Set a maximum amount of vertex buffer transform feedback storage:
+	transformFeedbackBufferSize =  sizeof(vec3)
+		* std::max(64.0f, gridWidth*gridHeight*gridDepth);
+
+    glBufferData(GL_ARRAY_BUFFER, transformFeedbackBufferSize, nullptr, GL_STATIC_READ);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     CHECK_GL_ERRORS;
@@ -630,10 +647,10 @@ void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
 
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
-    GLsizei numElements =  (gridWidth-1) * (gridHeight-1) * (gridDepth-1);
+    GLsizei numElements =  transformFeedbackBufferSize / sizeof(GLfloat);
     GLfloat * feedbackData = new GLfloat[numElements];
 
-    glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat)*numElements,
+    glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, transformFeedbackBufferSize,
             feedbackData);
 
     delete [] feedbackData;
@@ -654,25 +671,29 @@ void MarchingCubesRenderer::render(
 
     glBindVertexArray(vao);
 
-    glActiveTexture(GL_TEXTURE0 + textureUnitOffset);
+    glActiveTexture(GL_TEXTURE0 + volumeData_texUnitOffset);
     glBindTexture(GL_TEXTURE_3D, volumeData_texture3d);
-    glBindSampler(textureUnitOffset, sampler_volumeData);
+    glBindSampler(volumeData_texUnitOffset, sampler_volumeData);
+
+	glActiveTexture(GL_TEXTURE0 + triTable_texUnitOffset);
+	glBindTexture(GL_TEXTURE_2D, triTable_texture2d);
 
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tbo);
 
     shaderProgram.enable();
-		glBeginTransformFeedback(GL_POINTS);
+		glBeginTransformFeedback(GL_TRIANGLES);
 			glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
 		glEndTransformFeedback();
     shaderProgram.disable();
     glFlush();
+	glFinish();
 
     inspectTransformFeedbackBuffer();
 
     //-- Restore defaults:
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_3D, 0);
-    glBindSampler(textureUnitOffset, 0);
+    glBindSampler(volumeData_texUnitOffset, 0);
     glDisable(GL_RASTERIZER_DISCARD);
     CHECK_GL_ERRORS;
 }
