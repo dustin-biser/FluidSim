@@ -501,14 +501,15 @@ void MarchingCubesRenderer::generateTriTableTexture() {
 	glGenTextures(1, &triTable_texture2d);
 	glBindTexture(GL_TEXTURE_2D, triTable_texture2d);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 5 /*width*/, 256 /*height*/,
-			0, GL_RGB, GL_INT, triTable);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8I, 5 /*width*/, 256 /*height*/,
+			0, GL_RGB_INTEGER, GL_INT, triTable);
+
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	// Default border color = (0,0,0,0).
+	// border color defaults to 0.
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERRORS;
@@ -636,7 +637,7 @@ void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
 	// for holding vertex buffers output from GS.
 
 	//-- Set a maximum amount of vertex buffer transform feedback storage:
-	transformFeedbackBufferSize =  sizeof(vec3)
+	transformFeedbackBufferSize =  sizeof(GLfloat) * 3
 		* std::max(64.0f, gridWidth*gridHeight*gridDepth);
 
     glBufferData(GL_ARRAY_BUFFER, transformFeedbackBufferSize, nullptr, GL_STATIC_READ);
@@ -653,7 +654,7 @@ void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
     glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, transformFeedbackBufferSize,
             feedbackData);
 
-    delete [] feedbackData;
+	delete [] feedbackData;
     CHECK_GL_ERRORS;
 
 }
@@ -693,6 +694,7 @@ void MarchingCubesRenderer::render(
     //-- Restore defaults:
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_3D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
     glBindSampler(volumeData_texUnitOffset, 0);
     glDisable(GL_RASTERIZER_DISCARD);
     CHECK_GL_ERRORS;
