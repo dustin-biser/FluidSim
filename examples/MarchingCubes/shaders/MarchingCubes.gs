@@ -28,7 +28,7 @@ const int numCases = 256;
 // If a set starts with -1, then there are no more intersecting edges for the case.
 uniform isampler2D triTable;
 
-// Maps mc_case to number of triangles to output.
+// Maps mc_case to number of triangles to output.  Range [0..5]
 uniform uint case_to_numTriangles[numCases];
 
 // Assume directed edges which start on a vertexA and end at a vertexB.
