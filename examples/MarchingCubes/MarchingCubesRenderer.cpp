@@ -799,7 +799,13 @@ void MarchingCubesRenderer::generateIsoSurfaceTriangles(
 
 	shaderProgram_genIsoSurface.enable();
 		glBeginTransformFeedback(GL_POINTS);
-		glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
+//		glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
+
+
+		// TODO Dustin - remove:
+			// Process only first voxel:
+			glDrawArrays(GL_POINTS, 0, 1);
+
 		glEndTransformFeedback();
 	shaderProgram_genIsoSurface.disable();
 

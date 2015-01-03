@@ -69,11 +69,10 @@ void placeVertOnEdge(in int edgeNum, out vec3 vertexPosition) {
 
 	vertexPosition = gs_in[0].wsPosition + pos_within_cell * gs_in[0].wsVoxelSize;
 
-	// TODO Dustin - Uncomment after testing:
-//	outWsPosition = vertexPosition;
-//
-//	EmitStreamVertex(0);
-//	EndStreamPrimitive(0);
+	outWsPosition = vertexPosition;
+
+	EmitStreamVertex(0);
+	EndStreamPrimitive(0);
 }
 
 void computeNormal(vec3 vertexA, vec3 vertexB, vec3 vertexC) {
@@ -85,10 +84,9 @@ void computeNormal(vec3 vertexA, vec3 vertexB, vec3 vertexC) {
 	for(int i = 0; i < 3; ++i) {
 		// Must reassign output variables after each EmitStreamVertex() call.
 
-	// TODO Dustin - Uncomment after testing:
-//		outWsNormal = normal;
-//		EmitStreamVertex(1);
-//		EndStreamPrimitive(1);
+		outWsNormal = normal;
+		EmitStreamVertex(1);
+		EndStreamPrimitive(1);
 	}
 }
 
@@ -110,16 +108,4 @@ void main() {
 
 		computeNormal(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
 	}
-
-
-
-	// TODO Dustin - remove this:
-	outWsPosition = gs_in[0].wsPosition;
-	EmitStreamVertex(0);
-	EndStreamPrimitive(0);
-
-	outWsNormal = gs_in[0].wsPosition;
-	EmitStreamVertex(1);
-	EndStreamPrimitive(1);
-
 }

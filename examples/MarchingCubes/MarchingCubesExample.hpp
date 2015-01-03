@@ -21,7 +21,7 @@ const int kGridWidth = 4;
 const int kGridHeight = 4;
 const int kGridDepth = 4;
 
-const float isoSurfaceThreshold = 1.0f;
+const float kIsoSurfaceThreshold = 1.0f;
 
 class MarchingCubesExample : public GlfwOpenGlWindow {
 
