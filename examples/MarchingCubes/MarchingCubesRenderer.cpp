@@ -1,4 +1,6 @@
 #include "MarchingCubesRenderer.hpp"
+#include "MarchingCubesExample.hpp"
+
 using namespace Rigid3D;
 
 
@@ -16,11 +18,15 @@ MarchingCubesRenderer::MarchingCubesRenderer(
     setupShaders();
 	generateTriTableTexture();
     setShaderUniforms();
+
     setupVoxelUvCoordVboData();
     setupVoxelZLayerVboData();
-    setupVao();
+	setupVaoForVoxelData();
+
     setupSamplerObject();
-    setupTransformFeedbackBuffer();
+
+	setupTransformFeedback();
+	setupVaoForIsoSurfaceTriangles();
 }
 
 //---------------------------------------------------------------------------------------
@@ -30,28 +36,47 @@ MarchingCubesRenderer::~MarchingCubesRenderer() {
 
 //---------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setupShaders() {
-    shaderProgram.generateProgramObject();
-    shaderProgram.attachVertexShader
-            ("examples/MarchingCubes/shaders/MarchingCubes.vs");
 
-    shaderProgram.attachGeometryShader
-            ("examples/MarchingCubes/shaders/MarchingCubes.gs");
+	//-- shaderProgram_genIsoSurface:
+	{
+		shaderProgram_genIsoSurface.generateProgramObject();
+		shaderProgram_genIsoSurface.attachVertexShader
+				("examples/MarchingCubes/shaders/MarchingCubes.vs");
 
-    const GLchar * feedbackVaryings[] = {"outWsPosition"};
-    glTransformFeedbackVaryings(shaderProgram.getProgramObject(), 1, feedbackVaryings,
-            GL_INTERLEAVED_ATTRIBS);
+		shaderProgram_genIsoSurface.attachGeometryShader
+				("examples/MarchingCubes/shaders/MarchingCubes.gs");
 
-    shaderProgram.link();
+		// Link outWsPosition to stream index 0.
+		// Link outWsNormal to stream index 1.
+		const GLchar *feedbackVaryings[] = {"outWsPosition", "outWsNormal"};
+		glTransformFeedbackVaryings(shaderProgram_genIsoSurface.getProgramObject(), 2,
+				feedbackVaryings, GL_SEPARATE_ATTRIBS);
+
+		shaderProgram_genIsoSurface.link();
+	}
+
+
+	//-- shaderProgram_renderIsoSurface:
+	{
+		shaderProgram_renderIsoSurface.generateProgramObject();
+		shaderProgram_renderIsoSurface.attachVertexShader
+				("examples/MarchingCubes/shaders/RenderIsoSurface.vs");
+		shaderProgram_renderIsoSurface.attachFragmentShader
+				("examples/MarchingCubes/shaders/RenderIsoSurface.fs");
+		shaderProgram_renderIsoSurface.link();
+	}
 }
 
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setShaderUniforms() {
 
-    shaderProgram.setUniform("volumeData", volumeData_texUnitOffset);
-	shaderProgram.setUniform("triTable", triTable_texUnitOffset);
-    shaderProgram.setUniform("gridWidth", gridWidth);
-    shaderProgram.setUniform("gridHeight", gridHeight);
-    shaderProgram.setUniform("gridDepth", gridDepth);
+    shaderProgram_genIsoSurface.setUniform("volumeData", volumeData_texUnitOffset);
+	shaderProgram_genIsoSurface.setUniform("triTable", triTable_texUnitOffset);
+    shaderProgram_genIsoSurface.setUniform("gridWidth", gridWidth);
+    shaderProgram_genIsoSurface.setUniform("gridHeight", gridHeight);
+    shaderProgram_genIsoSurface.setUniform("gridDepth", gridDepth);
+
+	shaderProgram_renderIsoSurface.setUniform("color", vec3(0.1f,0.2f,0.8f));
 
     uploadUniformArrays();
 }
@@ -72,8 +97,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 	};
 
 	GLint case_to_numTriangles_location =
-			shaderProgram.getUniformLocation("case_to_numTriangles");
-	glUseProgram(shaderProgram.getProgramObject());
+			shaderProgram_genIsoSurface.getUniformLocation("case_to_numTriangles");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform1uiv(case_to_numTriangles_location, 256, case_to_numTriangles);
 	CHECK_GL_ERRORS;
 
@@ -95,8 +120,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 1, 0
 	};
 
-	GLint edge_start_location = shaderProgram.getUniformLocation("edge_start");
-	glUseProgram(shaderProgram.getProgramObject());
+	GLint edge_start_location = shaderProgram_genIsoSurface.getUniformLocation("edge_start");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform3iv(edge_start_location, 12, edge_start);
 	CHECK_GL_ERRORS;
 
@@ -118,8 +143,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 0, 1
 	};
 
-	GLint edge_dir_location = shaderProgram.getUniformLocation("edge_dir");
-	glUseProgram(shaderProgram.getProgramObject());
+	GLint edge_dir_location = shaderProgram_genIsoSurface.getUniformLocation("edge_dir");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform3iv(edge_dir_location, 12, edge_dir);
 	CHECK_GL_ERRORS;
 
@@ -145,8 +170,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 0, 0, 1,     // edge 11, starts at vertex 3
 	};
 	
-	GLint cornerAmask0123_location = shaderProgram.getUniformLocation("cornerAmask0123");
-	glUseProgram(shaderProgram.getProgramObject());
+	GLint cornerAmask0123_location = shaderProgram_genIsoSurface.getUniformLocation("cornerAmask0123");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform4fv(cornerAmask0123_location, 12, cornerAmask0123);
 	CHECK_GL_ERRORS;
 
@@ -171,8 +196,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 0, 0, 0,     // edge 11, starts at vertex 3
 	};
 
-	GLint cornerAmask4567_location = shaderProgram.getUniformLocation("cornerAmask4567");
-	glUseProgram(shaderProgram.getProgramObject());
+	GLint cornerAmask4567_location = shaderProgram_genIsoSurface.getUniformLocation("cornerAmask4567");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform4fv(cornerAmask4567_location, 12, cornerAmask4567);
 	CHECK_GL_ERRORS;
 
@@ -198,8 +223,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 0, 0, 0,     // edge 11, ends at vertex 7
 	};
 
-	GLint cornerBmask0123_location = shaderProgram.getUniformLocation("cornerBmask0123");
-	glUseProgram(shaderProgram.getProgramObject());
+	GLint cornerBmask0123_location = shaderProgram_genIsoSurface.getUniformLocation("cornerBmask0123");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform4fv(cornerBmask0123_location, 12, cornerBmask0123);
 	CHECK_GL_ERRORS;
 
@@ -225,8 +250,8 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 0, 0, 1,     // edge 11, ends at vertex 7
 	};
 
-	GLint cornerBmask4567_location = shaderProgram.getUniformLocation("cornerBmask4567");
-	glUseProgram(shaderProgram.getProgramObject());
+	GLint cornerBmask4567_location = shaderProgram_genIsoSurface.getUniformLocation("cornerBmask4567");
+	glUseProgram(shaderProgram_genIsoSurface.getProgramObject());
 	glUniform4fv(cornerBmask4567_location, 12, cornerBmask4567);
 	CHECK_GL_ERRORS;
 
@@ -575,9 +600,9 @@ void MarchingCubesRenderer::setupVoxelZLayerVboData() {
 
 //----------------------------------------------------------------------------------------
 // Set Vao Data Bindings
-void MarchingCubesRenderer::setupVao() {
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+void MarchingCubesRenderer::setupVaoForVoxelData() {
+    glGenVertexArrays(1, &vao_voxelData);
+    glBindVertexArray(vao_voxelData);
     glEnableVertexAttribArray(uvCoord_attrib_index);
     glEnableVertexAttribArray(zLayerCoord_attrib_index);
 
@@ -614,8 +639,33 @@ void MarchingCubesRenderer::setupVao() {
 
     //-- Restore Defaults:
     glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::setupVaoForIsoSurfaceTriangles() {
+	glGenVertexArrays(1, &vao_isoSurfaceTriangles);
+	glBindVertexArray(vao_isoSurfaceTriangles);
+	glEnableVertexAttribArray(position_attrib_index);
+	glEnableVertexAttribArray(normal_attrib_index);
+
+	// Map transform feedback stream buffers to vertex attribute locations for rendering
+	// isosurface triangles.
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, streamBuffer_wsPositions);
+		glVertexAttribPointer(position_attrib_index, 3, GL_FLOAT,
+				GL_FALSE, 0, reinterpret_cast<void *>(0));
+
+		glBindBuffer(GL_ARRAY_BUFFER, streamBuffer_wsNormals);
+		glVertexAttribPointer(normal_attrib_index, 3, GL_FLOAT,
+				GL_FALSE, 0, reinterpret_cast<void *>(0));
+	}
+
+
+	//-- Restore Defaults:
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CHECK_GL_ERRORS;
 }
 
 
@@ -629,34 +679,91 @@ void MarchingCubesRenderer::setupSamplerObject() {
 }
 
 //----------------------------------------------------------------------------------------
-void MarchingCubesRenderer::setupTransformFeedbackBuffer() {
-    glGenBuffers(1, &tbo);
-    glBindBuffer(GL_ARRAY_BUFFER, tbo);
+void MarchingCubesRenderer::setupTransformFeedback() {
 
-	// TODO Dustin - Need a better way to determine how much GPU Memory will be required
-	// for holding vertex buffers output from GS.
+	//-- Set an upper limit for vertex buffer transform feedback storage:
+	int vec3_size = sizeof(GLfloat) * 3;
+	int vertices_per_triangle = 3;
+	int one_mega_byte = sizeof(char) * 1000000;
+	transformFeedbackBufferSize = vertices_per_triangle * vec3_size;
+	transformFeedbackBufferSize *=
+			std::min(std::max(64, int(gridWidth * gridHeight * gridDepth)),  one_mega_byte);
 
-	//-- Set a maximum amount of vertex buffer transform feedback storage:
-	transformFeedbackBufferSize =  sizeof(GLfloat) * 3
-		* std::max(64.0f, gridWidth*gridHeight*gridDepth);
 
-    glBufferData(GL_ARRAY_BUFFER, transformFeedbackBufferSize, nullptr, GL_STATIC_READ);
+	//-- Allocate stream buffer storage for vertex positions:
+	{
+		glGenBuffers(1, &streamBuffer_wsPositions);
+		glBindBuffer(GL_ARRAY_BUFFER, streamBuffer_wsPositions);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    CHECK_GL_ERRORS;
+		glBufferData(GL_ARRAY_BUFFER, transformFeedbackBufferSize, nullptr, GL_STREAM_COPY);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		CHECK_GL_ERRORS;
+	}
+
+	//-- Allocate stream buffer storage for vertex normals:
+	{
+		glGenBuffers(1, &streamBuffer_wsNormals);
+		glBindBuffer(GL_ARRAY_BUFFER, streamBuffer_wsNormals);
+
+		glBufferData(GL_ARRAY_BUFFER, transformFeedbackBufferSize, nullptr, GL_STREAM_COPY);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		CHECK_GL_ERRORS;
+	}
+
+
+	//-- Setup transform feedback stream index binding points:
+	{
+		glGenTransformFeedbacks(1, &transformFeedbackObj);
+		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transformFeedbackObj);
+
+		// vertex positions:
+		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,
+				streamIndex_wsPositions, streamBuffer_wsPositions);
+
+		// vertex normals:
+		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,
+				streamIndex_wsNormals, streamBuffer_wsNormals);
+
+		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+		CHECK_GL_ERRORS;
+	}
 }
 
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
+
+	// Empty out GL pipeline so that stream buffers have data.
+	glFlush();
+	glFinish();
+
     GLsizei numElements =  transformFeedbackBufferSize / sizeof(GLfloat);
-    GLfloat * feedbackData = new GLfloat[numElements];
+    GLfloat * stream0Data = new GLfloat[numElements];
+	GLfloat * stream1Data = new GLfloat[numElements];
 
-    glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, transformFeedbackBufferSize,
-            feedbackData);
+	glBindBuffer(GL_ARRAY_BUFFER, streamBuffer_wsPositions);
+	glGetBufferSubData(GL_ARRAY_BUFFER, 0, transformFeedbackBufferSize, stream0Data);
 
-	delete [] feedbackData;
+	glBindBuffer(GL_ARRAY_BUFFER, streamBuffer_wsNormals);
+	glGetBufferSubData(GL_ARRAY_BUFFER, 0, transformFeedbackBufferSize, stream1Data);
+
+
+	delete [] stream0Data;
+	delete [] stream1Data;
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
     CHECK_GL_ERRORS;
+}
 
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::updateShaderUniforms(const Rigid3D::Camera &camera) {
+	mat4 projMatrix = camera.getProjectionMatrix();
+	mat4 viewMatrix = camera.getViewMatrix();
+
+	shaderProgram_renderIsoSurface.setUniform("MVP_Matrix", projMatrix * viewMatrix);
+	shaderProgram_renderIsoSurface.setUniform("NormalMatrix",
+			glm::transpose(glm::inverse(viewMatrix)));
 }
 
 //----------------------------------------------------------------------------------------
@@ -665,37 +772,63 @@ void MarchingCubesRenderer::render(
         GLuint volumeData_texture3d,
         float32 isoSurfaceThreshold
 ){
-    shaderProgram.setUniform("isoSurfaceThreshold", isoSurfaceThreshold);
+	generateIsoSurfaceTriangles(volumeData_texture3d, isoSurfaceThreshold);
+	renderIsoSurface(camera);
+}
 
-    // Prevent rasterization.
-    glEnable(GL_RASTERIZER_DISCARD);
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::generateIsoSurfaceTriangles(
+	GLuint volumeData_texture3d,
+	float isoSurfaceThreshold
+){
+	shaderProgram_genIsoSurface.setUniform("isoSurfaceThreshold", isoSurfaceThreshold);
 
-    glBindVertexArray(vao);
+	// Prevent rasterization.
+	glEnable(GL_RASTERIZER_DISCARD);
 
-    glActiveTexture(GL_TEXTURE0 + volumeData_texUnitOffset);
-    glBindTexture(GL_TEXTURE_3D, volumeData_texture3d);
-    glBindSampler(volumeData_texUnitOffset, sampler_volumeData);
+	glBindVertexArray(vao_voxelData);
+
+	glActiveTexture(GL_TEXTURE0 + volumeData_texUnitOffset);
+	glBindTexture(GL_TEXTURE_3D, volumeData_texture3d);
+	glBindSampler(volumeData_texUnitOffset, sampler_volumeData);
 
 	glActiveTexture(GL_TEXTURE0 + triTable_texUnitOffset);
 	glBindTexture(GL_TEXTURE_2D, triTable_texture2d);
 
-    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tbo);
+	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transformFeedbackObj);
 
-    shaderProgram.enable();
-		glBeginTransformFeedback(GL_TRIANGLES);
-			glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
+	shaderProgram_genIsoSurface.enable();
+		glBeginTransformFeedback(GL_POINTS);
+		glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
 		glEndTransformFeedback();
-    shaderProgram.disable();
-    glFlush();
-	glFinish();
+	shaderProgram_genIsoSurface.disable();
 
-    inspectTransformFeedbackBuffer();
+	inspectTransformFeedbackBuffer();
 
-    //-- Restore defaults:
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_3D, 0);
+	//-- Restore defaults:
+	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_3D, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-    glBindSampler(volumeData_texUnitOffset, 0);
-    glDisable(GL_RASTERIZER_DISCARD);
-    CHECK_GL_ERRORS;
+	glBindSampler(volumeData_texUnitOffset, 0);
+	glDisable(GL_RASTERIZER_DISCARD);
+	CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::renderIsoSurface(const Rigid3D::Camera & camera) {
+	updateShaderUniforms(camera);
+
+	glBindVertexArray(vao_isoSurfaceTriangles);
+
+	// Contains transform feedback primitive count needed for draw call.
+	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transformFeedbackObj);
+
+	shaderProgram_renderIsoSurface.enable();
+		glDrawTransformFeedback(GL_TRIANGLES, transformFeedbackObj);
+	shaderProgram_renderIsoSurface.disable();
+
+	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+	glBindVertexArray(0);
+	CHECK_GL_ERRORS;
 }

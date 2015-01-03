@@ -17,9 +17,11 @@ class MarchingCubesRenderer;
 const int kScreenWidth = 1024;
 const int kScreenHeight = 768;
 
-const int kBoundingVolumeWidth  = 8;
-const int kBoundingVolumeHeight = 8;
-const int kBoundingVolumeDepth  = 8;
+const int kGridWidth = 4;
+const int kGridHeight = 4;
+const int kGridDepth = 4;
+
+const float isoSurfaceThreshold = 1.0f;
 
 class MarchingCubesExample : public GlfwOpenGlWindow {
 
@@ -33,7 +35,9 @@ private:
 
     MarchingCubesRenderer * marchingCubesRenderer;
 
-    GLuint volumeDensity_texture3d;  // 3D data set to be rendered.
+    //-- 3D data sets to be rendered:
+    GLuint volumeDensity_texture3d;
+    GLuint cubeDensity_texture3d;
 
 
     virtual void init();
@@ -43,5 +47,6 @@ private:
 
     void createTextureStorage();
     void fillVolumeDensityTexture();
+    void fillCubeDensityTexture();
 
 };
