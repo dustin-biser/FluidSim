@@ -14,7 +14,7 @@ const GLuint zLayerCoord_attrib_index = 1;
 
 //-- For vao_isoSurfaceTriangles:
 const GLuint position_attrib_index = 0;
-const GLuint normal_attrib_index = 0;
+const GLuint normal_attrib_index = 1;
 
 //-- Streams for transform feedback buffers
 const GLuint streamIndex_wsPositions = 0;
