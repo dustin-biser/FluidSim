@@ -3,8 +3,7 @@
 
 layout(points) in;
 
-// Outputs 0-5 triangles
-layout(triangle_strip, max_vertices = 15) out;
+layout(points, max_vertices = 15) out;
 
 in vsOutputGsInput {
 	vec3 wsPosition; // World-space position of voxel's minimum corner.
@@ -50,9 +49,10 @@ uniform vec4 cornerAmask4567[numEdges]; // .xyzw corresponds to vertex 4,5,6,7.
 uniform vec4 cornerBmask0123[numEdges]; // .xyzw corresponds to vertex 0,1,2,3.
 uniform vec4 cornerBmask4567[numEdges]; // .xyzw corresponds to vertex 4,5,6,7.
 
-out vec3 outWsPosition;
+layout (stream = 0) out vec3 outWsPosition;
+layout (stream = 1) out vec3 outWsNormal;
 
-void placeVertOnEdge(int edgeNum) {
+void placeVertOnEdge(in int edgeNum, out vec3 vertexPosition) {
 
 	// Obtain value at vertex A.
 	float aValue = dot(cornerAmask0123[edgeNum], gs_in[0].f0123) +
@@ -67,7 +67,29 @@ void placeVertOnEdge(int edgeNum) {
 
 	vec3 pos_within_cell = edge_start[edgeNum] + t * edge_dir[edgeNum];
 
-	outWsPosition = gs_in[0].wsPosition + pos_within_cell * gs_in[0].wsVoxelSize;
+	vertexPosition = gs_in[0].wsPosition + pos_within_cell * gs_in[0].wsVoxelSize;
+
+	// TODO Dustin - Uncomment after testing:
+//	outWsPosition = vertexPosition;
+//
+//	EmitStreamVertex(0);
+//	EndStreamPrimitive(0);
+}
+
+void computeNormal(vec3 vertexA, vec3 vertexB, vec3 vertexC) {
+	vec3 dir_a_to_b = vertexB - vertexA;
+	vec3 dir_a_to_c = vertexC - vertexA;
+	vec3 normal = normalize(cross(dir_a_to_b, dir_a_to_c));
+
+	// Repeat 3 times, so each vertex position has a corresponding normal.
+	for(int i = 0; i < 3; ++i) {
+		// Must reassign output variables after each EmitStreamVertex() call.
+
+	// TODO Dustin - Uncomment after testing:
+//		outWsNormal = normal;
+//		EmitStreamVertex(1);
+//		EndStreamPrimitive(1);
+	}
 }
 
 void main() {
@@ -78,25 +100,26 @@ void main() {
 	for(int i = 0; i < numTriangles; ++i) {
 		ivec3 edges = texelFetch(triTable, ivec2(i, mc_case), 0).rgb;
 
-		placeVertOnEdge(edges[0]);
-		EmitVertex();
+		vec3 vertexPosition[3];
 
-		placeVertOnEdge(edges[1]);
-		EmitVertex();
+		placeVertOnEdge(edges[0], vertexPosition[0]);
 
-		placeVertOnEdge(edges[2]);
-		EmitVertex();
+		placeVertOnEdge(edges[1], vertexPosition[1]);
 
-		EndPrimitive();
+		placeVertOnEdge(edges[2], vertexPosition[2]);
+
+		computeNormal(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
 	}
 
+
+
+	// TODO Dustin - remove this:
+	outWsPosition = gs_in[0].wsPosition;
+	EmitStreamVertex(0);
+	EndStreamPrimitive(0);
+
+	outWsNormal = gs_in[0].wsPosition;
+	EmitStreamVertex(1);
+	EndStreamPrimitive(1);
+
 }
-
-
-// Tested:
-// 1. First voxel with isoValue = 1.0, gridSize = 8^3, edge[0,1]
-//      1.A: aValue=0 and bValue=2 for first voxel.
-//      1.B: t value = 0.5, halfway point.
-//      1.C: pos_within_cell = vec3(0.5, 0, 0).
-//      1.D: wsPosition = -0.75
-

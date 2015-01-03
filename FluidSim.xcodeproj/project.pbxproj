@@ -493,13 +493,14 @@
 		EF669049A888B3DE6CBC241F /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
 		EF6690C4889FBF75C64DB2A2 /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
 		EF6690F6392364937643B7EF /* VolumeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderer.hpp; sourceTree = "<group>"; };
-		EF66910120FE1D8DC388A3A5 /* PhongLighting.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = PhongLighting.fs; sourceTree = "<group>"; };
+		EF66910120FE1D8DC388A3A5 /* RenderIsoSurface.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RenderIsoSurface.fs; sourceTree = "<group>"; };
 		EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GpuSmokeSim3D.cpp; sourceTree = "<group>"; };
 		EF66928B88C58F02B9B13E84 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
 		EF669295197260614ED9DC03 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF66930DFAFA2BA55A79AEED /* MarchingCubesRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarchingCubesRenderer.cpp; sourceTree = "<group>"; };
 		EF66931C71D212F726446F02 /* FramebufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FramebufferTest.cpp; sourceTree = "<group>"; };
 		EF669357DA3AF92D77DD1A40 /* SphGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphGraphics.hpp; sourceTree = "<group>"; };
+		EF66938EAC9DE144B5B03C27 /* RenderIsoSurface.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = RenderIsoSurface.vs; sourceTree = "<group>"; };
 		EF6693C2BC5EA2718AC83D1F /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF6694242A93F91435896E49 /* Interp.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Interp.inl; sourceTree = "<group>"; };
 		EF669444F50505180F60A5AD /* GpuSmokeSim2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim2D.hpp; sourceTree = "<group>"; };
@@ -1347,7 +1348,8 @@
 			children = (
 				EF669D5F2B060F9E99F075A9 /* MarchingCubes.vs */,
 				EF6696A71D0819890435FC96 /* MarchingCubes.gs */,
-				EF66910120FE1D8DC388A3A5 /* PhongLighting.fs */,
+				EF66910120FE1D8DC388A3A5 /* RenderIsoSurface.fs */,
+				EF66938EAC9DE144B5B03C27 /* RenderIsoSurface.vs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
