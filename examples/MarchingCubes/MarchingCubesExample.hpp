@@ -48,5 +48,6 @@ private:
     void createTextureStorage();
     void fillVolumeDensityTexture();
     void fillCubeDensityTexture();
+    void setupCamera();
 
 };

@@ -27,6 +27,9 @@ MarchingCubesRenderer::MarchingCubesRenderer(
 
 	setupTransformFeedback();
 	setupVaoForIsoSurfaceTriangles();
+
+	setupVoxelEdgesVertexBuffer();
+	setupVoxelEdgesVao();
 }
 
 //---------------------------------------------------------------------------------------
@@ -65,6 +68,17 @@ void MarchingCubesRenderer::setupShaders() {
 				("examples/MarchingCubes/shaders/RenderIsoSurface.fs");
 		shaderProgram_renderIsoSurface.link();
 	}
+
+
+	//-- shaderProgram_voxelEdges:
+	{
+		shaderProgram_voxelEdges.generateProgramObject();
+		shaderProgram_voxelEdges.attachVertexShader
+				("examples/MarchingCubes/shaders/LineRender.vs");
+		shaderProgram_voxelEdges.attachFragmentShader
+				("examples/MarchingCubes/shaders/LineRender.fs");
+		shaderProgram_voxelEdges.link();
+	}
 }
 
 //----------------------------------------------------------------------------------------
@@ -75,10 +89,11 @@ void MarchingCubesRenderer::setShaderUniforms() {
     shaderProgram_genIsoSurface.setUniform("gridWidth", gridWidth);
     shaderProgram_genIsoSurface.setUniform("gridHeight", gridHeight);
     shaderProgram_genIsoSurface.setUniform("gridDepth", gridDepth);
+	uploadUniformArrays();
 
 	shaderProgram_renderIsoSurface.setUniform("color", vec3(0.1f,0.2f,0.8f));
 
-    uploadUniformArrays();
+	shaderProgram_voxelEdges.setUniform("lineColor", vec3(0.7f, 0.7f, 0.7f));
 }
 
 //----------------------------------------------------------------------------------------
@@ -109,7 +124,7 @@ void MarchingCubesRenderer::uploadUniformArrays() {
 			0, 0, 0,
 			1, 0, 0,
 			1, 1, 0,
-			0, 1, 0,
+			0, 0, 0,
 			0, 0, 1,
 			1, 0, 1,
 			1, 1, 1,
@@ -541,6 +556,68 @@ void MarchingCubesRenderer::generateTriTableTexture() {
 }
 
 //----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::setupVoxelEdgesVao() {
+	glGenVertexArrays(1, &vao_voxelEdgeLines);
+	glBindVertexArray(vao_voxelEdgeLines);
+
+	// Set index buffer binding for VAO.
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, voxelEdges_indexBuffer);
+
+	// Map position buffer data into vertex attribute index.
+	glBindBuffer(GL_ARRAY_BUFFER, voxelEdges_vertexBuffer);
+	glEnableVertexAttribArray(position_attrib_index);
+	glVertexAttribPointer(position_attrib_index, 3, GL_FLOAT, GL_FALSE, 0,
+			reinterpret_cast<void *>(0));
+
+
+	//-- Restore defaults:
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::setupVoxelEdgesVertexBuffer() {
+	//  Voxel vertex offsets in model-space
+	float32 voxelVertices[] = {
+			-0.5f, -0.5f, -0.5f,    // 0 Left Bottom Back
+			 0.5f, -0.5f, -0.5f,    // 1 Right Bottom Back
+			-0.5f, -0.5f,  0.5f,    // 2 Left Bottom Front
+			 0.5f, -0.5f,  0.5f,    // 3 Right Bottom Front
+			-0.5f,  0.5f, -0.5f,    // 4 Left Top Back
+		     0.5f,  0.5f, -0.5f,    // 5 Right Top Back
+			-0.5f,  0.5f,  0.5f,    // 6 Left Top Front
+			 0.5f,  0.5f,  0.5f,    // 7 Right Top Front
+	};
+	// Upload Vertex Position Data:
+	glGenBuffers(1, &voxelEdges_vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, voxelEdges_vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(voxelVertices), voxelVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CHECK_GL_ERRORS;
+
+
+	// Voxel corner indices for constructing GL_LINES.
+	// Every two indices is a new line.
+	GLushort indices [] = {
+			2,3,3,1,1,0,0,2,   // Bottom Face
+			6,7,7,5,5,4,4,6,   // Top Face
+			2,6,    // Left Front Vertical
+			3,7,    // Right Front Vertical
+			0,4,    // Left Back Vertical
+			1,5,    // Right Back Vertical
+
+	};
+	// Upload Index Data:
+	glGenBuffers(1, &voxelEdges_indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, voxelEdges_indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	CHECK_GL_ERRORS;
+}
+
+//----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setupVoxelUvCoordVboData() {
     glGenBuffers(1, &vbo_voxelUvCoords);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_voxelUvCoords);
@@ -757,13 +834,15 @@ void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
 }
 
 //----------------------------------------------------------------------------------------
-void MarchingCubesRenderer::updateShaderUniforms(const Rigid3D::Camera &camera) {
+void MarchingCubesRenderer::updateShaderUniforms(const Rigid3D::Camera &camera){
 	mat4 projMatrix = camera.getProjectionMatrix();
 	mat4 viewMatrix = camera.getViewMatrix();
+	mat4 mvp_Matrix = projMatrix * viewMatrix;
 
-	shaderProgram_renderIsoSurface.setUniform("MVP_Matrix", projMatrix * viewMatrix);
-	shaderProgram_renderIsoSurface.setUniform("NormalMatrix",
-			glm::transpose(glm::inverse(viewMatrix)));
+	shaderProgram_renderIsoSurface.setUniform("MVP_Matrix", mvp_Matrix);
+	shaderProgram_renderIsoSurface.setUniform("NormalMatrix", glm::transpose(glm::inverse(viewMatrix)));
+
+	shaderProgram_voxelEdges.setUniform("MVP_Matrix", mvp_Matrix);
 }
 
 //----------------------------------------------------------------------------------------
@@ -774,6 +853,7 @@ void MarchingCubesRenderer::render(
 ){
 	generateIsoSurfaceTriangles(volumeData_texture3d, isoSurfaceThreshold);
 	renderIsoSurface(camera);
+	renderVoxelEdges(camera);
 }
 
 //----------------------------------------------------------------------------------------
@@ -800,7 +880,6 @@ void MarchingCubesRenderer::generateIsoSurfaceTriangles(
 	shaderProgram_genIsoSurface.enable();
 		glBeginTransformFeedback(GL_POINTS);
 //		glDrawArraysInstanced(GL_POINTS, 0, numVoxelsPerLayer, gridDepth - 1);
-
 
 		// TODO Dustin - remove:
 			// Process only first voxel:
@@ -838,3 +917,18 @@ void MarchingCubesRenderer::renderIsoSurface(const Rigid3D::Camera & camera) {
 	glBindVertexArray(0);
 	CHECK_GL_ERRORS;
 }
+
+//----------------------------------------------------------------------------------------
+void MarchingCubesRenderer::renderVoxelEdges(const Rigid3D::Camera &camera) {
+	updateShaderUniforms(camera);
+
+	glBindVertexArray(vao_voxelEdgeLines);
+
+	shaderProgram_voxelEdges.enable();
+	glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, nullptr);
+	shaderProgram_voxelEdges.disable();
+
+	glBindVertexArray(0);
+	CHECK_GL_ERRORS;
+}
+
