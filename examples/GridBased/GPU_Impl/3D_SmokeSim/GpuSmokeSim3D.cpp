@@ -71,11 +71,11 @@ void GpuSmokeSim3D::init() {
 
     setShaderUniforms();
 
-//    createSolidCells();
+    createSolidCells();
 
     initCamera();
 
-    glClearColor(0.0, 0.0, 0.0, 1.0f);
+    glClearColor(0.0, 0.0, 0.0, 0.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
@@ -89,8 +89,11 @@ void GpuSmokeSim3D::init() {
 void GpuSmokeSim3D::initCamera() {
     camera.setNearZDistance(0.1f);
     camera.setFarZDistance(100.0f);
-    camera.setPosition(0.7, 0.0, 1.5);
+//    camera.setPosition(0.0, -0.4, 1.3);
+//    camera.lookAt(0, 0.1, 0);
+    camera.setPosition(0.7, 0.4, 1.2);
     camera.lookAt(0, 0, 0);
+
 }
 
 //----------------------------------------------------------------------------------------
@@ -230,8 +233,8 @@ void GpuSmokeSim3D::initTextureData() {
 }
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::createSolidCells() {
-    float width = 10;
-    float height  = 10;
+    float width = 15;
+    float height  = 15;
 
     vec3 scaleFactor;
     scaleFactor.x = width / cellTypeGrid.textureWidth;
@@ -251,7 +254,7 @@ void GpuSmokeSim3D::createSolidCells() {
 
     glViewport(0, 0, cellTypeGrid.textureWidth, cellTypeGrid.textureHeight);
 
-    for (int layer = 20; layer < 35; ++layer) {
+    for (int layer = 30; layer <= 40; ++layer) {
         bindFramebufferWithAttachments(framebuffer,
                 cellTypeGrid.textureName[READ], layer);
 
@@ -1180,7 +1183,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- temperatureGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 420.0f);
+        shaderProgram_InjectData.setUniform("value", 500.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
@@ -1316,7 +1319,7 @@ void GpuSmokeSim3D::logic() {
     //  Render
 
     static int counter = 0;
-    if (counter < 5) {
+    if (counter < 20) {
         injectDensityAndTemperature();
         ++counter;
     }
@@ -1326,8 +1329,6 @@ void GpuSmokeSim3D::logic() {
     computeDivergence();
     computePressure();
     projectVelocity();
-
-//    inspectGridData(w_velocityGrid);
 }
 
 //----------------------------------------------------------------------------------------

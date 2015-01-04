@@ -51,6 +51,7 @@ private:
     ShaderProgram shaderProgram_RayDirection;
     ShaderProgram shaderProgram_RayMarch;
     ShaderProgram shaderProgram_NoiseGenerator;
+    ShaderProgram shaderProgram_SolidCells;
 
     void updateShaderUniforms(const Camera & camera);
     void setupShaders();
@@ -93,4 +94,5 @@ private:
     void accqiurePreviousGLSetings();
     void restorePreviousGLSettings();
 
+    void renderSolidCells(const Camera & camera);
 };

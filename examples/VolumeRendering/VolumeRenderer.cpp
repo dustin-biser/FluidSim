@@ -174,6 +174,12 @@ void VolumeRenderer::setupShaders() {
     shaderProgram_LineRender.attachFragmentShader(
             "examples/VolumeRendering/shaders/LineRender.fs");
     shaderProgram_LineRender.link();
+
+    shaderProgram_SolidCells.attachVertexShader(
+            "examples/VolumeRendering/shaders/LineRender.vs");
+    shaderProgram_SolidCells.attachFragmentShader(
+            "examples/VolumeRendering/shaders/LineRender.fs");
+    shaderProgram_SolidCells.link();
 }
 
 //---------------------------------------------------------------------------------------
@@ -603,12 +609,45 @@ void VolumeRenderer::draw(
     composeVolumeEntranceTexture();
     composeRayDirectionTexture();
 
+    renderSolidCells(camera);
     renderVolume(volumeData_texture3d, rayStepSize);
 
     if(edgeDrawingEnabled) {
-        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
         renderBoundingVolumeEdges();
     }
 
+
     restorePreviousGLSettings();
+}
+
+//---------------------------------------------------------------------------------------
+void VolumeRenderer::renderSolidCells(const Camera & camera) {
+    float width = 15;
+    float height  = 15;
+    float depth = 10;
+
+    vec3 scaleFactor;
+    scaleFactor.x = width / boundingVolumeWidth;
+    scaleFactor.z = height / boundingVolumeHeight;
+    scaleFactor.y = depth / boundingVolumeDepth;
+    mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
+    mat4 transMatrix = glm::translate(mat4(), vec3(0.0f,3.0/boundingVolumeDepth, 0.0f));
+    mat4 modelMatrix = transMatrix * scaleMatrix;
+
+
+    mat4 ModelViewMatrix = camera.getViewMatrix() * modelMatrix;
+    shaderProgram_SolidCells.setUniform("ProjectionMatrix", camera.getProjectionMatrix());
+    shaderProgram_SolidCells.setUniform("ModelViewMatrix", ModelViewMatrix);
+    shaderProgram_SolidCells.setUniform("u_LineColor", vec4(0.2,0.01,0.01,1.0));
+
+
+    glBindVertexArray(bvEdgesVao);
+
+    shaderProgram_SolidCells.enable();
+    glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
+    shaderProgram_SolidCells.disable();
+
+    glBindVertexArray(0);
+    CHECK_GL_ERRORS;
 }

@@ -24,7 +24,7 @@ class VolumeRenderer;
 // Simulation Parameters
 //----------------------------------------------------------------------------------------
 const float32 kSecondsPerFrame = 1/60.0f;
-const float32 kDt = 0.008f;
+const float32 kDt = 0.01f;
 const int32 kJacobiIterations = 50;
 const int32 kScreenWidth = 1024;
 const int32 kScreenHeight = 768;
@@ -33,8 +33,8 @@ const int32 kScreenHeight = 768;
 // Fluid Parameters
 //----------------------------------------------------------------------------------------
 const float32 kTemp_0 = 273.0f;  // Ambient Temperature in Kelvin
-const float32 kBuoyant_d = 50.9f; // Density coefficient for buoyant force.
-const float32 kBuoyant_t = 2.09; // Temperature coefficient for buoyant force.
+const float32 kBuoyant_d = 0.8; // Density coefficient for buoyant force.
+const float32 kBuoyant_t = 0.34; // Temperature coefficient for buoyant force.
 const float32 kDensity = 1.0f;
 
 //----------------------------------------------------------------------------------------

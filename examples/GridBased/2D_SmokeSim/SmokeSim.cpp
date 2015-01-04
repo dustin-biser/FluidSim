@@ -112,6 +112,7 @@ void SmokeSim::initGridData() {
 
             }
 
+            // TOOD Dustin - Uncomment
             // Create a Solid Box near center of grid
             int32 mid_col = kGridWidth / 2;
             int32 mid_row = kGridHeight / 2;
@@ -398,7 +399,7 @@ void SmokeSim::logic() {
 
     //-- Inject density and temperature:
     static uint counter = 0;
-    if (counter < 60) {
+    if (counter < 80) {
         fillGrid(densityGrid, 35, 10, 1, 6, 1.0f);
         fillGrid(temperatureGrid, 35, 10, 1, 6, kTemp_0 + 200);
         counter++;
