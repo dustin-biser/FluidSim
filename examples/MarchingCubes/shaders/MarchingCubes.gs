@@ -108,7 +108,3 @@ void main() {
 		computeNormal(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
 	}
 }
-//----------------------------------------------------------------------------------------
-// TESTED:
-// edgeNum correct.
-// pos_within_cell correct.
