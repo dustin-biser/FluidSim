@@ -13,9 +13,9 @@ using namespace Rigid3D;
 const int kScreenWidth = 1024;
 const int kScreenHeight = 768;
 
-const int kBoundingVolumeWidth  = 512;
-const int kBoundingVolumeHeight = 512;
-const int kBoundingVolumeDepth  = 512;
+const int kGridWidth = 512;
+const int kGridHeight = 512;
+const int kGridDepth = 512;
 
 const float kRayStepSize = 0.05;
 

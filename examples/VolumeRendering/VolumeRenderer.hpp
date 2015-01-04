@@ -8,9 +8,9 @@ using namespace Rigid3D;
 
 
 // Vertex Attribute Index Locations:
-const GLuint position_attrib_index = 0;
+const GLuint uvCoord_attrib_index = 0;
 const GLuint color_attrib_index = 1;
-const GLuint textureCoord_attrib_index = 2;
+const GLuint zLayerCoord_attrib_index = 2;
 
 
 class VolumeRenderer {

@@ -28,9 +28,9 @@ VolumeRenderingExample::~VolumeRenderingExample() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::init() {
-    volumeRenderer = new VolumeRenderer(kBoundingVolumeWidth,
-                                        kBoundingVolumeHeight,
-                                        kBoundingVolumeDepth,
+    volumeRenderer = new VolumeRenderer(kGridWidth,
+            kGridHeight,
+            kGridDepth,
                                         defaultFramebufferWidth(),
                                         defaultFramebufferHeight());
 
@@ -67,8 +67,8 @@ void VolumeRenderingExample::createTextureStorage() {
     glGenTextures(1, &volumeDensity_texture3d);
     glBindTexture(GL_TEXTURE_3D, volumeDensity_texture3d);
 
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, kBoundingVolumeWidth, kBoundingVolumeHeight,
-        kBoundingVolumeDepth, 0, GL_RED, GL_FLOAT, NULL);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, kGridWidth, kGridHeight,
+            kGridDepth, 0, GL_RED, GL_FLOAT, NULL);
 
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -85,24 +85,24 @@ void VolumeRenderingExample::createTextureStorage() {
 void VolumeRenderingExample::fillVolumeDensityTexture() {
     glBindTexture(GL_TEXTURE_3D, volumeDensity_texture3d);
 
-    const int width = kBoundingVolumeWidth;
-    const int height = kBoundingVolumeHeight;
-    const int depth = kBoundingVolumeDepth;
+    const int width = kGridWidth;
+    const int height = kGridHeight;
+    const int depth = kGridDepth;
     float32 * data = new float32[depth*height*width];
 
     // Form a wedge like shape that is non-isotropic:
     // From the base upward, each slice should become thinner.
-    for(int k(0); k < kBoundingVolumeDepth; ++k) {
-        for(int j(0); j < kBoundingVolumeHeight; ++j) {
-            for(int i(0); i < kBoundingVolumeWidth; ++i) {
+    for(int k(0); k < kGridDepth; ++k) {
+        for(int j(0); j < kGridHeight; ++j) {
+            for(int i(0); i < kGridWidth; ++i) {
 
                 data[k*(height*width) + j*width + i] = 0.8f;
             }
         }
     }
 
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kBoundingVolumeWidth,
-            kBoundingVolumeHeight, kBoundingVolumeDepth, GL_RED, GL_FLOAT, data);
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kGridWidth,
+            kGridHeight, kGridDepth, GL_RED, GL_FLOAT, data);
 
 
     delete [] data;
