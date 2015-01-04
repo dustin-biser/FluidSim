@@ -6,7 +6,7 @@ using std::shared_ptr;
 //----------------------------------------------------------------------------------------
 int main() {
     shared_ptr<GlfwOpenGlWindow> demo =  MarchingCubesExample::getInstance();
-    demo->create(kScreenWidth, kScreenHeight, "Marching Cubes Demo", 1/80.0f);
+    demo->create(kScreenWidth, kScreenHeight, "Marching Cubes Demo", 1/60.0f);
 
     return 0;
 }
@@ -35,9 +35,21 @@ void MarchingCubesExample::init() {
     createTextureStorage();
     fillVolumeDensityTexture();
     fillCubeDensityTexture();
+    setupCamera();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glDisable(GL_DEPTH_TEST);
+
+    glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+    glClearDepth(1.0f);
+
+    glDisable(GL_CULL_FACE);
+
+    //-- Setup depth testing:
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE); // Allow writing to depth buffer.
+    glDepthFunc(GL_LEQUAL); // Only fragments with lesser/equal depth value will pass.
+    glDepthRange(0.0f, 1.0f);
+    glEnable(GL_DEPTH_CLAMP);
+
 
     CHECK_GL_ERRORS;
 }
@@ -154,13 +166,18 @@ void MarchingCubesExample::fillCubeDensityTexture() {
 }
 
 //---------------------------------------------------------------------------------------
+void MarchingCubesExample::setupCamera() {
+    camera.setPosition(vec3(0,0,2));
+}
+
+//---------------------------------------------------------------------------------------
 void MarchingCubesExample::logic() {
 
 }
 
 //---------------------------------------------------------------------------------------
 void MarchingCubesExample::draw() {
-    marchingCubesRenderer->render(camera, volumeDensity_texture3d, kIsoSurfaceThreshold);
+    marchingCubesRenderer->render(camera, cubeDensity_texture3d, kIsoSurfaceThreshold);
 }
 
 //---------------------------------------------------------------------------------------

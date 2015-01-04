@@ -488,6 +488,7 @@
 		0CC20F1719D21550004B89EA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GpuSmokeSim2D; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CFD3D511A4F47F1005A483F /* MarchingCubesExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MarchingCubesExample; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF66901ED6FD5E6EC6745842 /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
 		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
 		EF6690426336D679DDB9E84D /* GpuSmokeSim3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim3D.hpp; sourceTree = "<group>"; };
 		EF669049A888B3DE6CBC241F /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
@@ -566,6 +567,7 @@
 		EF669DFE3E21E8EFDAAB7108 /* Interp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interp.hpp; sourceTree = "<group>"; };
 		EF669E1C1F8D15FB4AB5E390 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
 		EF669E21FED0704F12D9A135 /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
+		EF669E5B950DC46EA122657E /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
 		EF669EB410FDB179D4990FCD /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669EBEF8FC4E7D665574E5 /* SmokeSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim.cpp; sourceTree = "<group>"; };
 		EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BuoyantForce.fs; sourceTree = "<group>"; };
@@ -1351,6 +1353,8 @@
 				EF6696A71D0819890435FC96 /* MarchingCubes.gs */,
 				EF66910120FE1D8DC388A3A5 /* RenderIsoSurface.fs */,
 				EF66938EAC9DE144B5B03C27 /* RenderIsoSurface.vs */,
+				EF669E5B950DC46EA122657E /* LineRender.fs */,
+				EF66901ED6FD5E6EC6745842 /* LineRender.vs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

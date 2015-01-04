@@ -83,7 +83,6 @@ void computeNormal(vec3 vertexA, vec3 vertexB, vec3 vertexC) {
 	// Repeat 3 times, so each vertex position has a corresponding normal.
 	for(int i = 0; i < 3; ++i) {
 		// Must reassign output variables after each EmitStreamVertex() call.
-
 		outWsNormal = normal;
 		EmitStreamVertex(1);
 		EndStreamPrimitive(1);
@@ -109,3 +108,7 @@ void main() {
 		computeNormal(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
 	}
 }
+//----------------------------------------------------------------------------------------
+// TESTED:
+// edgeNum correct.
+// pos_within_cell correct.
