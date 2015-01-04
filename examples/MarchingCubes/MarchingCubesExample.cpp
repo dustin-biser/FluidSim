@@ -38,18 +38,17 @@ void MarchingCubesExample::init() {
     setupCamera();
 
 
-    glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
-    glClearDepth(1.0f);
-
     glDisable(GL_CULL_FACE);
 
     //-- Setup depth testing:
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Allow writing to depth buffer.
-    glDepthFunc(GL_LEQUAL); // Only fragments with lesser/equal depth value will pass.
+    glDepthFunc(GL_LESS);
     glDepthRange(0.0f, 1.0f);
     glEnable(GL_DEPTH_CLAMP);
 
+    glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+    glClearDepth(1.0f);
 
     CHECK_GL_ERRORS;
 }
@@ -167,7 +166,13 @@ void MarchingCubesExample::fillCubeDensityTexture() {
 
 //---------------------------------------------------------------------------------------
 void MarchingCubesExample::setupCamera() {
-    camera.setPosition(vec3(0,0,2));
+    camera.setNearZDistance(0.1f);
+    camera.setPosition(vec3(0,1,1.5));
+    camera.lookAt(vec3(0,0,0));
+
+    cameraController.setForwardScaleFactor(0.05f/kGridWidth);
+    cameraController.setSideStrafeScaleFactor(0.05f/kGridWidth);
+    cameraController.setUpScaleFactor(0.05f/kGridWidth);
 }
 
 //---------------------------------------------------------------------------------------

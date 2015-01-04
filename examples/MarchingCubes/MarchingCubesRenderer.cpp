@@ -1,5 +1,6 @@
 #include "MarchingCubesRenderer.hpp"
 #include "MarchingCubesExample.hpp"
+#include <glm/gtx/transform.hpp>
 
 using namespace Rigid3D;
 
@@ -579,7 +580,16 @@ void MarchingCubesRenderer::setupVoxelEdgesVao() {
 
 //----------------------------------------------------------------------------------------
 void MarchingCubesRenderer::setupVoxelEdgesVertexBuffer() {
-	//  Voxel vertex offsets in model-space
+
+	//   World-Space Axes
+	//      y
+	//      |
+	//      |   / -z
+	//      |  /
+	//      | /
+	//      O -------- x
+
+	//  Voxel vertex offsets in world-space
 	float32 voxelVertices[] = {
 			-0.5f, -0.5f, -0.5f,    // 0 Left Bottom Back
 			 0.5f, -0.5f, -0.5f,    // 1 Right Bottom Back
@@ -837,12 +847,13 @@ void MarchingCubesRenderer::inspectTransformFeedbackBuffer() {
 void MarchingCubesRenderer::updateShaderUniforms(const Rigid3D::Camera &camera){
 	mat4 projMatrix = camera.getProjectionMatrix();
 	mat4 viewMatrix = camera.getViewMatrix();
-	mat4 mvp_Matrix = projMatrix * viewMatrix;
+	mat4 vpMatrix = projMatrix * viewMatrix;
 
-	shaderProgram_renderIsoSurface.setUniform("MVP_Matrix", mvp_Matrix);
+	shaderProgram_renderIsoSurface.setUniform("MVP_Matrix", vpMatrix);
 	shaderProgram_renderIsoSurface.setUniform("NormalMatrix", glm::transpose(glm::inverse(viewMatrix)));
 
-	shaderProgram_voxelEdges.setUniform("MVP_Matrix", mvp_Matrix);
+	mat4 modelMatrix = glm::scale(vec3(2.0f/(gridWidth-1)));
+	shaderProgram_voxelEdges.setUniform("MVP_Matrix", vpMatrix * modelMatrix);
 }
 
 //----------------------------------------------------------------------------------------
