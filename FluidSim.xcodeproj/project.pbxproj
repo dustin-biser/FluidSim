@@ -483,6 +483,7 @@
 		EF6694242A93F91435896E49 /* Interp.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Interp.inl; sourceTree = "<group>"; };
 		EF669444F50505180F60A5AD /* GpuSmokeSim2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim2D.hpp; sourceTree = "<group>"; };
 		EF66946C542DEAF219D938BF /* Advect.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Advect.inl; sourceTree = "<group>"; };
+		EF66946DE8889F1B710154E7 /* DensityTransferFunc.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = DensityTransferFunc.fs; sourceTree = "<group>"; };
 		EF66947FD44EB310BFDB170D /* SmokeGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeGraphics.cpp; sourceTree = "<group>"; };
 		EF6694DAED76CE967BF298D4 /* StaggeredGrid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = StaggeredGrid.inl; sourceTree = "<group>"; };
 		EF6694DCAED67E3F055B694E /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
@@ -1346,6 +1347,7 @@
 				EF66990A1A75A4B08EE98B58 /* NoiseGenerator.fs */,
 				EF669BC63BF08A24AB91B2E1 /* LineRender.vs */,
 				EF6694DCAED67E3F055B694E /* LineRender.fs */,
+				EF66946DE8889F1B710154E7 /* DensityTransferFunc.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

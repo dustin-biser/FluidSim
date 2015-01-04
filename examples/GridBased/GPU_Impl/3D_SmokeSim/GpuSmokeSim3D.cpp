@@ -71,13 +71,16 @@ void GpuSmokeSim3D::init() {
 
     setShaderUniforms();
 
-    createSolidCells();
+//    createSolidCells();
 
     initCamera();
 
     glClearColor(0.0, 0.0, 0.0, 1.0f);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+    glDepthRange(0.0f, 1.0f);
+    glEnable(GL_DEPTH_CLAMP);
 
     CHECK_GL_ERRORS;
 }
@@ -1156,7 +1159,7 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 
     //-- densityGrid:
     {
-        shaderProgram_InjectData.setUniform("value", 100.0f);
+        shaderProgram_InjectData.setUniform("value", 2.0f);
 
         shaderProgram_InjectData.setUniform("modelMatrix", modelMatrix);
 
@@ -1313,7 +1316,7 @@ void GpuSmokeSim3D::logic() {
     //  Render
 
     static int counter = 0;
-    if (counter < 60) {
+    if (counter < 5) {
         injectDensityAndTemperature();
         ++counter;
     }

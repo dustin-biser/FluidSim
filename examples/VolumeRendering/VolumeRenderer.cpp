@@ -160,7 +160,7 @@ void VolumeRenderer::setupShaders() {
     shaderProgram_RenderTexture.attachVertexShader(
             "examples/VolumeRendering/shaders/ScreenQuad.vs");
     shaderProgram_RenderTexture.attachFragmentShader(
-            "examples/VolumeRendering/shaders/ScreenQuad.fs");
+            "examples/VolumeRendering/shaders/DensityTransferFunc.fs");
     shaderProgram_RenderTexture.link();
 
     shaderProgram_NoiseGenerator.attachVertexShader(
