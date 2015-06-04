@@ -181,6 +181,7 @@ void VolumeRenderer::setupShaders() {
             "examples/VolumeRendering/shaders/LineRender.fs");
     shaderProgram_LineRender.link();
 
+	shaderProgram_SolidCells.generateProgramObject();
     shaderProgram_SolidCells.attachVertexShader(
             "examples/VolumeRendering/shaders/LineRender.vs");
     shaderProgram_SolidCells.attachFragmentShader(
