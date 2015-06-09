@@ -1,11 +1,8 @@
-#ifndef FLUIDSIM_NUMERIC_TYPES_HPP
-#define FLUIDSIM_NUMERIC_TYPES_HPP
+#pragma once
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-
-namespace FluidSim {
 
 //--------------------------------------------------------------------------------------
 // Basic Types
@@ -16,10 +13,12 @@ typedef unsigned char ubyte;
 typedef signed char	int8;
 typedef signed short int16;
 typedef signed int int32;
+typedef signed long int64;
 
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
+typedef unsigned long uint64;
 
 typedef float float32;
 typedef double float64;
@@ -55,7 +54,3 @@ using tmat3 = glm::detail::tmat3x3<T, glm::highp>;
 template <typename T>
 using tmat4 = glm::detail::tmat4x4<T, glm::highp>;
 
-
-} // end namespace FluidSim
-
-#endif /* FLUIDSIM_NUMERIC_TYPES_HPP */
