@@ -1,7 +1,7 @@
 #include "GpuSmokeSim2D.hpp"
+#include "DemoException.hpp"
 
-#include <Rigid3D/Rigid3D.hpp>
-using namespace Rigid3D;
+#include <Synergy/Synergy.hpp>
 
 #include <chrono>
 #include <sstream>
@@ -323,21 +323,53 @@ void GpuSmokeSim2D::setupScreenQuadVboData() {
 
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim2D::setupShaderPrograms() {
-    shaderProgram_Advect.loadFromFile (
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advect.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advect.fs");
+	//--shaderProgram_Advect:
+	{
+		shaderProgram_Advect.generateProgramObject();
+		shaderProgram_Advect.attachVertexShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advect.vs"
+		);
+		shaderProgram_Advect.attachFragmentShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/Advect.fs"
+		);
+		shaderProgram_Advect.link();
+	}
 
-    shaderProgram_ComputeRHS.loadFromFile(
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.fs");
+	//--shaderProgram_ComputeRHS:
+	{
+		shaderProgram_ComputeRHS.generateProgramObject();
+		shaderProgram_ComputeRHS.attachVertexShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.vs"
+		);
+		shaderProgram_ComputeRHS.attachFragmentShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ComputeRHS.fs"
+		);
+		shaderProgram_ComputeRHS.link();
+	}
 
-    shaderProgram_StencilFluidCells.loadFromFile(
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.fs");
+	//--shaderProgram_StencilFluidCells:
+	{
+		shaderProgram_StencilFluidCells.generateProgramObject();
+		shaderProgram_StencilFluidCells.attachVertexShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.vs"
+		);
+		shaderProgram_StencilFluidCells.attachFragmentShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/StencilFluidCells.fs"
+		);
+		shaderProgram_StencilFluidCells.link();
+	}
 
-    shaderProgram_SceneRenderer.loadFromFile(
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.vs",
-            "examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.fs");
+	//--shaderProgram_SceneRenderer:
+	{
+		shaderProgram_SceneRenderer.generateProgramObject();
+		shaderProgram_SceneRenderer.attachVertexShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.vs"
+		);
+		shaderProgram_SceneRenderer.attachFragmentShader(
+				"examples/GridBased/GPU_Impl/2D_SmokeSim/shaders/ScreenQuad.fs"
+		);
+		shaderProgram_SceneRenderer.link();
+	}
 
     CHECK_GL_ERRORS;
 }
@@ -634,7 +666,7 @@ void GpuSmokeSim2D::checkFramebufferCompleteness() {
         stringstream error;
         error << "Error. Framebuffer not complete.";
         error << " ErroCode: " << status;
-        throw Rigid3DException(error.str());
+        throw DemoException(error.str());
     }
 }
 

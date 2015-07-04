@@ -38,6 +38,8 @@
 		0C6665CB19E7749700F56EBC /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C66658619E76B8100F56EBC /* libgtest.a */; };
 		0CB3B7C71B47831600CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
 		0CB3B7C81B47832E00CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
+		0CB3B7C91B4783E200CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
+		0CB3B7CA1B4783F000CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
 		0CBCE20B19F839A5007ACADF /* Advect_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20819F839A5007ACADF /* Advect_Test.cpp */; };
 		0CBCE20C19F839A5007ACADF /* Grid_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20919F839A5007ACADF /* Grid_Test.cpp */; };
 		0CBCE20D19F839A5007ACADF /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
@@ -47,7 +49,6 @@
 		0CC20F1619D21547004B89EA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CC20F1819D21550004B89EA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0CC20F1919D215BE004B89EA /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
-		0CE588551A2583A3004F84AB /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0CE588561A2583A3004F84AB /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0CE588571A2583A3004F84AB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CE588581A2583A3004F84AB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
@@ -695,7 +696,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CE588551A2583A3004F84AB /* libRigid3D.a in Frameworks */,
+				0CB3B7CA1B4783F000CF609B /* libSynergy.a in Frameworks */,
 				0CE588561A2583A3004F84AB /* CoreVideo.framework in Frameworks */,
 				0CE588571A2583A3004F84AB /* IOKit.framework in Frameworks */,
 				0CE588581A2583A3004F84AB /* OpenGL.framework in Frameworks */,
@@ -1858,6 +1859,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CB3B7C91B4783E200CF609B /* CameraController.cpp in Sources */,
 				EF6694BE686AFDB083B1A765 /* GlfwOpenGlWindow.cpp in Sources */,
 				EF66903317F5B4B0A5DE15DF /* GpuSmokeSim2D.cpp in Sources */,
 			);
@@ -2241,7 +2243,7 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				PRODUCT_NAME = GpuSmokeSim2D;
-				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
+				USER_HEADER_SEARCH_PATHS = "source examples/**";
 			};
 			name = Debug;
 		};
@@ -2261,7 +2263,7 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				PRODUCT_NAME = GpuSmokeSim2D;
-				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
+				USER_HEADER_SEARCH_PATHS = "source examples/**";
 			};
 			name = Release;
 		};
