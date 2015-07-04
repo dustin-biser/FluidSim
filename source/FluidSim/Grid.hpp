@@ -43,9 +43,17 @@ public:
 
     float32 cellLength() const;
 
+	bool contains(const vec2 & p) const;
+
     vec2 getPosition(uint32 col, uint32 row) const;
 
+	glm::ivec2 gridCoordOf(const vec2 & p) const;
+
+	bool isValidCoord(int32 col, int32 row) const;
+
     T & operator () (uint32 col, uint32 row) const;
+
+	T & operator () (const glm::uvec2 & gridCoord) const;
 
     Grid<T> & operator = (Grid<T> && other);
 

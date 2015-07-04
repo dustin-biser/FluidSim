@@ -1,19 +1,16 @@
 /**
  * @brief Abstract class for other classes to inherit from that want access to an
  * GLFW window and OpenGL context for rendering.
- *
- * @author Dustin Biser
  */
 
-#ifndef GLFWOPENGLWINDOW_HPP_
-#define GLFWOPENGLWINDOW_HPP_
+#pragma once
+
 
 // Force GLFW to include gl3.h core functionality instead of gl.h deprecated code.
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
-#include <Rigid3D/Graphics/Camera.hpp>
-#include <Rigid3D/Graphics/CameraController.hpp>
+#include <Synergy/Graphics/Camera.hpp>
 
 #include <glm/glm.hpp>
 
@@ -21,10 +18,9 @@
 #include <memory>
 #include <chrono>
 
-#include <boost/noncopyable.hpp>
+#include "CameraController.hpp"
 
-/// Singleton
-class GlfwOpenGlWindow : private boost::noncopyable {
+class GlfwOpenGlWindow {
 public:
     virtual ~GlfwOpenGlWindow();
 
@@ -37,8 +33,8 @@ public:
 
 protected:
 
-    Rigid3D::Camera camera;
-    Rigid3D::CameraController cameraController;
+    Synergy::Camera camera;
+    CameraController cameraController;
 
     static std::shared_ptr<GlfwOpenGlWindow> p_instance;
 
@@ -101,7 +97,7 @@ protected:
     virtual void keyInput(int key, int action, int mods);
 
 
-private:
+protected:
     GLFWwindow * window;
     GLFWwindow * prevWindow;
     GLFWmonitor * monitor;
@@ -119,6 +115,3 @@ private:
             double desiredSecondsPerFrame,
             const std::chrono::steady_clock::time_point & startTime) const;
 };
-
-#endif /* GLFWOPENGLWINDOW_HPP_ */
-

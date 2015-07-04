@@ -1,6 +1,5 @@
 #include "GlfwOpenGlWindow.hpp"
-using Rigid3D::Camera;
-using Rigid3D::CameraController;
+using Synergy::Camera;
 using std::string;
 using std::shared_ptr;
 using std::chrono::seconds;
@@ -8,25 +7,22 @@ using std::chrono::duration;
 using std::chrono::steady_clock;
 using std::chrono::duration_cast;
 
-
-#include <Rigid3D/Graphics/GlfwException.hpp>
-#include <Rigid3D/Graphics/GlErrorCheck.hpp>
-
-#include <Rigid3D/Math/Trigonometry.hpp>
-using Rigid3D::cotangent;
-using Rigid3D::degreesToRadians;
+#include <Synergy/Core/Exception.hpp>
+#include <Synergy/Graphics/GlErrorCheck.hpp>
+#include <Synergy/Core/Math.hpp>
+using Synergy::radians;
 
 #include <sstream>
-using std::stringstream;
-
 #include <iostream>
+#include <exception>
+#include <thread>
+using std::stringstream;
 using std::cout;
 using std::endl;
-
-#include <thread>
+using std::exception;
 using std::this_thread::sleep_for;
 
-
+#include "DemoException.hpp"
 
 
 shared_ptr<GlfwOpenGlWindow> GlfwOpenGlWindow::p_instance = nullptr;
@@ -47,7 +43,7 @@ GlfwOpenGlWindow::GlfwOpenGlWindow()
 
 //----------------------------------------------------------------------------------------
 void GlfwOpenGlWindow::error_callback(int error, const char* description) {
-    throw GlfwException(description);
+	throw DemoException(description);
 }
 
 //----------------------------------------------------------------------------------------
@@ -61,7 +57,8 @@ void GlfwOpenGlWindow::windowResizeCallBack(GLFWwindow * window, int width, int 
 //----------------------------------------------------------------------------------------
 void GlfwOpenGlWindow::resize(int width, int height) {
     float aspectRatio = float(width) / height;
-    float frustumYScale = cotangent(degreesToRadians(camera.getFieldOfViewY() / 2));
+    float frustumYScale = radians(camera.getFieldOfViewY() / 2);
+	frustumYScale = 1.0f / tan(frustumYScale);
 
     float frustumXScale = frustumYScale;
     glm::mat4 projectionMatrix = camera.getProjectionMatrix();
@@ -152,7 +149,7 @@ void GlfwOpenGlWindow::create(
     glfwSetErrorCallback(error_callback);
 
     if (glfwInit() == GL_FALSE) {
-        throw GlfwException("Call to glfwInit() failed.");
+	    throw DemoException("Call to glfwInit() failed.");
     }
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -170,14 +167,14 @@ void GlfwOpenGlWindow::create(
     monitor = glfwGetPrimaryMonitor();
     if (monitor == NULL) {
         glfwTerminate();
-        throw GlfwException("Error retrieving primary monitor.");
+        throw DemoException("Error retrieving primary monitor.");
     }
 
     // Create Opengl Window
     window = glfwCreateWindow(width, height, windowTitle.c_str(), NULL, NULL);
     if (window == NULL) {
         glfwTerminate();
-        throw GlfwException("Call to glfwCreateWindow failed.");
+        throw DemoException("Call to glfwCreateWindow failed.");
     }
 
     // Get default framebuffer pixel dimensions in order to support high-definition
@@ -323,7 +320,7 @@ void GlfwOpenGlWindow::switchToFullScreen() {
     window = glfwCreateWindow(videoMode->width, videoMode->height, windowTitle.c_str(), monitor, NULL);
     if (window == NULL) {
         glfwTerminate();
-        throw GlfwException("Call to glfwCreateWindow failed.");
+        throw DemoException("Call to glfwCreateWindow failed.");
     }
     resize(videoMode->width, videoMode->height);
     cameraController.reset();
@@ -340,7 +337,7 @@ void GlfwOpenGlWindow::switchToWindowedMode() {
     window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
     if (window == NULL) {
         glfwTerminate();
-        throw GlfwException("Call to glfwCreateWindow failed.");
+        throw DemoException("Call to glfwCreateWindow failed.");
     }
     resize(windowWidth, windowHeight);
     centerWindow();
