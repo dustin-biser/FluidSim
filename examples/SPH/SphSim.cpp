@@ -1,15 +1,10 @@
 #include "SphSim.hpp"
 
 #include <glm/glm.hpp>
-using glm::step;
-using glm::dot;
-
 #include <glm/gtx/norm.hpp>
-using glm::length2;
 #include <glm/gtc/type_ptr.hpp>
-
 #include <glm/gtx/fast_square_root.hpp>
-using glm::fastLength;
+using namespace glm;
 
 #include <iostream>
 using namespace std;
@@ -137,11 +132,13 @@ void SphSim::AdvanceParticles() {
     for(Particle &p : particles) {
         // Constrain velocity to prevent unbound values.
         {
-            p.velocity.x = (p.velocity.x > 0) ? min(p.velocity.x, kMaxVelocityComponent) :
-                max(p.velocity.x, -kMaxVelocityComponent);
+            p.velocity.x = (p.velocity.x > 0) ?
+		            std::min(p.velocity.x,kMaxVelocityComponent) :
+                    std::max(p.velocity.x, -kMaxVelocityComponent);
 
-            p.velocity.y = (p.velocity.y > 0) ? min(p.velocity.y, kMaxVelocityComponent) :
-                max(p.velocity.y, -kMaxVelocityComponent);
+            p.velocity.y = (p.velocity.y > 0) ?
+		            std::min(p.velocity.y, kMaxVelocityComponent) :
+					std::max(p.velocity.y, -kMaxVelocityComponent);
         }
 
         p.position.x += p.velocity.x * kDt;
@@ -261,7 +258,7 @@ void SphSim::UpdateNeighbors() {
                 // pj is within a distance kH of pi, so count it as a neighbor and store
                 // a copy of it for later retrieval.
                 neighbors[p_index].particles[n_index] = *pj;
-                neighbors[p_index].r[n_index] = sqrt(r2);
+                neighbors[p_index].r[n_index] = std::sqrt(r2);
                 ++n_index;
             }
         }

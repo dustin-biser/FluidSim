@@ -46,12 +46,16 @@
 		0CB3B7E71B48673900CF609B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CB3B7E81B48673900CF609B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0CB3B7E91B48673900CF609B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
-		0CB3B7F01B4C6D2E00CF609B /* MarkerFluid.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF669AE707E7726598C96BEA /* MarkerFluid.cpp */; };
-		0CB3B7F11B4C6D3600CF609B /* MarkerFluid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669AE707E7726598C96BEA /* MarkerFluid.cpp */; };
 		0CB3B7F21B4C6D6900CF609B /* BlueNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */; };
 		0CB3B7F31B4C6DCD00CF609B /* BlueNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */; };
-		0CB3B7FD1B4C807E00CF609B /* BlueNoiseSampling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B7F51B4C807200CF609B /* BlueNoiseSampling.cpp */; };
-		0CB3B7FE1B4C808400CF609B /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B7F71B4C807200CF609B /* Renderer.cpp */; };
+		0CB3B8091B4C8DC300CF609B /* BlueNoiseSampling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B8011B4C8DB100CF609B /* BlueNoiseSampling.cpp */; };
+		0CB3B80A1B4C8DF100CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
+		0CB3B80B1B4C8DF400CF609B /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
+		0CB3B80C1B4C8E0A00CF609B /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B8031B4C8DB100CF609B /* Renderer.cpp */; };
+		0CB3B8131B4C8E6700CF609B /* MarkerFluid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B80E1B4C8E6100CF609B /* MarkerFluid.cpp */; };
+		0CB3B8141B4C8E6A00CF609B /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B8101B4C8E6100CF609B /* Renderer.cpp */; };
+		0CB3B8151B4C902100CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
+		0CB3B8161B4C903400CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
 		0CBCE20B19F839A5007ACADF /* Advect_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20819F839A5007ACADF /* Advect_Test.cpp */; };
 		0CBCE20C19F839A5007ACADF /* Grid_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20919F839A5007ACADF /* Grid_Test.cpp */; };
 		0CBCE20D19F839A5007ACADF /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
@@ -60,7 +64,6 @@
 		0CC20F1419D21541004B89EA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
 		0CC20F1619D21547004B89EA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CC20F1819D21550004B89EA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
-		0CC20F1919D215BE004B89EA /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0CE588561A2583A3004F84AB /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0CE588571A2583A3004F84AB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CE588581A2583A3004F84AB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
@@ -70,9 +73,7 @@
 		0CF7EC0B1B2628F900B6D860 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0CF7EC0C1B2628FE00B6D860 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CF7EC0D1B26291800B6D860 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
-		0CF7EC101B26299500B6D860 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
 		0CF7EC121B262BF300B6D860 /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
-		0CF7EC151B262CE300B6D860 /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
 		0CF7EC171B262D2100B6D860 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0CFD3D431A4F47F1005A483F /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
 		0CFD3D471A4F47F1005A483F /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
@@ -136,7 +137,6 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				0CB3B7F01B4C6D2E00CF609B /* MarkerFluid.cpp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -228,13 +228,17 @@
 		0CA6292C1A2E6EE500BA98B2 /* StencilFluidCells.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = StencilFluidCells.fs; sourceTree = "<group>"; };
 		0CA6292D1A2E6EE500BA98B2 /* StencilFluidCells.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = StencilFluidCells.vs; sourceTree = "<group>"; };
 		0CB3B7EE1B48673900CF609B /* MarkerFluid2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MarkerFluid2D; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CB3B7F51B4C807200CF609B /* BlueNoiseSampling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlueNoiseSampling.cpp; sourceTree = "<group>"; };
-		0CB3B7F61B4C807200CF609B /* BlueNoiseSampling.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlueNoiseSampling.hpp; sourceTree = "<group>"; };
-		0CB3B7F71B4C807200CF609B /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
-		0CB3B7F81B4C807200CF609B /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
-		0CB3B7FA1B4C807200CF609B /* InstancedSamples.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = InstancedSamples.vs; sourceTree = "<group>"; };
-		0CB3B7FB1B4C807200CF609B /* ScreenPrimative.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ScreenPrimative.fs; sourceTree = "<group>"; };
-		0CB3B7FC1B4C807200CF609B /* ScreenPrimative.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ScreenPrimative.vs; sourceTree = "<group>"; };
+		0CB3B8011B4C8DB100CF609B /* BlueNoiseSampling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlueNoiseSampling.cpp; sourceTree = "<group>"; };
+		0CB3B8021B4C8DB100CF609B /* BlueNoiseSampling.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlueNoiseSampling.hpp; sourceTree = "<group>"; };
+		0CB3B8031B4C8DB100CF609B /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
+		0CB3B8041B4C8DB100CF609B /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
+		0CB3B8061B4C8DB100CF609B /* InstancedSamples.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = InstancedSamples.vs; sourceTree = "<group>"; };
+		0CB3B8071B4C8DB100CF609B /* ScreenPrimative.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ScreenPrimative.fs; sourceTree = "<group>"; };
+		0CB3B8081B4C8DB100CF609B /* ScreenPrimative.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ScreenPrimative.vs; sourceTree = "<group>"; };
+		0CB3B80E1B4C8E6100CF609B /* MarkerFluid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerFluid.cpp; sourceTree = "<group>"; };
+		0CB3B80F1B4C8E6100CF609B /* MarkerFluid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MarkerFluid.hpp; sourceTree = "<group>"; };
+		0CB3B8101B4C8E6100CF609B /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
+		0CB3B8111B4C8E6100CF609B /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		0CBCE20819F839A5007ACADF /* Advect_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Advect_Test.cpp; sourceTree = "<group>"; };
 		0CBCE20919F839A5007ACADF /* Grid_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid_Test.cpp; sourceTree = "<group>"; };
 		0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interp_Test.cpp; sourceTree = "<group>"; };
@@ -603,12 +607,10 @@
 		EF6698AA53C449105CF1CC12 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF6698CF138E2D1333C00806 /* ColorScreen.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ColorScreen.vs; sourceTree = "<group>"; };
 		EF66990A1A75A4B08EE98B58 /* NoiseGenerator.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = NoiseGenerator.fs; sourceTree = "<group>"; };
-		EF669918B31259D24733FDA5 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlfwOpenGlWindow.cpp; sourceTree = "<group>"; };
 		EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderer.cpp; sourceTree = "<group>"; };
 		EF6699F3F74C873B9C114073 /* WriteOutData.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = WriteOutData.fs; sourceTree = "<group>"; };
-		EF669A20F828C366060E22C7 /* MarkerFluid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MarkerFluid.hpp; sourceTree = "<group>"; };
 		EF669A438020C6836504C8A8 /* VolumeRenderingExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderingExample.hpp; sourceTree = "<group>"; };
 		EF669A7E9DCDD468C467B09D /* BvEntry.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BvEntry.fs; sourceTree = "<group>"; };
 		EF669A80041D212360A52AD2 /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.vs; sourceTree = "<group>"; };
@@ -617,7 +619,6 @@
 		EF669A9D08C95C2145FC1DA7 /* RayDirection.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayDirection.fs; sourceTree = "<group>"; };
 		EF669AAB2BBD4415E3864349 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
-		EF669AE707E7726598C96BEA /* MarkerFluid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerFluid.cpp; sourceTree = "<group>"; };
 		EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderingExample.cpp; sourceTree = "<group>"; };
 		EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlueNoise.cpp; sourceTree = "<group>"; };
 		EF669B37BD6C786576629114 /* ForwardVertexData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ForwardVertexData.vs; sourceTree = "<group>"; };
@@ -641,7 +642,6 @@
 		EF669E1C1F8D15FB4AB5E390 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
 		EF669E21FED0704F12D9A135 /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF669E5B950DC46EA122657E /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
-		EF669E868FC342B72868D653 /* Renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		EF669EB410FDB179D4990FCD /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669EBEF8FC4E7D665574E5 /* SmokeSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim.cpp; sourceTree = "<group>"; };
 		EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BuoyantForce.fs; sourceTree = "<group>"; };
@@ -725,7 +725,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CC20F1919D215BE004B89EA /* libRigid3D.a in Frameworks */,
+				0CB3B8151B4C902100CF609B /* libSynergy.a in Frameworks */,
 				0CC20F1819D21550004B89EA /* CoreVideo.framework in Frameworks */,
 				0CC20F1619D21547004B89EA /* IOKit.framework in Frameworks */,
 				0CC20F1419D21541004B89EA /* OpenGL.framework in Frameworks */,
@@ -876,25 +876,51 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		0CB3B7F41B4C807200CF609B /* BlueNoiseSampling */ = {
+		0CB3B7FF1B4C8DB100CF609B /* Sampling */ = {
 			isa = PBXGroup;
 			children = (
-				0CB3B7F51B4C807200CF609B /* BlueNoiseSampling.cpp */,
-				0CB3B7F61B4C807200CF609B /* BlueNoiseSampling.hpp */,
-				0CB3B7F71B4C807200CF609B /* Renderer.cpp */,
-				0CB3B7F81B4C807200CF609B /* Renderer.hpp */,
-				0CB3B7F91B4C807200CF609B /* shaders */,
+				0CB3B8001B4C8DB100CF609B /* BlueNoiseSampling */,
 			);
-			name = BlueNoiseSampling;
-			path = Sampling/BlueNoiseSampling;
+			path = Sampling;
 			sourceTree = "<group>";
 		};
-		0CB3B7F91B4C807200CF609B /* shaders */ = {
+		0CB3B8001B4C8DB100CF609B /* BlueNoiseSampling */ = {
 			isa = PBXGroup;
 			children = (
-				0CB3B7FA1B4C807200CF609B /* InstancedSamples.vs */,
-				0CB3B7FB1B4C807200CF609B /* ScreenPrimative.fs */,
-				0CB3B7FC1B4C807200CF609B /* ScreenPrimative.vs */,
+				0CB3B8051B4C8DB100CF609B /* shaders */,
+				0CB3B8011B4C8DB100CF609B /* BlueNoiseSampling.cpp */,
+				0CB3B8021B4C8DB100CF609B /* BlueNoiseSampling.hpp */,
+				0CB3B8031B4C8DB100CF609B /* Renderer.cpp */,
+				0CB3B8041B4C8DB100CF609B /* Renderer.hpp */,
+			);
+			path = BlueNoiseSampling;
+			sourceTree = "<group>";
+		};
+		0CB3B8051B4C8DB100CF609B /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				0CB3B8061B4C8DB100CF609B /* InstancedSamples.vs */,
+				0CB3B8071B4C8DB100CF609B /* ScreenPrimative.fs */,
+				0CB3B8081B4C8DB100CF609B /* ScreenPrimative.vs */,
+			);
+			path = shaders;
+			sourceTree = "<group>";
+		};
+		0CB3B80D1B4C8E6100CF609B /* MarkerFluid */ = {
+			isa = PBXGroup;
+			children = (
+				0CB3B80E1B4C8E6100CF609B /* MarkerFluid.cpp */,
+				0CB3B80F1B4C8E6100CF609B /* MarkerFluid.hpp */,
+				0CB3B8101B4C8E6100CF609B /* Renderer.cpp */,
+				0CB3B8111B4C8E6100CF609B /* Renderer.hpp */,
+				0CB3B8121B4C8E6100CF609B /* shaders */,
+			);
+			path = MarkerFluid;
+			sourceTree = "<group>";
+		};
+		0CB3B8121B4C8E6100CF609B /* shaders */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -945,10 +971,10 @@
 			children = (
 				0CBCE20719F839A5007ACADF /* tests */,
 				0C66657D19E3119D00F56EBC /* data */,
+				EF669CE4357DC2409F2A485E /* examples */,
 				0CC20DD119D214CD004B89EA /* external */,
 				0CC20F0319D214CD004B89EA /* libraries */,
 				0CC20F0619D214CD004B89EA /* source */,
-				EF669CE4357DC2409F2A485E /* examples */,
 			);
 			path = FluidSim;
 			sourceTree = "<group>";
@@ -1612,21 +1638,10 @@
 			path = shaders;
 			sourceTree = "<group>";
 		};
-		EF669B99E6C44B8C93100DB5 /* MarkerFluid */ = {
-			isa = PBXGroup;
-			children = (
-				EF669EA65E9997DDBB33224A /* shaders */,
-				EF669A20F828C366060E22C7 /* MarkerFluid.hpp */,
-				EF669AE707E7726598C96BEA /* MarkerFluid.cpp */,
-				EF669E868FC342B72868D653 /* Renderer.hpp */,
-				EF669918B31259D24733FDA5 /* Renderer.cpp */,
-			);
-			path = MarkerFluid;
-			sourceTree = "<group>";
-		};
 		EF669CC308FDCB28AD8B6A05 /* GridBased */ = {
 			isa = PBXGroup;
 			children = (
+				0CB3B80D1B4C8E6100CF609B /* MarkerFluid */,
 				EF6692638E8E02311AC0065A /* GPU_Impl */,
 				EF66919873686E2D7EA60FAA /* 2D_SmokeSim */,
 			);
@@ -1636,23 +1651,15 @@
 		EF669CE4357DC2409F2A485E /* examples */ = {
 			isa = PBXGroup;
 			children = (
-				0CB3B7F41B4C807200CF609B /* BlueNoiseSampling */,
-				EF669150FC0A480617B6B542 /* Utils */,
+				0CB3B7FF1B4C8DB100CF609B /* Sampling */,
 				EF6692D4A8E7409DF4746219 /* SPH */,
 				EF669CC308FDCB28AD8B6A05 /* GridBased */,
 				EF66919FA43EED96C886154C /* VolumeRendering */,
 				EF6696BBB95539028B2620E6 /* MarchingCubes */,
-				EF669B99E6C44B8C93100DB5 /* MarkerFluid */,
+				EF669150FC0A480617B6B542 /* Utils */,
 			);
 			path = examples;
 			sourceTree = SOURCE_ROOT;
-		};
-		EF669EA65E9997DDBB33224A /* shaders */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = shaders;
-			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -1932,7 +1939,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CB3B7F11B4C6D3600CF609B /* MarkerFluid.cpp in Sources */,
+				0CB3B8131B4C8E6700CF609B /* MarkerFluid.cpp in Sources */,
+				0CB3B8141B4C8E6A00CF609B /* Renderer.cpp in Sources */,
 				0CB3B7F21B4C6D6900CF609B /* BlueNoise.cpp in Sources */,
 				0CB3B7E01B48673900CF609B /* CameraController.cpp in Sources */,
 				0CB3B7E21B48673900CF609B /* GlfwOpenGlWindow.cpp in Sources */,
@@ -1944,6 +1952,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF669E5C5E379724934A9750 /* GlfwOpenGlWindow.cpp in Sources */,
+				0CB3B8161B4C903400CF609B /* CameraController.cpp in Sources */,
 				EF6690DDAE3450CC2CA34218 /* SphGraphics.cpp in Sources */,
 				EF669EE98B7254163026C4F5 /* SphSim.cpp in Sources */,
 			);
@@ -1964,10 +1973,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0CB3B7F31B4C6DCD00CF609B /* BlueNoise.cpp in Sources */,
-				0CB3B7FD1B4C807E00CF609B /* BlueNoiseSampling.cpp in Sources */,
-				0CF7EC151B262CE300B6D860 /* CameraController.cpp in Sources */,
-				0CF7EC101B26299500B6D860 /* GlfwOpenGlWindow.cpp in Sources */,
-				0CB3B7FE1B4C808400CF609B /* Renderer.cpp in Sources */,
+				0CB3B8091B4C8DC300CF609B /* BlueNoiseSampling.cpp in Sources */,
+				0CB3B80A1B4C8DF100CF609B /* CameraController.cpp in Sources */,
+				0CB3B80B1B4C8DF400CF609B /* GlfwOpenGlWindow.cpp in Sources */,
+				0CB3B80C1B4C8E0A00CF609B /* Renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

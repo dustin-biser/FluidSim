@@ -9,6 +9,9 @@
 #include "SphGraphics.hpp"
 
 #include "Utils/GlfwOpenGlWindow.hpp"
+#include "FluidSim/NumericTypes.hpp"
+#include "FluidSim/Utils.hpp"
+using FluidSim::PI;
 
 #include <glm/glm.hpp>
 using glm::vec3;

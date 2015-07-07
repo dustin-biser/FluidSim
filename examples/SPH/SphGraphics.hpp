@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <Rigid3D/Rigid3D.hpp>
-using namespace Rigid3D;
+#include <Synergy/Synergy.hpp>
+using namespace Synergy;
 
 #include <vector>
 using std::vector;
