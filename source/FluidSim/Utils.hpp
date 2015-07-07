@@ -6,8 +6,6 @@
 
 namespace FluidSim {
 
-namespace Utils {
-
 static const float32 PI = 3.14159265359f;
 
 //---------------------------------------------------------------------------------------
@@ -73,7 +71,5 @@ T length2 (
 	return (vec.x * vec.x) + (vec.y * vec.y);
 }
 
-
-} // end namespace Utils
 
 } // end namespace FluidSim

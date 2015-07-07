@@ -40,6 +40,18 @@
 		0CB3B7C81B47832E00CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
 		0CB3B7C91B4783E200CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
 		0CB3B7CA1B4783F000CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
+		0CB3B7E01B48673900CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
+		0CB3B7E21B48673900CF609B /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
+		0CB3B7E41B48673900CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
+		0CB3B7E51B48673900CF609B /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
+		0CB3B7E61B48673900CF609B /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
+		0CB3B7E71B48673900CF609B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
+		0CB3B7E81B48673900CF609B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
+		0CB3B7E91B48673900CF609B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
+		0CB3B7F01B4C6D2E00CF609B /* MarkerFluid.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF669AE707E7726598C96BEA /* MarkerFluid.cpp */; };
+		0CB3B7F11B4C6D3600CF609B /* MarkerFluid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669AE707E7726598C96BEA /* MarkerFluid.cpp */; };
+		0CB3B7F21B4C6D6900CF609B /* BlueNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */; };
+		0CB3B7F31B4C6DCD00CF609B /* BlueNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */; };
 		0CBCE20B19F839A5007ACADF /* Advect_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20819F839A5007ACADF /* Advect_Test.cpp */; };
 		0CBCE20C19F839A5007ACADF /* Grid_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20919F839A5007ACADF /* Grid_Test.cpp */; };
 		0CBCE20D19F839A5007ACADF /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
@@ -115,6 +127,16 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		0CB3B7EA1B48673900CF609B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				0CB3B7F01B4C6D2E00CF609B /* MarkerFluid.cpp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -212,6 +234,7 @@
 		0C6665C019E7747D00F56EBC /* FluidSim_Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FluidSim_Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA6292C1A2E6EE500BA98B2 /* StencilFluidCells.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = StencilFluidCells.fs; sourceTree = "<group>"; };
 		0CA6292D1A2E6EE500BA98B2 /* StencilFluidCells.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = StencilFluidCells.vs; sourceTree = "<group>"; };
+		0CB3B7EE1B48673900CF609B /* MarkerFluid2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MarkerFluid2D; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBCE20819F839A5007ACADF /* Advect_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Advect_Test.cpp; sourceTree = "<group>"; };
 		0CBCE20919F839A5007ACADF /* Grid_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid_Test.cpp; sourceTree = "<group>"; };
 		0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interp_Test.cpp; sourceTree = "<group>"; };
@@ -541,6 +564,7 @@
 		EF6690F6392364937643B7EF /* VolumeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderer.hpp; sourceTree = "<group>"; };
 		EF66910120FE1D8DC388A3A5 /* RenderIsoSurface.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RenderIsoSurface.fs; sourceTree = "<group>"; };
 		EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GpuSmokeSim3D.cpp; sourceTree = "<group>"; };
+		EF66928034C33BA86301EE78 /* BlueNoise.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BlueNoise.hpp; sourceTree = "<group>"; };
 		EF66928B88C58F02B9B13E84 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
 		EF669295197260614ED9DC03 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF66930DFAFA2BA55A79AEED /* MarchingCubesRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarchingCubesRenderer.cpp; sourceTree = "<group>"; };
@@ -579,10 +603,12 @@
 		EF6698AA53C449105CF1CC12 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF6698CF138E2D1333C00806 /* ColorScreen.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ColorScreen.vs; sourceTree = "<group>"; };
 		EF66990A1A75A4B08EE98B58 /* NoiseGenerator.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = NoiseGenerator.fs; sourceTree = "<group>"; };
+		EF669918B31259D24733FDA5 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		EF669968B50D826F7DEE9C2F /* Smoke2DAdvect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Smoke2DAdvect.fs; sourceTree = "<group>"; };
 		EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlfwOpenGlWindow.cpp; sourceTree = "<group>"; };
 		EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderer.cpp; sourceTree = "<group>"; };
 		EF6699F3F74C873B9C114073 /* WriteOutData.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = WriteOutData.fs; sourceTree = "<group>"; };
+		EF669A20F828C366060E22C7 /* MarkerFluid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MarkerFluid.hpp; sourceTree = "<group>"; };
 		EF669A438020C6836504C8A8 /* VolumeRenderingExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderingExample.hpp; sourceTree = "<group>"; };
 		EF669A7E9DCDD468C467B09D /* BvEntry.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BvEntry.fs; sourceTree = "<group>"; };
 		EF669A80041D212360A52AD2 /* ComputeRHS.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ComputeRHS.vs; sourceTree = "<group>"; };
@@ -591,7 +617,9 @@
 		EF669A9D08C95C2145FC1DA7 /* RayDirection.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayDirection.fs; sourceTree = "<group>"; };
 		EF669AAB2BBD4415E3864349 /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
 		EF669AC704CCB7D3DB56B8AB /* NumericTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NumericTypes.hpp; sourceTree = "<group>"; };
+		EF669AE707E7726598C96BEA /* MarkerFluid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerFluid.cpp; sourceTree = "<group>"; };
 		EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeRenderingExample.cpp; sourceTree = "<group>"; };
+		EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlueNoise.cpp; sourceTree = "<group>"; };
 		EF669B37BD6C786576629114 /* ForwardVertexData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ForwardVertexData.vs; sourceTree = "<group>"; };
 		EF669B78AA7D0DA145AE2261 /* Advect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Advect.hpp; sourceTree = "<group>"; };
 		EF669BC63BF08A24AB91B2E1 /* LineRender.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = LineRender.vs; sourceTree = "<group>"; };
@@ -613,6 +641,7 @@
 		EF669E1C1F8D15FB4AB5E390 /* SmokeGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeGraphics.hpp; sourceTree = "<group>"; };
 		EF669E21FED0704F12D9A135 /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF669E5B950DC46EA122657E /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
+		EF669E868FC342B72868D653 /* Renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		EF669EB410FDB179D4990FCD /* Advect.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = Advect.vs; sourceTree = "<group>"; };
 		EF669EBEF8FC4E7D665574E5 /* SmokeSim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmokeSim.cpp; sourceTree = "<group>"; };
 		EF669EBF3B4E9517E993F7CB /* BuoyantForce.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = BuoyantForce.fs; sourceTree = "<group>"; };
@@ -676,6 +705,19 @@
 			files = (
 				0C6665CB19E7749700F56EBC /* libgtest.a in Frameworks */,
 				0C6665CA19E7749100F56EBC /* libpthread.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CB3B7E31B48673900CF609B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CB3B7E41B48673900CF609B /* libSynergy.a in Frameworks */,
+				0CB3B7E51B48673900CF609B /* libglfw3.a in Frameworks */,
+				0CB3B7E61B48673900CF609B /* CoreVideo.framework in Frameworks */,
+				0CB3B7E71B48673900CF609B /* IOKit.framework in Frameworks */,
+				0CB3B7E81B48673900CF609B /* Cocoa.framework in Frameworks */,
+				0CB3B7E91B48673900CF609B /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -870,13 +912,13 @@
 		0CC20DAB19D20D66004B89EA = {
 			isa = PBXGroup;
 			children = (
-				0CF7EC111B262BF300B6D860 /* libSynergy.a */,
-				0C6665B719E76D2E00F56EBC /* libpthread.dylib */,
-				0CC20F1719D21550004B89EA /* CoreVideo.framework */,
-				0CC20F1519D21547004B89EA /* IOKit.framework */,
-				0CC20F1319D21541004B89EA /* OpenGL.framework */,
 				0CC20F1119D21538004B89EA /* Cocoa.framework */,
+				0CC20F1719D21550004B89EA /* CoreVideo.framework */,
 				0CC20DB619D20D66004B89EA /* FluidSim */,
+				0CC20F1519D21547004B89EA /* IOKit.framework */,
+				0C6665B719E76D2E00F56EBC /* libpthread.dylib */,
+				0CF7EC111B262BF300B6D860 /* libSynergy.a */,
+				0CC20F1319D21541004B89EA /* OpenGL.framework */,
 				0CC20DB519D20D66004B89EA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -893,6 +935,7 @@
 				0C4002E61A375B1000C76A78 /* GpuSmokeSim3D */,
 				0CFD3D511A4F47F1005A483F /* MarchingCubesExample */,
 				0CF7EBFC1B26289900B6D860 /* PoissonDiskSampling */,
+				0CB3B7EE1B48673900CF609B /* MarkerFluid2D */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1509,6 +1552,8 @@
 				EF669D4246BCE5C5E6C9E189 /* StaggeredGrid.hpp */,
 				EF6694DAED76CE967BF298D4 /* StaggeredGrid.inl */,
 				EF669D9AF516AC6F0E1D1F55 /* Utils.hpp */,
+				EF66928034C33BA86301EE78 /* BlueNoise.hpp */,
+				EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */,
 			);
 			path = FluidSim;
 			sourceTree = "<group>";
@@ -1567,6 +1612,18 @@
 			path = shaders;
 			sourceTree = "<group>";
 		};
+		EF669B99E6C44B8C93100DB5 /* MarkerFluid */ = {
+			isa = PBXGroup;
+			children = (
+				EF669EA65E9997DDBB33224A /* shaders */,
+				EF669A20F828C366060E22C7 /* MarkerFluid.hpp */,
+				EF669AE707E7726598C96BEA /* MarkerFluid.cpp */,
+				EF669E868FC342B72868D653 /* Renderer.hpp */,
+				EF669918B31259D24733FDA5 /* Renderer.cpp */,
+			);
+			path = MarkerFluid;
+			sourceTree = "<group>";
+		};
 		EF669CC308FDCB28AD8B6A05 /* GridBased */ = {
 			isa = PBXGroup;
 			children = (
@@ -1585,9 +1642,17 @@
 				EF669CC308FDCB28AD8B6A05 /* GridBased */,
 				EF66919FA43EED96C886154C /* VolumeRendering */,
 				EF6696BBB95539028B2620E6 /* MarchingCubes */,
+				EF669B99E6C44B8C93100DB5 /* MarkerFluid */,
 			);
 			path = examples;
 			sourceTree = SOURCE_ROOT;
+		};
+		EF669EA65E9997DDBB33224A /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = shaders;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -1687,6 +1752,23 @@
 			productReference = 0C6665C019E7747D00F56EBC /* FluidSim_Tests */;
 			productType = "com.apple.product-type.tool";
 		};
+		0CB3B7DD1B48673900CF609B /* MarkerFluid2D */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CB3B7EB1B48673900CF609B /* Build configuration list for PBXNativeTarget "MarkerFluid2D" */;
+			buildPhases = (
+				0CB3B7DE1B48673900CF609B /* Sources */,
+				0CB3B7E31B48673900CF609B /* Frameworks */,
+				0CB3B7EA1B48673900CF609B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MarkerFluid2D;
+			productName = 2D_LiquidSim;
+			productReference = 0CB3B7EE1B48673900CF609B /* MarkerFluid2D */;
+			productType = "com.apple.product-type.tool";
+		};
 		0CC20DC319D2144F004B89EA /* SphSim */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0CC20DCA19D21450004B89EA /* Build configuration list for PBXNativeTarget "SphSim" */;
@@ -1721,9 +1803,9 @@
 			productReference = 0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */;
 			productType = "com.apple.product-type.tool";
 		};
-		0CF7EBFB1B26289900B6D860 /* PoissonDiskSampling */ = {
+		0CF7EBFB1B26289900B6D860 /* FastPoissonDiskSampling */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CF7EC021B26289900B6D860 /* Build configuration list for PBXNativeTarget "PoissonDiskSampling" */;
+			buildConfigurationList = 0CF7EC021B26289900B6D860 /* Build configuration list for PBXNativeTarget "FastPoissonDiskSampling" */;
 			buildPhases = (
 				0CF7EBF81B26289900B6D860 /* Sources */,
 				0CF7EBF91B26289900B6D860 /* Frameworks */,
@@ -1733,7 +1815,7 @@
 			);
 			dependencies = (
 			);
-			name = PoissonDiskSampling;
+			name = FastPoissonDiskSampling;
 			productName = 2D_LiquidSim;
 			productReference = 0CF7EBFC1B26289900B6D860 /* PoissonDiskSampling */;
 			productType = "com.apple.product-type.tool";
@@ -1789,7 +1871,8 @@
 				0C06D4621A2CD33600635199 /* VolumeRenderingExample */,
 				0C4002D61A375B1000C76A78 /* GpuSmokeSim3D */,
 				0CFD3D411A4F47F1005A483F /* MarchingCubesExample */,
-				0CF7EBFB1B26289900B6D860 /* PoissonDiskSampling */,
+				0CF7EBFB1B26289900B6D860 /* FastPoissonDiskSampling */,
+				0CB3B7DD1B48673900CF609B /* MarkerFluid2D */,
 			);
 		};
 /* End PBXProject section */
@@ -1845,6 +1928,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0CB3B7DE1B48673900CF609B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CB3B7F11B4C6D3600CF609B /* MarkerFluid.cpp in Sources */,
+				0CB3B7F21B4C6D6900CF609B /* BlueNoise.cpp in Sources */,
+				0CB3B7E01B48673900CF609B /* CameraController.cpp in Sources */,
+				0CB3B7E21B48673900CF609B /* GlfwOpenGlWindow.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0CC20DC019D2144F004B89EA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1869,6 +1963,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CB3B7F31B4C6DCD00CF609B /* BlueNoise.cpp in Sources */,
 				0C3130491B3F10B3007709F1 /* FastPoissonDiskSampling.cpp in Sources */,
 				0CF7EC151B262CE300B6D860 /* CameraController.cpp in Sources */,
 				0C31304A1B3F10B4007709F1 /* Renderer.cpp in Sources */,
@@ -2094,6 +2189,44 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "examples/** source/**";
+			};
+			name = Release;
+		};
+		0CB3B7EC1B48673900CF609B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libraries",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = MarkerFluid2D;
+				USER_HEADER_SEARCH_PATHS = "examples/** source";
+			};
+			name = Debug;
+		};
+		0CB3B7ED1B48673900CF609B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libraries",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = MarkerFluid2D;
+				USER_HEADER_SEARCH_PATHS = "examples/** source";
 			};
 			name = Release;
 		};
@@ -2397,6 +2530,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		0CB3B7EB1B48673900CF609B /* Build configuration list for PBXNativeTarget "MarkerFluid2D" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CB3B7EC1B48673900CF609B /* Debug */,
+				0CB3B7ED1B48673900CF609B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0CC20DAF19D20D66004B89EA /* Build configuration list for PBXProject "FluidSim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2424,7 +2566,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CF7EC021B26289900B6D860 /* Build configuration list for PBXNativeTarget "PoissonDiskSampling" */ = {
+		0CF7EC021B26289900B6D860 /* Build configuration list for PBXNativeTarget "FastPoissonDiskSampling" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CF7EC001B26289900B6D860 /* Debug */,
