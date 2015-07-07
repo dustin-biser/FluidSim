@@ -16,15 +16,12 @@
 		0C06D46C1A2CD33600635199 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
 		0C06D4721A2CD35C00635199 /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
 		0C4002D81A375B1000C76A78 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
-		0C4002DC1A375B1000C76A78 /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0C4002DD1A375B1000C76A78 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0C4002DE1A375B1000C76A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0C4002DF1A375B1000C76A78 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
 		0C4002E01A375B1000C76A78 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0C4002E11A375B1000C76A78 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
-		0C4002FE1A375B6B00C76A78 /* GpuSmokeSim3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */; };
 		0C40030F1A378A9700C76A78 /* VolumeRenderingExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B0A03403C1A3249430C /* VolumeRenderingExample.cpp */; };
-		0C4003221A38CE4600C76A78 /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
 		0C66656519E305DD00F56EBC /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0C66656619E305DD00F56EBC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0C66656719E305DD00F56EBC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
@@ -56,6 +53,10 @@
 		0CB3B8141B4C8E6A00CF609B /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CB3B8101B4C8E6100CF609B /* Renderer.cpp */; };
 		0CB3B8151B4C902100CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
 		0CB3B8161B4C903400CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
+		0CB3B8171B4C917700CF609B /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
+		0CB3B8181B4C917F00CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
+		0CB3B81A1B4C925000CF609B /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
+		0CB3B81B1B4C92DE00CF609B /* GpuSmokeSim3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */; };
 		0CBCE20B19F839A5007ACADF /* Advect_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20819F839A5007ACADF /* Advect_Test.cpp */; };
 		0CBCE20C19F839A5007ACADF /* Grid_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20919F839A5007ACADF /* Grid_Test.cpp */; };
 		0CBCE20D19F839A5007ACADF /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
@@ -594,7 +595,6 @@
 		EF66962CE14C9BBC8034B83A /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF6696A71D0819890435FC96 /* MarchingCubes.gs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = MarchingCubes.gs; sourceTree = "<group>"; };
 		EF6696CD14D916A209CF3484 /* ComputeDivergence.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeDivergence.fs; sourceTree = "<group>"; };
-		EF6696E0E23A2B72A3423777 /* GraphicsRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GraphicsRenderer.hpp; sourceTree = "<group>"; };
 		EF66974B133ED34A684843C7 /* MarchingCubesExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MarchingCubesExample.hpp; sourceTree = "<group>"; };
 		EF66977066F3BCF7A0674074 /* ProjectV.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ProjectV.fs; sourceTree = "<group>"; };
 		EF66978C574A4E2E64D1A85D /* SmokeSim.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SmokeSim.hpp; sourceTree = "<group>"; };
@@ -627,7 +627,6 @@
 		EF669BF2991738CF77AE3D41 /* PressureSolve.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = PressureSolve.fs; sourceTree = "<group>"; };
 		EF669C182C48E938F3CA6546 /* RayMarch.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RayMarch.fs; sourceTree = "<group>"; };
 		EF669C28717301A7D7206D49 /* SphGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphGraphics.cpp; sourceTree = "<group>"; };
-		EF669C5AFC8EB6BF40CF06A8 /* GraphicsRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsRenderer.cpp; sourceTree = "<group>"; };
 		EF669C5B5525E27C8D74CABC /* SolidCell.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = SolidCell.vs; sourceTree = "<group>"; };
 		EF669C7B7386A7D48F759609 /* FramebufferTest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FramebufferTest.hpp; sourceTree = "<group>"; };
 		EF669C96DB8182E61AA6F408 /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
@@ -670,7 +669,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C4002DC1A375B1000C76A78 /* libRigid3D.a in Frameworks */,
+				0CB3B8171B4C917700CF609B /* libSynergy.a in Frameworks */,
 				0C4002DD1A375B1000C76A78 /* CoreVideo.framework in Frameworks */,
 				0C4002DE1A375B1000C76A78 /* IOKit.framework in Frameworks */,
 				0C4002DF1A375B1000C76A78 /* OpenGL.framework in Frameworks */,
@@ -938,13 +937,13 @@
 		0CC20DAB19D20D66004B89EA = {
 			isa = PBXGroup;
 			children = (
+				0CC20DB619D20D66004B89EA /* FluidSim */,
 				0CC20F1119D21538004B89EA /* Cocoa.framework */,
 				0CC20F1719D21550004B89EA /* CoreVideo.framework */,
-				0CC20DB619D20D66004B89EA /* FluidSim */,
 				0CC20F1519D21547004B89EA /* IOKit.framework */,
+				0CC20F1319D21541004B89EA /* OpenGL.framework */,
 				0C6665B719E76D2E00F56EBC /* libpthread.dylib */,
 				0CF7EC111B262BF300B6D860 /* libSynergy.a */,
-				0CC20F1319D21541004B89EA /* OpenGL.framework */,
 				0CC20DB519D20D66004B89EA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1458,8 +1457,6 @@
 				EF66980EF87A7D9FD6EC413A /* shaders */,
 				EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */,
 				EF6690426336D679DDB9E84D /* GpuSmokeSim3D.hpp */,
-				EF669C5AFC8EB6BF40CF06A8 /* GraphicsRenderer.cpp */,
-				EF6696E0E23A2B72A3423777 /* GraphicsRenderer.hpp */,
 			);
 			path = 3D_SmokeSim;
 			sourceTree = "<group>";
@@ -1875,8 +1872,8 @@
 				0C66655F19E305DD00F56EBC /* SmokeSim2D */,
 				0C6665BF19E7747D00F56EBC /* FluidSim_Tests */,
 				0CE5884F1A2583A3004F84AB /* GpuSmokeSim2D */,
-				0C06D4621A2CD33600635199 /* VolumeRenderingExample */,
 				0C4002D61A375B1000C76A78 /* GpuSmokeSim3D */,
+				0C06D4621A2CD33600635199 /* VolumeRenderingExample */,
 				0CFD3D411A4F47F1005A483F /* MarchingCubesExample */,
 				0CF7EBFB1B26289900B6D860 /* BlueNoiseSampling */,
 				0CB3B7DD1B48673900CF609B /* MarkerFluid2D */,
@@ -1899,9 +1896,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CB3B81B1B4C92DE00CF609B /* GpuSmokeSim3D.cpp in Sources */,
 				0C4002D81A375B1000C76A78 /* GlfwOpenGlWindow.cpp in Sources */,
-				0C4002FE1A375B6B00C76A78 /* GpuSmokeSim3D.cpp in Sources */,
-				0C4003221A38CE4600C76A78 /* VolumeRenderer.cpp in Sources */,
+				0CB3B8181B4C917F00CF609B /* CameraController.cpp in Sources */,
+				0CB3B81A1B4C925000CF609B /* VolumeRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -646,7 +646,7 @@ void VolumeRenderer::renderSolidCells(const Camera & camera) {
     mat4 ModelViewMatrix = camera.getViewMatrix() * modelMatrix;
     shaderProgram_SolidCells.setUniform("ProjectionMatrix", camera.getProjectionMatrix());
     shaderProgram_SolidCells.setUniform("ModelViewMatrix", ModelViewMatrix);
-    shaderProgram_SolidCells.setUniform("u_LineColor", vec4(0.2,0.01,0.01,1.0));
+    shaderProgram_SolidCells.setUniform("u_LineColor", vec4(0.2,0.01,0.01,1.0)*2.2f);
 
 
     glBindVertexArray(bvEdgesVao);

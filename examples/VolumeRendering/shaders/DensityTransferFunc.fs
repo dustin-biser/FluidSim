@@ -15,7 +15,7 @@ void main () {
 		vec3 colorB = vec3(0.5,0.5,1.0);
 		vec3 amount = vec3(clamp(2*density,0.0,1.0));
 
-		outColor = vec4(mix(colorA*0.5,colorB,amount), 1.0);
+		outColor = vec4(mix(colorA*0.8,colorB*5.5,amount), 1.0);
 		gl_FragDepth = 0.9;
 
 	} else {

@@ -3,8 +3,8 @@
 *
 * @author Dustin Biser
 */
-#include <Rigid3D/Rigid3D.hpp>
-using namespace Rigid3D;
+#include <Synergy/Synergy.hpp>
+using namespace Synergy;
 
 
 // Vertex Attribute Index Locations:

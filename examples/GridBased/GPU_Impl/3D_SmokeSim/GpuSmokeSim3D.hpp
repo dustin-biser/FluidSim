@@ -7,12 +7,11 @@
 #pragma once
 
 #include "FluidSim/NumericTypes.hpp"
-using namespace FluidSim;
 
 #include "Utils/GlfwOpenGlWindow.hpp"
 
-#include <Rigid3D/Graphics/ShaderProgram.hpp>
-using namespace Rigid3D;
+#include <Synergy/Synergy.hpp>
+using namespace Synergy;
 
 #include "Timer.hpp"
 

@@ -1,19 +1,16 @@
 #include "GpuSmokeSim3D.hpp"
 
-#include <Rigid3D/Rigid3D.hpp>
-using namespace Rigid3D;
-
 #include "VolumeRenderer.hpp"
-#include "matrix_transform_2d.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_transform_2d.hpp>
 using namespace glm;
 
-
+#include <iostream>
+#include <sstream>
 #include <chrono>
 using namespace std::chrono;
-#include <sstream>
 using namespace std;
 
 
