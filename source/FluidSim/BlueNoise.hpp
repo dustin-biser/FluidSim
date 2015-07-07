@@ -1,4 +1,5 @@
 // BlueNoise.hpp
+
 #pragma once
 
 #include "FluidSim/NumericTypes.hpp"

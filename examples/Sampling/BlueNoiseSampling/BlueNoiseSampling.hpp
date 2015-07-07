@@ -1,4 +1,4 @@
-// FastPoissonDiskSampling.hpp
+// BlueNoiseSampling.hpp
 
 #pragma once
 
@@ -6,7 +6,6 @@
 #include "Renderer.hpp"
 
 #include "FluidSim/NumericTypes.hpp"
-#include "FluidSim/Grid.hpp"
 #include "Timer.hpp"
 
 #include <vector>
@@ -16,12 +15,12 @@ const int kScreenWidth = 768;
 const int kScreenHeight = 768;
 
 
-class FastPoissonDiskSampling : public GlfwOpenGlWindow {
+class BlueNoiseSampling : public GlfwOpenGlWindow {
 
 public:
-	FastPoissonDiskSampling();
+	BlueNoiseSampling();
 
-	~FastPoissonDiskSampling();
+	~BlueNoiseSampling();
 
 	static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 

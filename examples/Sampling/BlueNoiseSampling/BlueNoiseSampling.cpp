@@ -1,7 +1,7 @@
-#include "FastPoissonDiskSampling.hpp"
+// BlueNoiseSampling.cpp
+
+#include "BlueNoiseSampling.hpp"
 #include "FluidSim/BlueNoise.hpp"
-#include "FluidSim/Utils.hpp"
-#include "FluidSim/Grid.hpp"
 
 using namespace FluidSim;
 using namespace glm;
@@ -12,18 +12,18 @@ using namespace std;
 
 //----------------------------------------------------------------------------------------
 int main() {
-	shared_ptr<GlfwOpenGlWindow> demo = FastPoissonDiskSampling::getInstance();
+	shared_ptr<GlfwOpenGlWindow> demo = BlueNoiseSampling::getInstance();
 	demo->create(kScreenWidth,
 				 kScreenHeight,
-				 "Fast Poisson Disk Sampling",
+				 "Blue Noise Sampling 2D",
 				 1/60.0f);
 
 	return 0;
 }
 
 //---------------------------------------------------------------------------------------
-shared_ptr<GlfwOpenGlWindow> FastPoissonDiskSampling::getInstance() {
-	static GlfwOpenGlWindow * instance = new FastPoissonDiskSampling();
+shared_ptr<GlfwOpenGlWindow> BlueNoiseSampling::getInstance() {
+	static GlfwOpenGlWindow * instance = new BlueNoiseSampling();
 	if (p_instance == nullptr) {
 		p_instance = shared_ptr<GlfwOpenGlWindow>(instance);
 	}
@@ -32,17 +32,17 @@ shared_ptr<GlfwOpenGlWindow> FastPoissonDiskSampling::getInstance() {
 }
 
 //---------------------------------------------------------------------------------------
-FastPoissonDiskSampling::FastPoissonDiskSampling() {
+BlueNoiseSampling::BlueNoiseSampling() {
 
 }
 
 //---------------------------------------------------------------------------------------
-FastPoissonDiskSampling::~FastPoissonDiskSampling() {
+BlueNoiseSampling::~BlueNoiseSampling() {
 	delete renderer;
 }
 
 //---------------------------------------------------------------------------------------
-void FastPoissonDiskSampling::init() {
+void BlueNoiseSampling::init() {
 	vec2 domainMin = vec2(0.2, 0.2);
 	vec2 domainMax = vec2(0.8, 0.8);
 	uint32 maxSamples = 4000;
@@ -82,22 +82,22 @@ void FastPoissonDiskSampling::init() {
 }
 
 //---------------------------------------------------------------------------------------
-void FastPoissonDiskSampling::keyInput(int key, int action, int mods) {
+void BlueNoiseSampling::keyInput(int key, int action, int mods) {
 
 }
 
 //---------------------------------------------------------------------------------------
-void FastPoissonDiskSampling::cleanup() {
+void BlueNoiseSampling::cleanup() {
 
 }
 
 //---------------------------------------------------------------------------------------
-void FastPoissonDiskSampling::logic() {
+void BlueNoiseSampling::logic() {
 
 }
 
 //---------------------------------------------------------------------------------------
-void FastPoissonDiskSampling::draw() {
+void BlueNoiseSampling::draw() {
 //	renderer->renderGrid();
 	renderer->renderSamples(samples);
 }

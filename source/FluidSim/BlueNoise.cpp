@@ -1,4 +1,5 @@
 // BlueNoise.cpp
+
 #include "BlueNoise.hpp"
 #include "FluidSim/Utils.hpp"
 
