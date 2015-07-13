@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0C06D4641A2CD33600635199 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
-		0C06D4671A2CD33600635199 /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0C06D4681A2CD33600635199 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0C06D4691A2CD33600635199 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0C06D46A1A2CD33600635199 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
@@ -77,7 +76,6 @@
 		0CF7EC121B262BF300B6D860 /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
 		0CF7EC171B262D2100B6D860 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0CFD3D431A4F47F1005A483F /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
-		0CFD3D471A4F47F1005A483F /* libRigid3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0519D214CD004B89EA /* libRigid3D.a */; };
 		0CFD3D481A4F47F1005A483F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
 		0CFD3D491A4F47F1005A483F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1519D21547004B89EA /* IOKit.framework */; };
 		0CFD3D4A1A4F47F1005A483F /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1319D21541004B89EA /* OpenGL.framework */; };
@@ -489,55 +487,7 @@
 		0CC20EC919D214CD004B89EA /* vec3.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vec3.hpp; sourceTree = "<group>"; };
 		0CC20ECA19D214CD004B89EA /* vec4.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vec4.hpp; sourceTree = "<group>"; };
 		0CC20ECB19D214CD004B89EA /* vector_relational.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vector_relational.hpp; sourceTree = "<group>"; };
-		0CC20ED019D214CD004B89EA /* AABB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AABB.cpp; sourceTree = "<group>"; };
-		0CC20ED119D214CD004B89EA /* AABB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AABB.hpp; sourceTree = "<group>"; };
-		0CC20ED319D214CD004B89EA /* AABBFactory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AABBFactory.hpp; sourceTree = "<group>"; };
-		0CC20ED419D214CD004B89EA /* BoundingVolume.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoundingVolume.hpp; sourceTree = "<group>"; };
-		0CC20ED519D214CD004B89EA /* BoundingVolumeFactory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoundingVolumeFactory.hpp; sourceTree = "<group>"; };
-		0CC20ED619D214CD004B89EA /* Geometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Geometry.cpp; sourceTree = "<group>"; };
-		0CC20ED719D214CD004B89EA /* Geometry.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Geometry.hpp; sourceTree = "<group>"; };
-		0CC20ED819D214CD004B89EA /* PolyhedronShape.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PolyhedronShape.hpp; sourceTree = "<group>"; };
-		0CC20ED919D214CD004B89EA /* RayCastInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RayCastInput.hpp; sourceTree = "<group>"; };
-		0CC20EDA19D214CD004B89EA /* RayCastOutput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RayCastOutput.hpp; sourceTree = "<group>"; };
-		0CC20EDB19D214CD004B89EA /* Shape.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shape.hpp; sourceTree = "<group>"; };
-		0CC20EDD19D214CD004B89EA /* GlmOutStream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GlmOutStream.hpp; sourceTree = "<group>"; };
-		0CC20EDE19D214CD004B89EA /* Rigid3DException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Rigid3DException.hpp; sourceTree = "<group>"; };
-		0CC20EDF19D214CD004B89EA /* Settings.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Settings.hpp; sourceTree = "<group>"; };
-		0CC20EE119D214CD004B89EA /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
-		0CC20EE219D214CD004B89EA /* Camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
-		0CC20EE319D214CD004B89EA /* CameraController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CameraController.cpp; sourceTree = "<group>"; };
-		0CC20EE419D214CD004B89EA /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CameraController.hpp; sourceTree = "<group>"; };
-		0CC20EE519D214CD004B89EA /* Frustum.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Frustum.cpp; sourceTree = "<group>"; };
-		0CC20EE619D214CD004B89EA /* Frustum.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Frustum.hpp; sourceTree = "<group>"; };
-		0CC20EE719D214CD004B89EA /* GlErrorCheck.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GlErrorCheck.cpp; sourceTree = "<group>"; };
-		0CC20EE819D214CD004B89EA /* GlErrorCheck.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GlErrorCheck.hpp; sourceTree = "<group>"; };
-		0CC20EE919D214CD004B89EA /* GlfwException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GlfwException.hpp; sourceTree = "<group>"; };
-		0CC20EEA19D214CD004B89EA /* MaterialProperties.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MaterialProperties.hpp; sourceTree = "<group>"; };
-		0CC20EEB19D214CD004B89EA /* Mesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
-		0CC20EEC19D214CD004B89EA /* Mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Mesh.hpp; sourceTree = "<group>"; };
-		0CC20EED19D214CD004B89EA /* MeshConsolidator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MeshConsolidator.cpp; sourceTree = "<group>"; };
-		0CC20EEE19D214CD004B89EA /* MeshConsolidator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MeshConsolidator.hpp; sourceTree = "<group>"; };
-		0CC20EEF19D214CD004B89EA /* ModelTransform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelTransform.cpp; sourceTree = "<group>"; };
-		0CC20EF019D214CD004B89EA /* ModelTransform.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ModelTransform.hpp; sourceTree = "<group>"; };
-		0CC20EF119D214CD004B89EA /* ObjFileLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ObjFileLoader.cpp; sourceTree = "<group>"; };
-		0CC20EF219D214CD004B89EA /* ObjFileLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ObjFileLoader.hpp; sourceTree = "<group>"; };
-		0CC20EF319D214CD004B89EA /* OpenGlContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenGlContext.cpp; sourceTree = "<group>"; };
-		0CC20EF419D214CD004B89EA /* OpenGlContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OpenGlContext.hpp; sourceTree = "<group>"; };
-		0CC20EF519D214CD004B89EA /* Renderable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderable.cpp; sourceTree = "<group>"; };
-		0CC20EF619D214CD004B89EA /* Renderable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderable.hpp; sourceTree = "<group>"; };
-		0CC20EF719D214CD004B89EA /* RenderableFrustum.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderableFrustum.cpp; sourceTree = "<group>"; };
-		0CC20EF819D214CD004B89EA /* RenderableFrustum.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RenderableFrustum.hpp; sourceTree = "<group>"; };
-		0CC20EF919D214CD004B89EA /* Scene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
-		0CC20EFA19D214CD004B89EA /* Scene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Scene.hpp; sourceTree = "<group>"; };
-		0CC20EFB19D214CD004B89EA /* ShaderException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderException.hpp; sourceTree = "<group>"; };
-		0CC20EFC19D214CD004B89EA /* ShaderProgram.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
-		0CC20EFD19D214CD004B89EA /* ShaderProgram.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderProgram.hpp; sourceTree = "<group>"; };
-		0CC20EFF19D214CD004B89EA /* Transform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
-		0CC20F0019D214CD004B89EA /* Transform.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Transform.hpp; sourceTree = "<group>"; };
-		0CC20F0119D214CD004B89EA /* Trigonometry.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Trigonometry.hpp; sourceTree = "<group>"; };
-		0CC20F0219D214CD004B89EA /* Rigid3D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Rigid3D.hpp; sourceTree = "<group>"; };
 		0CC20F0419D214CD004B89EA /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libglfw3.a; sourceTree = "<group>"; };
-		0CC20F0519D214CD004B89EA /* libRigid3D.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libRigid3D.a; sourceTree = "<group>"; };
 		0CC20F1119D21538004B89EA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0CC20F1319D21541004B89EA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		0CC20F1519D21547004B89EA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -656,7 +606,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C06D4671A2CD33600635199 /* libRigid3D.a in Frameworks */,
 				0C06D4681A2CD33600635199 /* CoreVideo.framework in Frameworks */,
 				0C06D4691A2CD33600635199 /* IOKit.framework in Frameworks */,
 				0C06D46A1A2CD33600635199 /* OpenGL.framework in Frameworks */,
@@ -763,7 +712,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CFD3D471A4F47F1005A483F /* libRigid3D.a in Frameworks */,
 				0CFD3D481A4F47F1005A483F /* CoreVideo.framework in Frameworks */,
 				0CFD3D491A4F47F1005A483F /* IOKit.framework in Frameworks */,
 				0CFD3D4A1A4F47F1005A483F /* OpenGL.framework in Frameworks */,
@@ -985,7 +933,6 @@
 				0C66658A19E76BCE00F56EBC /* gtest */,
 				0CC20DD219D214CD004B89EA /* GLFW */,
 				0CC20DD519D214CD004B89EA /* glm */,
-				0CC20ECC19D214CD004B89EA /* Rigid3D */,
 			);
 			path = external;
 			sourceTree = SOURCE_ROOT;
@@ -1273,121 +1220,10 @@
 			path = gtx;
 			sourceTree = "<group>";
 		};
-		0CC20ECC19D214CD004B89EA /* Rigid3D */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20ECD19D214CD004B89EA /* src */,
-			);
-			path = Rigid3D;
-			sourceTree = "<group>";
-		};
-		0CC20ECD19D214CD004B89EA /* src */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20ECE19D214CD004B89EA /* Rigid3D */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		0CC20ECE19D214CD004B89EA /* Rigid3D */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20ECF19D214CD004B89EA /* Collision */,
-				0CC20EDC19D214CD004B89EA /* Common */,
-				0CC20EE019D214CD004B89EA /* Graphics */,
-				0CC20EFE19D214CD004B89EA /* Math */,
-				0CC20F0219D214CD004B89EA /* Rigid3D.hpp */,
-			);
-			path = Rigid3D;
-			sourceTree = "<group>";
-		};
-		0CC20ECF19D214CD004B89EA /* Collision */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20ED019D214CD004B89EA /* AABB.cpp */,
-				0CC20ED119D214CD004B89EA /* AABB.hpp */,
-				0CC20ED219D214CD004B89EA /* for_removal */,
-				0CC20ED819D214CD004B89EA /* PolyhedronShape.hpp */,
-				0CC20ED919D214CD004B89EA /* RayCastInput.hpp */,
-				0CC20EDA19D214CD004B89EA /* RayCastOutput.hpp */,
-				0CC20EDB19D214CD004B89EA /* Shape.hpp */,
-			);
-			path = Collision;
-			sourceTree = "<group>";
-		};
-		0CC20ED219D214CD004B89EA /* for_removal */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20ED319D214CD004B89EA /* AABBFactory.hpp */,
-				0CC20ED419D214CD004B89EA /* BoundingVolume.hpp */,
-				0CC20ED519D214CD004B89EA /* BoundingVolumeFactory.hpp */,
-				0CC20ED619D214CD004B89EA /* Geometry.cpp */,
-				0CC20ED719D214CD004B89EA /* Geometry.hpp */,
-			);
-			path = for_removal;
-			sourceTree = "<group>";
-		};
-		0CC20EDC19D214CD004B89EA /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20EDD19D214CD004B89EA /* GlmOutStream.hpp */,
-				0CC20EDE19D214CD004B89EA /* Rigid3DException.hpp */,
-				0CC20EDF19D214CD004B89EA /* Settings.hpp */,
-			);
-			path = Common;
-			sourceTree = "<group>";
-		};
-		0CC20EE019D214CD004B89EA /* Graphics */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20EE119D214CD004B89EA /* Camera.cpp */,
-				0CC20EE219D214CD004B89EA /* Camera.hpp */,
-				0CC20EE319D214CD004B89EA /* CameraController.cpp */,
-				0CC20EE419D214CD004B89EA /* CameraController.hpp */,
-				0CC20EE519D214CD004B89EA /* Frustum.cpp */,
-				0CC20EE619D214CD004B89EA /* Frustum.hpp */,
-				0CC20EE719D214CD004B89EA /* GlErrorCheck.cpp */,
-				0CC20EE819D214CD004B89EA /* GlErrorCheck.hpp */,
-				0CC20EE919D214CD004B89EA /* GlfwException.hpp */,
-				0CC20EEA19D214CD004B89EA /* MaterialProperties.hpp */,
-				0CC20EEB19D214CD004B89EA /* Mesh.cpp */,
-				0CC20EEC19D214CD004B89EA /* Mesh.hpp */,
-				0CC20EED19D214CD004B89EA /* MeshConsolidator.cpp */,
-				0CC20EEE19D214CD004B89EA /* MeshConsolidator.hpp */,
-				0CC20EEF19D214CD004B89EA /* ModelTransform.cpp */,
-				0CC20EF019D214CD004B89EA /* ModelTransform.hpp */,
-				0CC20EF119D214CD004B89EA /* ObjFileLoader.cpp */,
-				0CC20EF219D214CD004B89EA /* ObjFileLoader.hpp */,
-				0CC20EF319D214CD004B89EA /* OpenGlContext.cpp */,
-				0CC20EF419D214CD004B89EA /* OpenGlContext.hpp */,
-				0CC20EF519D214CD004B89EA /* Renderable.cpp */,
-				0CC20EF619D214CD004B89EA /* Renderable.hpp */,
-				0CC20EF719D214CD004B89EA /* RenderableFrustum.cpp */,
-				0CC20EF819D214CD004B89EA /* RenderableFrustum.hpp */,
-				0CC20EF919D214CD004B89EA /* Scene.cpp */,
-				0CC20EFA19D214CD004B89EA /* Scene.hpp */,
-				0CC20EFB19D214CD004B89EA /* ShaderException.hpp */,
-				0CC20EFC19D214CD004B89EA /* ShaderProgram.cpp */,
-				0CC20EFD19D214CD004B89EA /* ShaderProgram.hpp */,
-			);
-			path = Graphics;
-			sourceTree = "<group>";
-		};
-		0CC20EFE19D214CD004B89EA /* Math */ = {
-			isa = PBXGroup;
-			children = (
-				0CC20EFF19D214CD004B89EA /* Transform.cpp */,
-				0CC20F0019D214CD004B89EA /* Transform.hpp */,
-				0CC20F0119D214CD004B89EA /* Trigonometry.hpp */,
-			);
-			path = Math;
-			sourceTree = "<group>";
-		};
 		0CC20F0319D214CD004B89EA /* libraries */ = {
 			isa = PBXGroup;
 			children = (
 				0CC20F0419D214CD004B89EA /* libglfw3.a */,
-				0CC20F0519D214CD004B89EA /* libRigid3D.a */,
 			);
 			path = libraries;
 			sourceTree = SOURCE_ROOT;
