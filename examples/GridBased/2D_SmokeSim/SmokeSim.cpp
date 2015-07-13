@@ -266,7 +266,7 @@ void SmokeSim::computePressure() {
     Grid<float32> & p = pressureGrid;
 
     //-- Set pressure to all zeros for initial guess
-    p.setAll(0);
+//    p.setAll(0);
 
     float32 numFluidNeighbors;
     float32 neighborPressureSum;
