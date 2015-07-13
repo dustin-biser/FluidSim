@@ -24,7 +24,7 @@ class VolumeRenderer;
 //----------------------------------------------------------------------------------------
 const float32 kSecondsPerFrame = 1/60.0f;
 const float32 kDt = 0.01f;
-const int32 kJacobiIterations = 50;
+const int32 kJacobiIterations = 30;
 const int32 kScreenWidth = 1024;
 const int32 kScreenHeight = 768;
 

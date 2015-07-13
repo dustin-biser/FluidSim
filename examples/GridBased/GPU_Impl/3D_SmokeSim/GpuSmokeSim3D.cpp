@@ -1150,8 +1150,8 @@ void GpuSmokeSim3D::addBuoyantForce() {
 //----------------------------------------------------------------------------------------
 void GpuSmokeSim3D::injectDensityAndTemperature() {
 
-    float width = 6;
-    float height = 6;
+    float width = 5;
+    float height = 5;
     float depth = 2;
     int startLayer = 1;
     depth += startLayer;
@@ -1217,17 +1217,6 @@ void GpuSmokeSim3D::injectDensityAndTemperature() {
 void GpuSmokeSim3D::computePressure() {
 
     glViewport(0, 0, pressureGrid.textureWidth, pressureGrid.textureHeight);
-
-    // Zero out all pressures values, which will be the initial guess for Jacobi
-    // iteration.
-    for (int i = 0; i < 2; ++i) {
-        for (int layer = 0; layer < pressureGrid.textureDepth; ++layer) {
-            bindFramebufferWithAttachments(framebuffer, pressureGrid.textureName[i],
-                    layer);
-            glClearColor(0, 0, 0, 0);
-            glClear(GL_COLOR_BUFFER_BIT);
-        }
-    }
 
     glActiveTexture(GL_TEXTURE0 + pressureGrid.textureUnit);
     glBindTexture(GL_TEXTURE_3D, pressureGrid.textureName[READ]);
@@ -1325,7 +1314,7 @@ void GpuSmokeSim3D::logic() {
     //  Render
 
     static int counter = 0;
-    if (counter < 20) {
+    if (counter < 10) {
         injectDensityAndTemperature();
         ++counter;
     }
