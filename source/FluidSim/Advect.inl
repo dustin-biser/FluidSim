@@ -14,7 +14,7 @@ void advect(Grid<V> & quantity,
 {
     Grid<V> & q = quantity;
 
-    vec2 worldPos; // Word location within grid to be updated.
+    vec2 worldPos; // World location within grid to be updated.
     vec2 x_p; // World location of the particle that will be at worldPos in dt time.
     vec2 x_mid; // Temporary
     vec2 u; // Velocity at a given world position.
