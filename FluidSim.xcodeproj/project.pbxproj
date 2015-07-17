@@ -55,6 +55,7 @@
 		0CB3B8181B4C917F00CF609B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
 		0CB3B81A1B4C925000CF609B /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
 		0CB3B81B1B4C92DE00CF609B /* GpuSmokeSim3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6691DFA20A9497AE764F50 /* GpuSmokeSim3D.cpp */; };
+		0CB730E01B595271005B0B8A /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669F8C6F50CA8B6CAC0FD0 /* Renderer.cpp */; };
 		0CBCE20B19F839A5007ACADF /* Advect_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20819F839A5007ACADF /* Advect_Test.cpp */; };
 		0CBCE20C19F839A5007ACADF /* Grid_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20919F839A5007ACADF /* Grid_Test.cpp */; };
 		0CBCE20D19F839A5007ACADF /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
@@ -87,7 +88,6 @@
 		EF669314D90FC7417A549AE1 /* SmokeSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669EBEF8FC4E7D665574E5 /* SmokeSim.cpp */; };
 		EF6694BE686AFDB083B1A765 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
 		EF6698D0537A83725238CC7E /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
-		EF669D48862131E5B5F45AF1 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669F8C6F50CA8B6CAC0FD0 /* Renderer.cpp */; };
 		EF669E5C5E379724934A9750 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
 		EF669EC38A02F2F36BDEBBCB /* SmokeGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669CEEBC2909ACE0EBB183 /* SmokeGraphics.cpp */; };
 		EF669EE98B7254163026C4F5 /* SphSim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66984E6B620E19AF5041E3 /* SphSim.cpp */; };
@@ -491,7 +491,7 @@
 		0CC20F1519D21547004B89EA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		0CC20F1719D21550004B89EA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GpuSmokeSim2D; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CF7EBFC1B26289900B6D860 /* PoissonDiskSampling */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = PoissonDiskSampling; path = BlueNoiseSampling; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CF7EBFC1B26289900B6D860 /* BlueNoiseSampling */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BlueNoiseSampling; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CF7EC111B262BF300B6D860 /* libSynergy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSynergy.a; path = libraries/libSynergy.a; sourceTree = "<group>"; };
 		0CF7EC131B262CE000B6D860 /* CameraController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CameraController.cpp; sourceTree = "<group>"; };
 		0CF7EC141B262CE000B6D860 /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CameraController.hpp; sourceTree = "<group>"; };
@@ -513,6 +513,7 @@
 		EF66903C00FB7EBDC0EC509E /* Grid.inl */ = {isa = PBXFileReference; lastKnownFileType = file.inl; path = Grid.inl; sourceTree = "<group>"; };
 		EF6690426336D679DDB9E84D /* GpuSmokeSim3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GpuSmokeSim3D.hpp; sourceTree = "<group>"; };
 		EF669049A888B3DE6CBC241F /* LineRender.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = LineRender.fs; sourceTree = "<group>"; };
+		EF669093676E750712A46B7D /* ScreenPrimative.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenPrimative.vs; sourceTree = "<group>"; };
 		EF6690C4889FBF75C64DB2A2 /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
 		EF6690F6392364937643B7EF /* VolumeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VolumeRenderer.hpp; sourceTree = "<group>"; };
 		EF66910120FE1D8DC388A3A5 /* RenderIsoSurface.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = RenderIsoSurface.fs; sourceTree = "<group>"; };
@@ -522,6 +523,7 @@
 		EF669295197260614ED9DC03 /* ComputeRHS.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeRHS.fs; sourceTree = "<group>"; };
 		EF66930DFAFA2BA55A79AEED /* MarchingCubesRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarchingCubesRenderer.cpp; sourceTree = "<group>"; };
 		EF66931C71D212F726446F02 /* FramebufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FramebufferTest.cpp; sourceTree = "<group>"; };
+		EF66934BA80F12CF8CB5660F /* ScreenPrimative.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenPrimative.fs; sourceTree = "<group>"; };
 		EF669357DA3AF92D77DD1A40 /* SphGraphics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SphGraphics.hpp; sourceTree = "<group>"; };
 		EF66938EAC9DE144B5B03C27 /* RenderIsoSurface.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = RenderIsoSurface.vs; sourceTree = "<group>"; };
 		EF6693C2BC5EA2718AC83D1F /* ScreenQuad.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ScreenQuad.fs; sourceTree = "<group>"; };
@@ -540,6 +542,7 @@
 		EF6695B2D92486A64416268B /* ScreenQuad.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = ScreenQuad.vs; sourceTree = "<group>"; };
 		EF6695B5EB2E9F973946D617 /* Timer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.inl; path = Timer.inl; sourceTree = "<group>"; };
 		EF6695CAA8EC66038654D8E7 /* InjectData.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = InjectData.vs; sourceTree = "<group>"; };
+		EF6695FF252B8ABBD4D44A50 /* InstancedSamples.vs */ = {isa = PBXFileReference; lastKnownFileType = file.vs; path = InstancedSamples.vs; sourceTree = "<group>"; };
 		EF66962CE14C9BBC8034B83A /* Advect.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = Advect.fs; sourceTree = "<group>"; };
 		EF6696A71D0819890435FC96 /* MarchingCubes.gs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = MarchingCubes.gs; sourceTree = "<group>"; };
 		EF6696CD14D916A209CF3484 /* ComputeDivergence.fs */ = {isa = PBXFileReference; lastKnownFileType = file.fs; path = ComputeDivergence.fs; sourceTree = "<group>"; };
@@ -856,9 +859,9 @@
 		0CB3B80D1B4C8E6100CF609B /* MarkerFluid */ = {
 			isa = PBXGroup;
 			children = (
+				0CB3B8121B4C8E6100CF609B /* shaders */,
 				0CB3B80E1B4C8E6100CF609B /* MarkerFluid.cpp */,
 				0CB3B80F1B4C8E6100CF609B /* MarkerFluid.hpp */,
-				0CB3B8121B4C8E6100CF609B /* shaders */,
 				EF669E2F455EC6CE10FCDB35 /* Renderer.hpp */,
 				EF669F8C6F50CA8B6CAC0FD0 /* Renderer.cpp */,
 			);
@@ -868,6 +871,9 @@
 		0CB3B8121B4C8E6100CF609B /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				EF669093676E750712A46B7D /* ScreenPrimative.vs */,
+				EF6695FF252B8ABBD4D44A50 /* InstancedSamples.vs */,
+				EF66934BA80F12CF8CB5660F /* ScreenPrimative.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -907,7 +913,7 @@
 				0C06D4711A2CD33600635199 /* VolumeRenderingExample */,
 				0C4002E61A375B1000C76A78 /* GpuSmokeSim3D */,
 				0CFD3D511A4F47F1005A483F /* MarchingCubesExample */,
-				0CF7EBFC1B26289900B6D860 /* PoissonDiskSampling */,
+				0CF7EBFC1B26289900B6D860 /* BlueNoiseSampling */,
 				0CB3B7EE1B48673900CF609B /* MarkerFluid2D */,
 			);
 			name = Products;
@@ -1657,7 +1663,7 @@
 			);
 			name = BlueNoiseSampling;
 			productName = 2D_LiquidSim;
-			productReference = 0CF7EBFC1B26289900B6D860 /* PoissonDiskSampling */;
+			productReference = 0CF7EBFC1B26289900B6D860 /* BlueNoiseSampling */;
 			productType = "com.apple.product-type.tool";
 		};
 		0CFD3D411A4F47F1005A483F /* MarchingCubesExample */ = {
@@ -1775,6 +1781,7 @@
 			files = (
 				0CB3B8131B4C8E6700CF609B /* MarkerFluid.cpp in Sources */,
 				0CB3B7F21B4C6D6900CF609B /* BlueNoise.cpp in Sources */,
+				0CB730E01B595271005B0B8A /* Renderer.cpp in Sources */,
 				0CB3B7E01B48673900CF609B /* CameraController.cpp in Sources */,
 				0CB3B7E21B48673900CF609B /* GlfwOpenGlWindow.cpp in Sources */,
 			);
@@ -1810,7 +1817,6 @@
 				0CB3B80A1B4C8DF100CF609B /* CameraController.cpp in Sources */,
 				0CB3B80B1B4C8DF400CF609B /* GlfwOpenGlWindow.cpp in Sources */,
 				0CB3B80C1B4C8E0A00CF609B /* Renderer.cpp in Sources */,
-				EF669D48862131E5B5F45AF1 /* Renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1928,14 +1934,13 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"external/Rigid3D/src/**",
 					"external/**",
-					"source/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
 				PRODUCT_NAME = SmokeSim2D;
-				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
+				USER_HEADER_SEARCH_PATHS = "source examples/**";
 			};
 			name = Debug;
 		};
@@ -1948,14 +1953,13 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"external/Rigid3D/src/**",
 					"external/**",
-					"source/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libraries",
 				);
 				PRODUCT_NAME = SmokeSim2D;
-				USER_HEADER_SEARCH_PATHS = "source/** examples/**";
+				USER_HEADER_SEARCH_PATHS = "source examples/**";
 			};
 			name = Release;
 		};
@@ -2109,6 +2113,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"external/**",
+					source,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2148,6 +2153,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"external/**",
+					source,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SDKROOT = macosx;

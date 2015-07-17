@@ -7,6 +7,41 @@ using namespace FluidSim;
 using namespace glm;
 using namespace std;
 
+//---------------------------------------------------------------------------------------
+// Function declarations. Limit visibility to this file only.
+namespace FluidSim {
+namespace BlueNoise {
+
+	static void generateFirstSample(
+			const vec2 &domainMin,
+			const vec2 &domainExtents,
+			float &seed,
+			FluidSim::Grid<int32> &accel_grid,
+			std::vector<uint32> &activeList,
+			std::vector<vec2> &samples
+	);
+
+	static void setupAccelGrid(
+			float minDistance,
+			const vec2 &domainMin,
+			const vec2 &domainExtents,
+			FluidSim::Grid<int32> &accel_grid
+	);
+
+	static void distributeNextSample(
+			uint32 numSubStepCandidates,
+			const vec2 &domainMin,
+			const vec2 &domainMax,
+			float minDistance,
+			float &seed,
+			Grid<int32> &accel_grid,
+			std::vector<uint32> &activeList,
+			std::vector<vec2> &samples
+	);
+
+} // end namespace BlueNoise
+} // end namespace FluidSim
+
 
 //---------------------------------------------------------------------------------------
 void BlueNoise::setupAccelGrid (
@@ -179,7 +214,7 @@ void BlueNoise::distributeNextSample(
 void BlueNoise::distributeSamples (
 		glm::vec2 domainMin,
 		glm::vec2 domainMax,
-		float minDistance,
+		float minSampleDistance,
 		uint32 maxSamples,
 		std::vector<glm::vec2> & samples,
 		uint32 numSubStepCandidates
@@ -193,7 +228,7 @@ void BlueNoise::distributeSamples (
 	FluidSim::Grid<int32> accel_grid;
 
 	const vec2 domainExtents = domainMax - domainMin;
-	setupAccelGrid(minDistance, domainMin, domainExtents, accel_grid);
+	setupAccelGrid(minSampleDistance, domainMin, domainExtents, accel_grid);
 
 	std::vector<uint32> activeList;
 
@@ -218,7 +253,7 @@ void BlueNoise::distributeSamples (
 				numSubStepCandidates,
 				domainMin,
 				domainMax,
-				minDistance,
+				minSampleDistance,
 				seed,
 				accel_grid,
 				activeList,

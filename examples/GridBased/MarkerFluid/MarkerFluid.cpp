@@ -1,9 +1,24 @@
-#include "GlfwOpenGlWindow.hpp"
-#include "MarkerFluid.hpp"
+// MarkerFluid.cpp
 
+#include "MarkerFluid.hpp"
+#include "Renderer.hpp"
+
+#include "Utils/Timer.hpp"
+
+#include <FluidSim/BlueNoise.hpp>
+
+#include <iostream>
+
+using namespace std;
 using namespace FluidSim;
 
-using std::shared_ptr;
+//---------------------------------------------------------------------------------------
+int main () {
+    shared_ptr<GlfwOpenGlWindow> demo = MarkerFluid::getInstance();
+    demo->create(kScreenWidth, kScreenWidth, "Marker Particle Fluid Simulation");
+    
+    return 0;
+}
 
 //---------------------------------------------------------------------------------------
 MarkerFluid::MarkerFluid() {
@@ -12,7 +27,8 @@ MarkerFluid::MarkerFluid() {
 
 //---------------------------------------------------------------------------------------
 MarkerFluid::~MarkerFluid() {
-
+	delete timer;
+	delete renderer;
 }
 
 //---------------------------------------------------------------------------------------
@@ -28,6 +44,37 @@ shared_ptr<GlfwOpenGlWindow> MarkerFluid::getInstance() {
 //---------------------------------------------------------------------------------------
 void MarkerFluid::init() {
 	setupGridData();
+
+	vec2 domainMin = vec2(0.05, 0.4);
+	vec2 domainMax = vec2(0.35, 0.98);
+	uint32 maxSamples = 4000;
+	float minSampleDistance = 0.012f;
+
+
+	timer = new Timer();
+	timer->start();
+	BlueNoise::distributeSamples(
+			domainMin,
+			domainMax,
+			minSampleDistance,
+			maxSamples,
+			samples
+	);
+	timer->stop();
+
+	cout << endl;
+	cout << "Time: " << timer->getElapsedTime() << " sec" << endl;
+	cout << "NumSamples: " << samples.size() << endl;
+
+	renderer = new Renderer(
+			kScreenWidth,
+			kScreenHeight,
+			kGridWidth,
+			kGridHeight,
+			maxSamples
+	);
+
+	renderer->setSampleRadius(0.0022f);
 }
 
 //---------------------------------------------------------------------------------------
@@ -68,7 +115,8 @@ void MarkerFluid::logic() {
 
 //---------------------------------------------------------------------------------------
 void MarkerFluid::draw() {
-
+	renderer->renderGrid();
+	renderer->renderSamples(samples);
 }
 
 //---------------------------------------------------------------------------------------

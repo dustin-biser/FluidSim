@@ -2,11 +2,22 @@
 
 #pragma once
 
-#include "GlfwOpenGlWindow.hpp"
-#include "Renderer.hpp"
+
+#include "Utils/GlfwOpenGlWindow.hpp"
 
 #include <FluidSim/Grid.hpp>
 
+#include <vector>
+
+//---------------------------------------------------------------------------------------
+// Forward Declarations
+//---------------------------------------------------------------------------------------
+class Renderer;
+class Timer;
+
+//---------------------------------------------------------------------------------------
+// Simulation Constants
+//---------------------------------------------------------------------------------------
 const int kScreenWidth = 768;
 const int kScreenHeight = 768;
 
@@ -28,6 +39,9 @@ private:
 	FluidSim::Grid<float32> u; // x-component of velocity.
 	FluidSim::Grid<float32> v; // y-component of velocity.
 
+	std::vector<vec2> samples;
+
+	Timer * timer;
 	Renderer * renderer;
 
 	virtual void init();
@@ -37,4 +51,5 @@ private:
 	virtual void cleanup();
 
 	void setupGridData();
+
 };
