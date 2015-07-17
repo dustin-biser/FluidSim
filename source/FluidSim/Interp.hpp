@@ -4,8 +4,7 @@
 * @author Dustin Biser
 */
 
-#ifndef FLUIDSIM_INTERP_HPP
-#define FLUIDSIM_INTERP_HPP
+#pragma once
 
 #include "NumericTypes.hpp"
 #include "FluidSim/Grid.hpp"
@@ -23,5 +22,3 @@ namespace FluidSim {
 }
 
 #include "Interp.inl"
-
-#endif // FLUIDSIM_INTERP_HPP
