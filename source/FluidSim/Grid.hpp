@@ -43,13 +43,32 @@ public:
 
     float32 cellLength() const;
 
+
+	/// Returns true if point p intersects Grid.  Returns false otherwise.
 	bool contains(const vec2 & p) const;
 
+
+	/// Returns the position of grid node at grid index (col,row),
+	/// taken into account the Grid origin and cell length.
     vec2 getPosition(uint32 col, uint32 row) const;
 
+
+	/// Returns the position of grid node at \c index,
+	/// taken into account the Grid origin and cell length.
+	vec2 getPosition(const glm::uvec2 & index) const;
+
+
+	/// Returns the grid coordinates of grid cell position p intersects.
 	glm::ivec2 gridCoordOf(const vec2 & p) const;
 
+
+	/// Returns true if col in [0, width-1] and row in [0, height-1].  Returns false
+	// otherwise.
 	bool isValidCoord(int32 col, int32 row) const;
+
+	/// Returns true if gridCoord.x in [0, width-1] and gridCoord.y in [0, height-1].
+	/// Returns false otherwise.
+	bool isValidCoord(const glm::ivec2 & gridCoord) const;
 
     T & operator () (uint32 col, uint32 row) const;
 

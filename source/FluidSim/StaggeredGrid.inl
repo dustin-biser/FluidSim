@@ -78,21 +78,6 @@ StaggeredGrid<T> & StaggeredGrid<T>::operator = (StaggeredGrid<T> && other) {
 
 //----------------------------------------------------------------------------------------
 template <typename T>
-tvec2<T> StaggeredGrid<T>::operator () (float32 col, float32 row) const {
-    T u_val = m_interp(u, col+0.5f, row);
-    T v_val = m_interp(v, col, row+0.5f);
-
-    return tvec2<T>(u_val,v_val);
-}
-
-//----------------------------------------------------------------------------------------
-template <typename T>
-tvec2<T> StaggeredGrid<T>::operator () (const vec2 & coords) const {
-    return (*this)(coords.x, coords.y);
-}
-
-//----------------------------------------------------------------------------------------
-template <typename T>
 StaggeredGrid<T> & StaggeredGrid<T>::operator = (const StaggeredGrid<T> & other) {
     u = other.u;
     v = other.v;

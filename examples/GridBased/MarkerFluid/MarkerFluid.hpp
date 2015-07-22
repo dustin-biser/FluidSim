@@ -5,7 +5,7 @@
 
 #include "Utils/GlfwOpenGlWindow.hpp"
 
-#include <FluidSim/Grid.hpp>
+#include <FluidSim/StaggeredGrid.hpp>
 
 #include <vector>
 
@@ -21,10 +21,13 @@ class Timer;
 const int kScreenWidth = 768;
 const int kScreenHeight = 768;
 
-const int32 kGridWidth = 20;
-const int32 kGridHeight = 20;
+const int32 kGridWidth = 40;
+const int32 kGridHeight = 40;
 const float32 kGridCellLength = 1.0f / kGridWidth;
 
+const float32 kDt = 0.02f;
+
+//---------------------------------------------------------------------------------------
 
 class MarkerFluid : public GlfwOpenGlWindow {
 
@@ -36,10 +39,11 @@ public:
 	static std::shared_ptr<GlfwOpenGlWindow> getInstance();
 
 private:
-	FluidSim::Grid<float32> u; // x-component of velocity.
-	FluidSim::Grid<float32> v; // y-component of velocity.
+	FluidSim::StaggeredGrid<float32> velocityGrid;
+	FluidSim::StaggeredGrid<float32> tmp_velocity;
 
-	std::vector<vec2> samples;
+	std::vector<vec2> particleVelocities;
+	std::vector<vec2> particlePositions;
 
 	Timer * timer;
 	Renderer * renderer;
@@ -51,5 +55,22 @@ private:
 	virtual void cleanup();
 
 	void setupGridData();
+	void distributeFluidParticles(uint32 maxParticles);
+	void setInitialParticleVelocities();
+
+	void advectVelocity();
+	void transferParticlesVelocitiesToGrid();
+
+
+	// TODO Dustin - Implement these methods:
+	void updateParticlePositions();
+	void addForces();
+
+	void computeRHS();
+	void computePressure();
+	void subtractPressureGradient();
+
+	void clampMaxVelocity();
+	void computeMaxVelocity();
 
 };

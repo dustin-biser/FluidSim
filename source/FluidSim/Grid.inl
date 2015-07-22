@@ -108,6 +108,13 @@ vec2 Grid<T>::getPosition(uint32 col, uint32 row) const {
     return m_origin + coords;
 }
 
+
+//---------------------------------------------------------------------------------------
+template <typename T>
+vec2 Grid<T>::getPosition(const glm::uvec2 & index) const {
+	return getPosition(index.x, index.y);
+}
+
 //---------------------------------------------------------------------------------------
 template <typename T>
 T & Grid<T>::operator () (uint32 col, uint32 row) const {
@@ -153,15 +160,21 @@ Grid<T> & Grid<T>::operator = (const Grid<T> & other) {
     if (this == &other)
         return *this;
 
-	delete [] m_data;
+	//-- Only allocate new memory if there is a difference in Grid sizes:
+	if (m_width != other.m_width || m_height != other.m_height) {
+		m_width = other.m_width;
+		m_height = other.m_height;
 
-    m_width = other.m_width;
-    m_height = other.m_height;
+		delete [] m_data;
+		m_data = new T [m_width * m_height];
+	}
+
     m_cellLength = other.m_cellLength;
     m_origin = other.m_origin;
 
     uint32 num_elements = m_width * m_height;
-    m_data = new T [num_elements];
+
+	// Perform deep copy of data.
     std::memcpy(m_data, other.m_data, sizeof(T)*num_elements);
 
     return *this;
@@ -182,9 +195,6 @@ const T * Grid<T>::data() const {
 }
 
 //---------------------------------------------------------------------------------------
-/**
-* Returns the grid coordinates that position p intersects.
-*/
 template <typename T>
 glm::ivec2 Grid<T>::gridCoordOf(const glm::vec2 & p) const {
 	assert(m_cellLength > 0.0f);
@@ -197,9 +207,6 @@ glm::ivec2 Grid<T>::gridCoordOf(const glm::vec2 & p) const {
 }
 
 //---------------------------------------------------------------------------------------
-/**
-* Returns true if point p intersects Grid.  Returns false otherwise.
-*/
 template <typename T>
 bool Grid<T>::contains(const vec2 & p) const {
 	vec2 relPos = p - m_origin;
@@ -211,15 +218,18 @@ bool Grid<T>::contains(const vec2 & p) const {
 }
 
 //---------------------------------------------------------------------------------------
-/**
-* Returns true if col in [0, width-1] and row in [0, height-1].  Returns false otherwise.
-*/
 template <typename T>
 bool Grid<T>::isValidCoord(int32 col, int32 row) const {
 	return (col > -1) &&
 		   (col < m_width) &&
 		   (row > -1) &&
 		   (row < m_height);
+}
+
+//---------------------------------------------------------------------------------------
+template <typename T>
+bool Grid<T>::isValidCoord(const glm::ivec2 & gridCoord) const {
+	return isValidCoord(gridCoord.x, gridCoord.y);
 }
 
 } // end namespace FluidSim

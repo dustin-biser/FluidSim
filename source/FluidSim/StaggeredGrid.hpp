@@ -44,10 +44,6 @@ public:
 
     StaggeredGrid<T> & operator = (const StaggeredGrid<T> & other);
 
-    tvec2<T> operator () (float32 col, float32 row) const;
-
-    tvec2<T> operator () (const vec2 & coords) const;
-
 
     Grid<T> u; // Horizontal component grid.
     Grid<T> v; // Vertical component grid.
