@@ -1,7 +1,29 @@
 #include "Grid.hpp"
+
+#include "FluidSim/Utils.hpp"
+
 #include <utility>
 
+#include <glm/gtx/norm.hpp>
+
 namespace FluidSim {
+
+//---------------------------------------------------------------------------------------
+inline bool GridSpec::operator == (
+		const GridSpec & other
+) const {
+	return (width == other.width &&
+			height == other.height &&
+			approxEqual(cellLength, other.cellLength) &&
+			approxEqual(glm::length2(origin - other.origin), 0.0f));
+}
+
+//---------------------------------------------------------------------------------------
+inline bool GridSpec::operator != (
+		const GridSpec & other
+) const {
+	return !(*this == other);
+}
 
 //---------------------------------------------------------------------------------------
 template <typename T>
@@ -14,7 +36,7 @@ Grid<T>::Grid()
 {
     
 }
-       
+
 //---------------------------------------------------------------------------------------
 template <typename T>
 Grid<T>::Grid(
@@ -102,6 +124,19 @@ float32 Grid<T>::cellLength() const {
 
 //---------------------------------------------------------------------------------------
 template <typename T>
+GridSpec Grid<T>::gridSpec() const {
+	GridSpec gridSpec = {
+			m_width,
+			m_height,
+			m_cellLength,
+			m_origin
+	};
+
+	return gridSpec;
+}
+
+//---------------------------------------------------------------------------------------
+template <typename T>
 vec2 Grid<T>::getPosition(uint32 col, uint32 row) const {
     vec2 coords(col,row);
     coords *= m_cellLength;
@@ -160,7 +195,7 @@ Grid<T> & Grid<T>::operator = (const Grid<T> & other) {
     if (this == &other)
         return *this;
 
-	//-- Only allocate new memory if there is a difference in Grid sizes:
+	//-- Allocate new memory only if there is a difference between Grid sizes:
 	if (m_width != other.m_width || m_height != other.m_height) {
 		m_width = other.m_width;
 		m_height = other.m_height;
@@ -200,8 +235,9 @@ glm::ivec2 Grid<T>::gridCoordOf(const glm::vec2 & p) const {
 	assert(m_cellLength > 0.0f);
 
 	vec2 relativePos = p - m_origin;
-	int32 i = int32(relativePos.x / m_cellLength);
-	int32 j = int32(relativePos.y / m_cellLength);
+	float32 inv_cellLength = 1.0f / m_cellLength;
+	int32 i (int32(relativePos.x * inv_cellLength));
+	int32 j (int32(relativePos.y * inv_cellLength));
 
 	return glm::ivec2(i,j);
 }
@@ -230,6 +266,21 @@ bool Grid<T>::isValidCoord(int32 col, int32 row) const {
 template <typename T>
 bool Grid<T>::isValidCoord(const glm::ivec2 & gridCoord) const {
 	return isValidCoord(gridCoord.x, gridCoord.y);
+}
+
+//---------------------------------------------------------------------------------------
+template <typename T>
+Grid<T> & Grid<T>::operator /= (const Grid<T> & other) {
+	assert (this->m_height == other.m_height &&
+			this->m_width == other.m_width);
+
+	for (int j(0); j < m_height; ++j) {
+		for (int i(0); i < m_width; ++i) {
+			m_data[j*m_width + i] = m_data[j*m_width + i] / other.m_data[j*m_width + i];
+		}
+	}
+
+	return *this;
 }
 
 } // end namespace FluidSim

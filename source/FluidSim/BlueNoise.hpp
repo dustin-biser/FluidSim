@@ -9,6 +9,7 @@
 
 
 namespace FluidSim {
+
 namespace BlueNoise {
 
 	void distributeSamples (
@@ -21,4 +22,5 @@ namespace BlueNoise {
 	);
 
 } // end namespace BlueNoise
+
 } // end namespace FluidSim

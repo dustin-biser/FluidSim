@@ -15,6 +15,9 @@ struct GridSpec {
     uint32 height;
     float32 cellLength;
     vec2 origin;
+
+	bool operator == (const GridSpec & other) const;
+	bool operator != (const GridSpec & other) const;
 };
 
 template <typename T>
@@ -43,6 +46,7 @@ public:
 
     float32 cellLength() const;
 
+	GridSpec gridSpec() const;
 
 	/// Returns true if point p intersects Grid.  Returns false otherwise.
 	bool contains(const vec2 & p) const;
@@ -78,12 +82,15 @@ public:
 
     Grid<T> & operator = (const Grid<T> & other);
 
+	Grid<T> & operator /= (const Grid<T> & other);
+
     void setAll(const T & val);
 
     const T * data() const;
 
 private:
     T * m_data;
+
     uint32 m_height;
     uint32 m_width;
     float32 m_cellLength;

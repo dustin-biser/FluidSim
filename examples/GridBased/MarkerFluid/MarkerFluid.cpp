@@ -299,6 +299,7 @@ void MarkerFluid::computeMaxVelocity() {
 void MarkerFluid::logic() {
 
 	advectVelocity();
+
 	transferParticlesVelocitiesToGrid();
 
 //	updateParticlePositions();

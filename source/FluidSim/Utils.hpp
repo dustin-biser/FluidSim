@@ -6,7 +6,8 @@
 
 namespace FluidSim {
 
-static const float32 PI = 3.14159265359f;
+const float32 PI = 3.14159265359f;
+const float32 EPSILON = 1e-6;
 
 //---------------------------------------------------------------------------------------
 template<typename T>
@@ -62,14 +63,13 @@ inline glm::vec2 rand_point_in_annulus (
 	return vec2(x + center.x, y + center.y);
 }
 
-//---------------------------------------------------------------------------------------
-// Returns the length squared of argument.
-template <typename T>
-T length2 (
-		const glm::detail::tvec2<T, glm::highp> & vec
-) {
-	return (vec.x * vec.x) + (vec.y * vec.y);
-}
 
+//---------------------------------------------------------------------------------------
+// Approximate, relative, absolute tolerance floating point check.
+template <typename T,
+		  typename = std::enable_if<std::is_floating_point<T>::value> >
+bool approxEqual(T x, T y) {
+	return std::abs(x - y) <= T(EPSILON) * (abs(x) + abs(y) + T(1));
+}
 
 } // end namespace FluidSim
