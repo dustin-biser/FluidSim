@@ -30,7 +30,6 @@ const float32 kDt = 0.02f;
 //---------------------------------------------------------------------------------------
 
 class MarkerFluid : public GlfwOpenGlWindow {
-
 public:
 	MarkerFluid();
 
@@ -40,10 +39,13 @@ public:
 
 private:
 	FluidSim::StaggeredGrid<float32> velocityGrid;
-	FluidSim::StaggeredGrid<float32> tmp_velocity;
+	FluidSim::StaggeredGrid<float32> tmp_grid;
 
-	std::vector<vec2> particleVelocities;
 	std::vector<vec2> particlePositions;
+	std::vector<vec2> particleVelocities;
+	std::vector<float32> particle_u_velocity_cache;
+	std::vector<float32> particle_v_velocity_cache;
+
 
 	Timer * timer;
 	Renderer * renderer;
@@ -60,6 +62,7 @@ private:
 
 	void advectVelocity();
 	void transferParticlesVelocitiesToGrid();
+	void updateParticleVelocityCache();
 
 
 	// TODO Dustin - Implement these methods:

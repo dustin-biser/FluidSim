@@ -19,6 +19,8 @@ namespace FluidSim {
     template <typename T>
     tvec2<T> bilinear(const StaggeredGrid<T> & grid, const vec2 & worldPos);
 
+
+	inline float32 linear(const vec2 & x, float32 h);
 }
 
 #include "Interp.inl"

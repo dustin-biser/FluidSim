@@ -12,8 +12,8 @@ namespace FluidSim {
 //---------------------------------------------------------------------------------------
 template<typename T>
 static void checkGridSizesEqual(
-		const Grid<T> &a,
-		const Grid<T> &b
+		const Grid<T> & a,
+		const Grid<T> & b
 ) {
 	if (a.gridSpec() != b.gridSpec()) {
 		throw FluidSim::Exception("GridSpecs do not match.");
@@ -30,8 +30,8 @@ void adjustWeights(
 	const uint32 grid_width = weights.width();
 	T value;
 	T w;
-	for (int i(0); i < grid_height; ++i) {
-		for (int j(0); j < grid_width; ++j) {
+	for (int i(0); i < grid_width; ++i) {
+		for (int j(0); j < grid_height; ++j) {
 			w = weights(i,j);
 			value = std::abs(w) < EPSILON ? 1.0f : w;
 
@@ -43,11 +43,11 @@ void adjustWeights(
 //---------------------------------------------------------------------------------------
 template<typename T>
 void interpParticleToGrid(
-		Grid<T> &grid,
-		Grid<T> &weights,
-		const std::vector<vec2> &positions,
-		const std::vector<T> &attributes,
-		std::function<float32(const vec2 &, float32)> kernelFunc,
+		Grid<T> & grid,
+		Grid<T> & weights,
+		const std::vector<vec2> & positions,
+		const std::vector<T> & attributes,
+		std::function<float32 (const vec2 &, float32) > kernel,
 		float32 h
 ) {
 	checkGridSizesEqual(grid, weights);
@@ -74,7 +74,7 @@ void interpParticleToGrid(
 				neighborIndex = cellIndex + uvec2(i, j);
 				gridNodePos = grid.getPosition(neighborIndex);
 
-				w = kernelFunc(gridNodePos - particlePos, h);
+				w = kernel(gridNodePos - particlePos, h);
 				attribute = attributes[particleIndex];
 
 				grid(neighborIndex) += attribute * w;

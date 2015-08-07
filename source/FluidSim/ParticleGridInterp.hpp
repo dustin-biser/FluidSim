@@ -40,9 +40,9 @@ template <typename T>
 void interpParticleToGrid(
 		Grid<T> & grid,
 		Grid<T> & weights,
-		const std::vector<vec2> &positions,
-		const std::vector<T> &attributes,
-		std::function<float32(const vec2 &, float32)> kernelFunc,
+		const std::vector<vec2> & positions,
+		const std::vector<T> & attributes,
+		std::function<float32 (const vec2 &, float32) > kernel,
 		float32 h
 );
 

@@ -46,4 +46,14 @@ tvec2<T> bilinear(const StaggeredGrid<T> & grid, const vec2 & worldPos) {
     return tvec2<T>(uValue,vValue);
 }
 
+//----------------------------------------------------------------------------------------
+// Linear interpolation kernel
+inline float32 linear(const vec2 & x, float32 h) {
+	float32 inv_h = 1.0f / h;
+	float32 a = std::max(1.0f - std::abs(x.x * inv_h), 0.0f);
+	float32 b = std::max(1.0f - std::abs(x.y * inv_h), 0.0f);
+
+	return a * b;
+}
+
 } // end namespace FluidSim
