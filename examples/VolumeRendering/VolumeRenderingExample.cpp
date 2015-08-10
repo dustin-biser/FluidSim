@@ -25,19 +25,24 @@ VolumeRenderingExample::~VolumeRenderingExample() {
     delete volumeRenderer;
 }
 
-
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::init() {
-    volumeRenderer = new VolumeRenderer(kGridWidth,
-            kGridHeight,
-            kGridDepth,
-                                        defaultFramebufferWidth(),
-                                        defaultFramebufferHeight());
+    volumeRenderer = new VolumeRenderer(
+		    kGridWidth,
+		    kGridHeight,
+		    kGridDepth,
+		    defaultFramebufferWidth(),
+		    defaultFramebufferHeight()
+    );
 
     volumeRenderer->enableDrawBoundingVolumeEdges();
+
     setupDepthSettings();
+
     initCamera();
+
     createTextureStorage();
+
     fillVolumeDensityTexture();
 }
 
@@ -52,7 +57,6 @@ void VolumeRenderingExample::setupDepthSettings() {
     glClearDepth(1.0f);
 }
 
-
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::initCamera() {
     camera.setNearZDistance(0.1f);
@@ -60,7 +64,6 @@ void VolumeRenderingExample::initCamera() {
     camera.setPosition(0.7, 0.8, 1.5);
     camera.lookAt(0, 0, 0);
 }
-
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::createTextureStorage() {

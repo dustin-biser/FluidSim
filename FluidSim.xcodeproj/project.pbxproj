@@ -15,6 +15,8 @@
 		0C06D46C1A2CD33600635199 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
 		0C06D4721A2CD35C00635199 /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
 		0C07A0801B77D57C00B0AE80 /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
+		0C07A0811B78FF1700B0AE80 /* libSynergy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF7EC111B262BF300B6D860 /* libSynergy.a */; };
+		0C07A0821B78FFD200B0AE80 /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF7EC131B262CE000B6D860 /* CameraController.cpp */; };
 		0C0B1A171B648BC5008C2E21 /* BlueNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */; };
 		0C4002D81A375B1000C76A78 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
 		0C4002DD1A375B1000C76A78 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
@@ -493,7 +495,7 @@
 		0CC20F1719D21550004B89EA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0CE5885F1A2583A3004F84AB /* GpuSmokeSim2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GpuSmokeSim2D; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CF7EBFC1B26289900B6D860 /* BlueNoiseSampling */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BlueNoiseSampling; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CF7EC111B262BF300B6D860 /* libSynergy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSynergy.a; path = libraries/libSynergy.a; sourceTree = "<group>"; };
+		0CF7EC111B262BF300B6D860 /* libSynergy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSynergy.a; sourceTree = "<group>"; };
 		0CF7EC131B262CE000B6D860 /* CameraController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CameraController.cpp; sourceTree = "<group>"; };
 		0CF7EC141B262CE000B6D860 /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CameraController.hpp; sourceTree = "<group>"; };
 		0CF7EC161B262D0A00B6D860 /* DemoException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DemoException.hpp; sourceTree = "<group>"; };
@@ -619,6 +621,7 @@
 				0C06D46A1A2CD33600635199 /* OpenGL.framework in Frameworks */,
 				0C06D46B1A2CD33600635199 /* Cocoa.framework in Frameworks */,
 				0C06D46C1A2CD33600635199 /* libglfw3.a in Frameworks */,
+				0C07A0811B78FF1700B0AE80 /* libSynergy.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -903,7 +906,6 @@
 				0CC20F1519D21547004B89EA /* IOKit.framework */,
 				0CC20F1319D21541004B89EA /* OpenGL.framework */,
 				0C6665B719E76D2E00F56EBC /* libpthread.dylib */,
-				0CF7EC111B262BF300B6D860 /* libSynergy.a */,
 				0CC20DB519D20D66004B89EA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1235,6 +1237,7 @@
 		0CC20F0319D214CD004B89EA /* libraries */ = {
 			isa = PBXGroup;
 			children = (
+				0CF7EC111B262BF300B6D860 /* libSynergy.a */,
 				0CC20F0419D214CD004B89EA /* libglfw3.a */,
 			);
 			path = libraries;
@@ -1737,6 +1740,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C07A0821B78FFD200B0AE80 /* CameraController.cpp in Sources */,
 				0C06D4721A2CD35C00635199 /* VolumeRenderer.cpp in Sources */,
 				0C06D4641A2CD33600635199 /* GlfwOpenGlWindow.cpp in Sources */,
 				0C40030F1A378A9700C76A78 /* VolumeRenderingExample.cpp in Sources */,
