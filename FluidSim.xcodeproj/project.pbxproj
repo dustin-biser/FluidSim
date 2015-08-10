@@ -14,6 +14,7 @@
 		0C06D46B1A2CD33600635199 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1119D21538004B89EA /* Cocoa.framework */; };
 		0C06D46C1A2CD33600635199 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F0419D214CD004B89EA /* libglfw3.a */; };
 		0C06D4721A2CD35C00635199 /* VolumeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF6699E88EDFA97638E26F2D /* VolumeRenderer.cpp */; };
+		0C07A0801B77D57C00B0AE80 /* Interp_Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CBCE20A19F839A5007ACADF /* Interp_Test.cpp */; };
 		0C0B1A171B648BC5008C2E21 /* BlueNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF669B30F4430CAE8CB1FDFE /* BlueNoise.cpp */; };
 		0C4002D81A375B1000C76A78 /* GlfwOpenGlWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF66997D0294E95989749C15 /* GlfwOpenGlWindow.cpp */; };
 		0C4002DD1A375B1000C76A78 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC20F1719D21550004B89EA /* CoreVideo.framework */; };
@@ -1780,6 +1781,7 @@
 			files = (
 				0CBCE20C19F839A5007ACADF /* Grid_Test.cpp in Sources */,
 				0C65CD231B72F2D500A8D98C /* ParticleGridInterp_Test.cpp in Sources */,
+				0C07A0801B77D57C00B0AE80 /* Interp_Test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

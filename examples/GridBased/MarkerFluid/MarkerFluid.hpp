@@ -71,7 +71,7 @@ private:
 
 	void computeRHS();
 	void computePressure();
-	void subtractPressureGradient();
+	void projectVelocity();
 
 	void clampMaxVelocity();
 	void computeMaxVelocity();

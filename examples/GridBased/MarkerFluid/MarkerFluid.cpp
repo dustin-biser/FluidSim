@@ -159,11 +159,11 @@ void MarkerFluid::updateParticleVelocityCache() {
 void MarkerFluid::transferParticlesVelocitiesToGrid() {
 	updateParticleVelocityCache();
 
-	interpParticleToGrid (velocityGrid.u, tmp_grid.u, particlePositions,
-			particle_u_velocity_cache, linear, kGridCellLength );
+	interpParticlesToGrid(velocityGrid.u, tmp_grid.u, particlePositions,
+			particle_u_velocity_cache, linear, kGridCellLength);
 
-	interpParticleToGrid (velocityGrid.v, tmp_grid.v, particlePositions,
-			particle_v_velocity_cache, linear, kGridCellLength );
+	interpParticlesToGrid(velocityGrid.v, tmp_grid.v, particlePositions,
+			particle_v_velocity_cache, linear, kGridCellLength);
 }
 
 //---------------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ void MarkerFluid::computePressure() {
 }
 
 //---------------------------------------------------------------------------------------
-void MarkerFluid::subtractPressureGradient() {
+void MarkerFluid::projectVelocity() {
 
 }
 
@@ -220,10 +220,7 @@ void MarkerFluid::logic() {
 //
 //	computeRHS();
 //	computePressure();
-//	subtractPressureGradient();
-//
-//	clampMaxVelocity();
-//	computeMaxVelocity();
+//	projectVelocity();
 }
 
 //---------------------------------------------------------------------------------------

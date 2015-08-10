@@ -7,8 +7,13 @@
 #pragma once
 
 #include "NumericTypes.hpp"
-#include "FluidSim/Grid.hpp"
-#include "FluidSim/StaggeredGrid.hpp"
+
+// Forward Declaration
+namespace FluidSim {
+	template <typename T> class Grid;
+	template <typename T> class StaggeredGrid;
+}
+
 
 namespace FluidSim {
 

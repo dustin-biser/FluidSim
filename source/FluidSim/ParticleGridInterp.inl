@@ -42,12 +42,12 @@ void adjustWeights(
 
 //---------------------------------------------------------------------------------------
 template<typename T>
-void interpParticleToGrid(
+void interpParticlesToGrid(
 		Grid<T> & grid,
 		Grid<T> & weights,
 		const std::vector<vec2> & positions,
 		const std::vector<T> & attributes,
-		std::function<float32 (const vec2 &, float32) > kernel,
+		std::function<float32(const vec2 &, float32)> kernel,
 		float32 h
 ) {
 	checkGridSizesEqual(grid, weights);
@@ -87,5 +87,23 @@ void interpParticleToGrid(
 	adjustWeights(weights);
 	grid /= weights;
 }
+
+//---------------------------------------------------------------------------------------
+template <typename T>
+void interpGridToParticles(
+		std::vector<T> & attributes,
+		const std::vector<vec2> & positions,
+		const Grid<T> & grid,
+		std::function < T (const Grid<T> &, const vec2 &) > interp
+) {
+
+	uint32 particleIndex = 0;
+	for(const vec2 & position : positions) {
+		attributes[particleIndex] = interp(grid, position);
+		++particleIndex;
+	}
+
+}
+
 
 } // end namespace FluidSim

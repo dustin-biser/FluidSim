@@ -82,7 +82,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test1) {
 
 	vector<float32> attributes = { 1.0f };
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid2x2, weights2x2, positions, attributes, linear, kCellLength
 	);
 
@@ -99,7 +99,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test2) {
 
 	vector<float32> attributes = { 1.0f };
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid2x2, weights2x2, positions, attributes, linear, kCellLength
 	);
 
@@ -116,7 +116,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test3) {
 
 	vector<float32> attributes = { 1.0f };
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid2x2, weights2x2, positions, attributes, linear, kCellLength
 	);
 
@@ -133,7 +133,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test4) {
 
 	vector<float32> attributes = { 1.0f };
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid2x2, weights2x2, positions, attributes, linear, kCellLength
 	);
 
@@ -150,7 +150,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test5) {
 
 	vector<float32> attributes = { 1.0f };
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid2x2, weights2x2, positions, attributes, linear, kCellLength
 	);
 
@@ -173,7 +173,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test6) {
 			2.0f   // particle 2
 	};
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid2x2, weights2x2, positions, attributes, linear, kCellLength
 	);
 
@@ -199,7 +199,7 @@ TEST_F(ParticleGridInterp_Test, grid3x2_test1) {
 			2.0f   // particle 2
 	};
 
-	interpParticleToGrid(
+	interpParticlesToGrid(
 			grid3x2, weights3x2, positions, attributes, linear, kCellLength
 	);
 

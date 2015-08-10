@@ -1,4 +1,6 @@
 #include "Interp.hpp"
+#include "FluidSim/Grid.hpp"
+#include "FluidSim/StaggeredGrid.hpp"
 
 #include <cmath>
 
