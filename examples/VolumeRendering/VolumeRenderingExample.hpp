@@ -32,6 +32,7 @@ private:
     VolumeRenderer * volumeRenderer;
 
     GLuint volumeDensity_texture3d;  // 3D data set to be rendered.
+	mat4 transform; // model transform for volume data.
 
     virtual void init();
     virtual void logic();

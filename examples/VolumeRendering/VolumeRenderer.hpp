@@ -3,6 +3,7 @@
 *
 * @author Dustin Biser
 */
+
 #include <Synergy/Synergy.hpp>
 using namespace Synergy;
 
@@ -16,18 +17,22 @@ const GLuint zLayerCoord_attrib_index = 2;
 class VolumeRenderer {
 
 public:
-    VolumeRenderer(uint32 boundingVolumeWidth,
-                   uint32 boundingVolumeHeight,
-                   uint32 boundingVolumeDepth,
-                   uint32 framebufferWidth,
-                   uint32 framebufferHeight);
+    VolumeRenderer (
+            uint32 framebufferWidth,
+            uint32 framebufferHeight
+    );
 
     ~VolumeRenderer();
 
-    void draw(const Camera & camera, float32 rayStepSize, GLuint volumeData_texture3d);
+    void render (
+		    const Camera & camera,
+		    float32 rayStepSize,
+		    GLuint volumeData_texture3d,
+		    const mat4 & transform
+    );
 
-    void enableDrawBoundingVolumeEdges();
-    void disableDrawBoundingVolumeEdges();
+    void enableBoundingVolumeEdges();
+    void disableBoundingVolumeEdges();
 
 private:
     uint32 boundingVolumeWidth;
@@ -53,7 +58,11 @@ private:
     ShaderProgram shaderProgram_NoiseGenerator;
     ShaderProgram shaderProgram_SolidCells;
 
-    void updateShaderUniforms(const Camera & camera);
+    void updateShaderUniforms (
+		    const Camera & camera,
+		    const mat4 & transform
+    );
+
     void setupShaders();
     void createTextureStorage();
     void setupBoundingVolumeVertexData();
@@ -61,10 +70,16 @@ private:
 
     void composeVolumeEntranceTexture();
     void composeRayDirectionTexture();
-    void renderVolume(GLuint in_dataTexture3d, float stepSize);
 
-    void marchRaysForward(GLuint in_dataTexture3d,
-                          float stepSize);
+    void renderVolume (
+		    GLuint in_dataTexture3d,
+		    float stepSize
+    );
+
+    void rayMarch (
+		    GLuint in_dataTexture3d,
+		    float stepSize
+    );
 
     void renderBoundingVolume(const ShaderProgram & shader);
     void renderScreenQuad(const ShaderProgram & shader);
@@ -93,6 +108,4 @@ private:
     GLboolean prev_depth_test_enabled;
     void accqiurePreviousGLSetings();
     void restorePreviousGLSettings();
-
-    void renderSolidCells(const Camera & camera);
 };
