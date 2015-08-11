@@ -36,7 +36,6 @@ class Texture {
 public:
 	static const GLenum type = textureTarget;
 
-	/// Calls glGenTextures(...) to generate objName.
 	Texture();
 
 	/// Calls glDeleteTextures(...) using objName.
@@ -48,8 +47,9 @@ public:
 	/// Unbinds objName from it's associated texture target.
 	void unbind() const;
 
+	/// Calls glGenTextures(...) to generate texture object name.
 	/// Allocates texture storage on the GPU.  If \c data is non-null, pixel data
-	// pointed to by \c data is copied into texture storage.
+	/// pointed to by \c data is copied into texture storage.
 	void allocateStorage (
 			const TextureSpec & spec,
 			const GLvoid * data = nullptr,
