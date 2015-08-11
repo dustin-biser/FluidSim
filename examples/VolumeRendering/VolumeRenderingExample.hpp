@@ -13,11 +13,7 @@ using namespace Synergy;
 const int kScreenWidth = 1024;
 const int kScreenHeight = 768;
 
-const int kGridWidth = 512;
-const int kGridHeight = 512;
-const int kGridDepth = 512;
-
-const float kRayStepSize = 0.05;
+const float kRayStepSize = 0.03;
 
 class VolumeRenderingExample : public GlfwOpenGlWindow {
 
@@ -31,8 +27,11 @@ private:
 
     VolumeRenderer * volumeRenderer;
 
-    GLuint volumeDensity_texture3d;  // 3D data set to be rendered.
-	mat4 transform; // model transform for volume data.
+	// 3D data set to be rendered.
+    Texture3D volumeData;
+
+	// Model transform for positioning volume data within scene.
+	mat4 transform;
 
     virtual void init();
     virtual void logic();

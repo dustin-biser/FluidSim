@@ -27,7 +27,7 @@ public:
     void render (
 		    const Camera & camera,
 		    float32 rayStepSize,
-		    GLuint volumeData_texture3d,
+		    const Texture3D & volumeData,
 		    const mat4 & transform
     );
 
@@ -56,7 +56,6 @@ private:
     ShaderProgram shaderProgram_RayDirection;
     ShaderProgram shaderProgram_RayMarch;
     ShaderProgram shaderProgram_NoiseGenerator;
-    ShaderProgram shaderProgram_SolidCells;
 
     void updateShaderUniforms (
 		    const Camera & camera,
@@ -72,12 +71,12 @@ private:
     void composeRayDirectionTexture();
 
     void renderVolume (
-		    GLuint in_dataTexture3d,
+		    const Texture3D & volumeData,
 		    float stepSize
     );
 
-    void rayMarch (
-		    GLuint in_dataTexture3d,
+    void rayMarch(
+		    const Texture3D & volumeData,
 		    float stepSize
     );
 

@@ -174,13 +174,6 @@ void VolumeRenderer::setupShaders() {
     shaderProgram_LineRender.attachFragmentShader(
             "examples/VolumeRendering/shaders/LineRender.fs");
     shaderProgram_LineRender.link();
-
-	shaderProgram_SolidCells.generateProgramObject();
-    shaderProgram_SolidCells.attachVertexShader(
-            "examples/VolumeRendering/shaders/LineRender.vs");
-    shaderProgram_SolidCells.attachFragmentShader(
-            "examples/VolumeRendering/shaders/LineRender.fs");
-    shaderProgram_SolidCells.link();
 }
 
 //---------------------------------------------------------------------------------------
@@ -467,8 +460,10 @@ void VolumeRenderer::composeRayDirectionTexture() {
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
-{
+void VolumeRenderer::renderVolume (
+		const Texture3D & volumeData,
+		float stepSize
+) {
     // Reuse bvEntrance_texture2d texture for accumulating density values along ray:
     accumulatedDensity_texture2d = bvEntrance_texture2d;
 
@@ -477,7 +472,7 @@ void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
     glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-	rayMarch(in_dataTexture3d, stepSize);
+	rayMarch(volumeData, stepSize);
 
     renderTextureToScreen(accumulatedDensity_texture2d);
 
@@ -497,11 +492,11 @@ void VolumeRenderer::renderBoundingVolumeEdges() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::rayMarch(
-		GLuint in_dataTexture3d,
+		const Texture3D  & volumeData,
 		float stepSize)
 {
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, in_dataTexture3d);
+	volumeData.bind();
     shaderProgram_RayMarch.setUniform("dataTexture3d", 0);
 
     glActiveTexture(GL_TEXTURE0 + 1);
@@ -591,7 +586,7 @@ void VolumeRenderer::restorePreviousGLSettings() {
 void VolumeRenderer::render (
 		const Camera &camera,
 		float32 rayStepSize,
-		GLuint volumeData_texture3d,
+		const Texture3D & volumeData,
 		const mat4 & transform
 ) {
     accqiurePreviousGLSetings();
@@ -604,7 +599,7 @@ void VolumeRenderer::render (
     composeVolumeEntranceTexture();
     composeRayDirectionTexture();
 
-    renderVolume(volumeData_texture3d, rayStepSize);
+    renderVolume(volumeData, rayStepSize);
 
     if(edgeDrawingEnabled) {
         glEnable(GL_DEPTH_TEST);
