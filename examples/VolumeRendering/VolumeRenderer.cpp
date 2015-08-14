@@ -5,16 +5,10 @@
 using namespace glm;
 
 //---------------------------------------------------------------------------------------
-VolumeRenderer::VolumeRenderer(
-        uint32 boundingVolumeWidth,
-        uint32 boundingVolumeHeight,
-        uint32 boundingVolumeDepth,
+VolumeRenderer::VolumeRenderer (
         uint32 framebufferWidth,
-        uint32 framebufferHeight)
-    :
-        boundingVolumeWidth(boundingVolumeWidth),
-        boundingVolumeHeight(boundingVolumeHeight),
-        boundingVolumeDepth(boundingVolumeDepth),
+        uint32 framebufferHeight
+) :
         framebufferWidth(framebufferWidth),
         framebufferHeight(framebufferHeight),
         edgeDrawingEnabled(true)
@@ -180,50 +174,33 @@ void VolumeRenderer::setupShaders() {
     shaderProgram_LineRender.attachFragmentShader(
             "examples/VolumeRendering/shaders/LineRender.fs");
     shaderProgram_LineRender.link();
-
-	shaderProgram_SolidCells.generateProgramObject();
-    shaderProgram_SolidCells.attachVertexShader(
-            "examples/VolumeRendering/shaders/LineRender.vs");
-    shaderProgram_SolidCells.attachFragmentShader(
-            "examples/VolumeRendering/shaders/LineRender.fs");
-    shaderProgram_SolidCells.link();
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::updateShaderUniforms(const Camera & camera) {
-    shaderProgram_BvEntry.setUniform("modelView_matrix", camera.getViewMatrix());
-    shaderProgram_BvEntry.setUniform("projection_matrix", camera.getProjectionMatrix());
+void VolumeRenderer::updateShaderUniforms (
+		const Camera & camera,
+		const mat4 & transform
+) {
+	mat4 modelView = camera.getViewMatrix() * transform;
+	mat4 projMatrix = camera.getProjectionMatrix();
+    shaderProgram_BvEntry.setUniform("modelView_matrix", modelView);
+    shaderProgram_BvEntry.setUniform("projection_matrix", projMatrix);
 
-    shaderProgram_RayDirection.setUniform("modelView_matrix", camera.getViewMatrix());
-    shaderProgram_RayDirection.setUniform("projection_matrix", camera.getProjectionMatrix());
+    shaderProgram_RayDirection.setUniform("modelView_matrix", modelView);
+    shaderProgram_RayDirection.setUniform("projection_matrix", projMatrix);
 
-    shaderProgram_RayMarch.setUniform("modelView_matrix", camera.getViewMatrix());
-    shaderProgram_RayMarch.setUniform("projection_matrix", camera.getProjectionMatrix());
+    shaderProgram_RayMarch.setUniform("modelView_matrix", modelView);
+    shaderProgram_RayMarch.setUniform("projection_matrix", projMatrix);
 
     if (edgeDrawingEnabled) {
-        shaderProgram_LineRender.setUniform("ModelViewMatrix", camera.getViewMatrix());
-        shaderProgram_LineRender.setUniform("ProjectionMatrix", camera.getProjectionMatrix());
+        shaderProgram_LineRender.setUniform("ModelViewMatrix", modelView);
+        shaderProgram_LineRender.setUniform("ProjectionMatrix", projMatrix);
         shaderProgram_LineRender.setUniform("u_LineColor", vec4(0.4, 0.4, 0.4, 1.0));
-
-        // Scale bounding volume
-        {
-            uint32 maxDimension = max(boundingVolumeWidth, boundingVolumeHeight);
-            maxDimension = max(maxDimension, boundingVolumeDepth);
-            float x_scale = boundingVolumeWidth / float(maxDimension);
-            float y_scale = boundingVolumeHeight / float(maxDimension);
-            float z_scale = boundingVolumeDepth / float(maxDimension);
-
-            mat4 modelMatrix = scale(mat4(), vec3(x_scale, y_scale, z_scale));
-
-            shaderProgram_LineRender.setUniform("ModelViewMatrix",
-                    camera.getViewMatrix() * modelMatrix);
-        }
     }
 }
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::setupBoundingVolumeVertexData() {
-
     // Positions and Color-Coordinates.
     // Colors correspond to textureCoordinates into the 3D data set.
     float32 bvVertices[] = {
@@ -392,12 +369,12 @@ void VolumeRenderer::setupScreenQuadVboData() {
 }
 
 //----------------------------------------------------------------------------------------
-void VolumeRenderer::enableDrawBoundingVolumeEdges() {
+void VolumeRenderer::enableBoundingVolumeEdges() {
     edgeDrawingEnabled = true;
 }
 
 //----------------------------------------------------------------------------------------
-void VolumeRenderer::disableDrawBoundingVolumeEdges() {
+void VolumeRenderer::disableBoundingVolumeEdges() {
     edgeDrawingEnabled = false;
 }
 
@@ -483,8 +460,10 @@ void VolumeRenderer::composeRayDirectionTexture() {
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
-{
+void VolumeRenderer::renderVolume (
+		const Texture3D & volumeData,
+		float stepSize
+) {
     // Reuse bvEntrance_texture2d texture for accumulating density values along ray:
     accumulatedDensity_texture2d = bvEntrance_texture2d;
 
@@ -493,7 +472,7 @@ void VolumeRenderer::renderVolume(GLuint in_dataTexture3d, float stepSize)
     glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    marchRaysForward(in_dataTexture3d, stepSize);
+	rayMarch(volumeData, stepSize);
 
     renderTextureToScreen(accumulatedDensity_texture2d);
 
@@ -512,12 +491,12 @@ void VolumeRenderer::renderBoundingVolumeEdges() {
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::marchRaysForward(
-        GLuint in_dataTexture3d,
-        float stepSize)
+void VolumeRenderer::rayMarch(
+		const Texture3D  & volumeData,
+		float stepSize)
 {
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, in_dataTexture3d);
+	volumeData.bind();
     shaderProgram_RayMarch.setUniform("dataTexture3d", 0);
 
     glActiveTexture(GL_TEXTURE0 + 1);
@@ -585,10 +564,13 @@ void VolumeRenderer::accqiurePreviousGLSetings() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderer::restorePreviousGLSettings() {
-    glClearColor(prev_color_clear_value[0],
+    glClearColor (
+		    prev_color_clear_value[0],
             prev_color_clear_value[1],
             prev_color_clear_value[2],
-            prev_color_clear_value[3]);
+            prev_color_clear_value[3]
+    );
+
     if (prev_cull_face == GL_TRUE) {
         glEnable(GL_CULL_FACE);
     }
@@ -601,14 +583,15 @@ void VolumeRenderer::restorePreviousGLSettings() {
 }
 
 //---------------------------------------------------------------------------------------
-void VolumeRenderer::draw(
-        const Camera & camera,
-        float32 rayStepSize,
-        GLuint volumeData_texture3d)
-{
+void VolumeRenderer::render (
+		const Camera &camera,
+		float32 rayStepSize,
+		const Texture3D & volumeData,
+		const mat4 & transform
+) {
     accqiurePreviousGLSetings();
 
-    updateShaderUniforms(camera);
+    updateShaderUniforms(camera, transform);
 
     glEnable(GL_CULL_FACE);
     glFrontFace(GL_CCW);
@@ -616,8 +599,7 @@ void VolumeRenderer::draw(
     composeVolumeEntranceTexture();
     composeRayDirectionTexture();
 
-    renderSolidCells(camera);
-    renderVolume(volumeData_texture3d, rayStepSize);
+    renderVolume(volumeData, rayStepSize);
 
     if(edgeDrawingEnabled) {
         glEnable(GL_DEPTH_TEST);
@@ -626,35 +608,4 @@ void VolumeRenderer::draw(
 
 
     restorePreviousGLSettings();
-}
-
-//---------------------------------------------------------------------------------------
-void VolumeRenderer::renderSolidCells(const Camera & camera) {
-    float width = 15;
-    float height  = 15;
-    float depth = 10;
-
-    vec3 scaleFactor;
-    scaleFactor.x = width / boundingVolumeWidth;
-    scaleFactor.z = height / boundingVolumeHeight;
-    scaleFactor.y = depth / boundingVolumeDepth;
-    mat4 scaleMatrix = glm::scale(mat4(), scaleFactor);
-    mat4 transMatrix = glm::translate(mat4(), vec3(0.0f,3.0/boundingVolumeDepth, 0.0f));
-    mat4 modelMatrix = transMatrix * scaleMatrix;
-
-
-    mat4 ModelViewMatrix = camera.getViewMatrix() * modelMatrix;
-    shaderProgram_SolidCells.setUniform("ProjectionMatrix", camera.getProjectionMatrix());
-    shaderProgram_SolidCells.setUniform("ModelViewMatrix", ModelViewMatrix);
-    shaderProgram_SolidCells.setUniform("u_LineColor", vec4(0.2,0.01,0.01,1.0)*2.2f);
-
-
-    glBindVertexArray(bvEdgesVao);
-
-    shaderProgram_SolidCells.enable();
-    glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
-    shaderProgram_SolidCells.disable();
-
-    glBindVertexArray(0);
-    CHECK_GL_ERRORS;
 }

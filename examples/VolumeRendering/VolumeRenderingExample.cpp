@@ -1,5 +1,7 @@
 #include "VolumeRenderingExample.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 using std::shared_ptr;
 
 //----------------------------------------------------------------------------------------
@@ -25,20 +27,26 @@ VolumeRenderingExample::~VolumeRenderingExample() {
     delete volumeRenderer;
 }
 
-
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::init() {
-    volumeRenderer = new VolumeRenderer(kGridWidth,
-            kGridHeight,
-            kGridDepth,
-                                        defaultFramebufferWidth(),
-                                        defaultFramebufferHeight());
+    volumeRenderer = new VolumeRenderer(
+		    defaultFramebufferWidth(),
+		    defaultFramebufferHeight()
+    );
 
-    volumeRenderer->enableDrawBoundingVolumeEdges();
+	volumeRenderer->enableBoundingVolumeEdges();
+
     setupDepthSettings();
+
     initCamera();
+
     createTextureStorage();
+
     fillVolumeDensityTexture();
+
+	// Model transform for positioning volume-data with in the scene.
+	transform = glm::translate(mat4(), vec3(0.0f, 0.0f, -1.5f));
+	transform = glm::rotate(transform, -0.3f, vec3(0.0f,1.0,0.0f));
 }
 
 //---------------------------------------------------------------------------------------
@@ -52,24 +60,27 @@ void VolumeRenderingExample::setupDepthSettings() {
     glClearDepth(1.0f);
 }
 
-
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::initCamera() {
     camera.setNearZDistance(0.1f);
     camera.setFarZDistance(100.0f);
-    camera.setPosition(0.7, 0.8, 1.5);
-    camera.lookAt(0, 0, 0);
+    camera.setPosition(0.0, 1.0, 1.0);
+    camera.lookAt(0, 0, -1.5f);
 }
-
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::createTextureStorage() {
-    glGenTextures(1, &volumeDensity_texture3d);
-    glBindTexture(GL_TEXTURE_3D, volumeDensity_texture3d);
+	TextureSpec textureSpec;
+	textureSpec.width = 512;
+	textureSpec.height = 512;
+	textureSpec.depth = 512;
+	textureSpec.internalFormat = GL_RED;
+	textureSpec.format = GL_RED;
+	textureSpec.dataType = GL_FLOAT;
 
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, kGridWidth, kGridHeight,
-            kGridDepth, 0, GL_RED, GL_FLOAT, NULL);
+	volumeData.allocateStorage(textureSpec);
 
+    glBindTexture(GL_TEXTURE_3D, volumeData.name());
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -83,26 +94,26 @@ void VolumeRenderingExample::createTextureStorage() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::fillVolumeDensityTexture() {
-    glBindTexture(GL_TEXTURE_3D, volumeDensity_texture3d);
 
-    const int width = kGridWidth;
-    const int height = kGridHeight;
-    const int depth = kGridDepth;
+    const int width = volumeData.width();
+    const int height = volumeData.height();
+    const int depth = volumeData.depth();
     float32 * data = new float32[depth*height*width];
 
     // Form a wedge like shape that is non-isotropic:
     // From the base upward, each slice should become thinner.
-    for(int k(0); k < kGridDepth; ++k) {
-        for(int j(0); j < kGridHeight; ++j) {
-            for(int i(0); i < kGridWidth; ++i) {
+    for(int k(0); k < depth; ++k) {
+        for(int j(0); j < height; ++j) {
+            for(int i(0); i < width; ++i) {
 
-                data[k*(height*width) + j*width + i] = 0.8f;
+                data[k*(height*width) + j*width + i] = 0.2f * float(k)/depth;
             }
         }
     }
 
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kGridWidth,
-            kGridHeight, kGridDepth, GL_RED, GL_FLOAT, data);
+	glBindTexture(GL_TEXTURE_3D, volumeData.name());
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth,
+            volumeData.format(), GL_FLOAT, data);
 
 
     delete [] data;
@@ -117,7 +128,12 @@ void VolumeRenderingExample::logic() {
 
 //---------------------------------------------------------------------------------------
 void VolumeRenderingExample::draw() {
-    volumeRenderer->draw(camera, kRayStepSize, volumeDensity_texture3d);
+	volumeRenderer->render (
+			camera,
+			kRayStepSize,
+			volumeData,
+			transform
+	);
 }
 
 //---------------------------------------------------------------------------------------

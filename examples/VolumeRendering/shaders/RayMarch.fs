@@ -35,7 +35,7 @@ void main() {
         ray = f_color + (s * rayDir);
         outDensity += texture(dataTexture3d, ray).r * step;
 
-        if(outDensity > 0.9) {
+        if(outDensity > 0.98) {
             return;
         }
     }
