@@ -45,8 +45,8 @@ BlueNoiseSampling::~BlueNoiseSampling() {
 void BlueNoiseSampling::init() {
 	vec2 domainMin = vec2(0.2, 0.2);
 	vec2 domainMax = vec2(0.8, 0.8);
-	uint32 maxSamples = 4000;
-	float minDistance = 0.012f;
+	uint32 maxSamples = 5000;
+	float minDistance = 0.015f;
 
 
 	timer.start();
