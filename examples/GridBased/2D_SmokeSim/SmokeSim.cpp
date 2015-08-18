@@ -201,8 +201,8 @@ void SmokeSim::addForces() {
    for(uint32 row(0); row < kGridHeight; ++row) {
        for(uint32 col(0); col < kGridWidth; ++col) {
            worldPos = velocityGrid.v.getPosition(col,row);
-           density = bilinear(densityGrid, worldPos);
-           temp = bilinear(temperatureGrid, worldPos);
+           density = GridInterp::linear(densityGrid, worldPos);
+           temp = GridInterp::linear(temperatureGrid, worldPos);
 
            force = -kBuoyant_d * density + kBuoyant_t * (temp - kTemp_0);
 

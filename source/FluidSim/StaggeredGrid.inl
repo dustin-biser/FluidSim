@@ -9,7 +9,7 @@ template <typename T>
 StaggeredGrid<T>::StaggeredGrid()
     : u(),
       v(),
-      m_interp(&bilinear)
+      m_interp(&GridInterp::linear)
 {
 
 }

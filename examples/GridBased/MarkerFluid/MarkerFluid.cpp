@@ -160,17 +160,17 @@ void MarkerFluid::transferParticlesVelocitiesToGrid() {
 	updateParticleVelocityCache();
 
 	interpParticlesToGrid(velocityGrid.u, tmp_grid.u, particlePositions,
-			particle_u_velocity_cache, linear, kGridCellLength);
+			particle_u_velocity_cache, InterpKernel::linear, kGridCellLength);
 
 	interpParticlesToGrid(velocityGrid.v, tmp_grid.v, particlePositions,
-			particle_v_velocity_cache, linear, kGridCellLength);
+			particle_v_velocity_cache, InterpKernel::linear, kGridCellLength);
 }
 
 //---------------------------------------------------------------------------------------
 void MarkerFluid::updateParticlePositions() {
 	for(vec2 & position : particlePositions) {
-		float32 u = bilinear(velocityGrid.u, position);
-		float32 v = bilinear(velocityGrid.v, position);
+		float32 u = GridInterp::linear(velocityGrid.u, position);
+		float32 v = GridInterp::linear(velocityGrid.v, position);
 
 		// Euler update to particle position.
 		position += vec2(u,v)*kDt;

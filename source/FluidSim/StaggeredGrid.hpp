@@ -12,11 +12,18 @@
 namespace FluidSim {
 
 // Forward Declaration
-template <typename T>
-T bilinear(const Grid<T> & grid, const vec2 & worldPos);
+namespace GridInterp {
+	template<typename T>
+	T linear (
+			const Grid<T> & grid,
+			const vec2 & position
+	);
+}
+
 
 template <typename T>
 using interpFunc = T (*) (const Grid<T> &, const vec2 &);
+
 
 
 template <typename T>
@@ -27,12 +34,12 @@ public:
     StaggeredGrid(
         const Grid<T> & u,
         const Grid<T> & v,
-        interpFunc<T> interp = &bilinear);
+        interpFunc<T> interp = &GridInterp::linear);
 
     StaggeredGrid(
         Grid<T> && u,
         Grid<T> && v,
-        interpFunc<T> interp = &bilinear);
+        interpFunc<T> interp = &GridInterp::linear);
 
     StaggeredGrid(const StaggeredGrid<T> & other);
 

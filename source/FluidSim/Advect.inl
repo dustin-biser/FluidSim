@@ -1,4 +1,5 @@
 #include "Advect.hpp"
+#include "FluidSim/Interp.hpp"
 
 using glm::dvec2;
 
@@ -25,16 +26,16 @@ void advect (
     for (uint32 row(0); row < q.height(); ++row) {
         for (uint32 col(0); col < q.width(); ++col) {
             worldPos = q.getPosition(col,row);
-            u = bilinear(velocity, worldPos);
+            u = GridInterp::bilinear(velocity, worldPos);
 
             // Backtrace to particle location that will end up at worldPos at the next
             // time step dt.
             // Two stage Runge-Kutta:
             x_mid = worldPos - (0.5 * dt * u);
-            u = bilinear(velocity, x_mid);
+            u = GridInterp::bilinear(velocity, x_mid);
             x_p = worldPos - (dt * u);
 
-            q_new(col, row) = bilinear(q, x_p);
+            q_new(col, row) = GridInterp::linear(q, x_p);
         }
     }
 

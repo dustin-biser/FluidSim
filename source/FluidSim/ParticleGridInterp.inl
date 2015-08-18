@@ -1,10 +1,11 @@
-#include "ParticleGridInterp.hpp"
+
+#include <vector>
+#include <functional>
 
 #include "FluidSim/Grid.hpp"
 #include "FluidSim/Exception.hpp"
 #include "FluidSim/Utils.hpp"
 
-using namespace FluidSim;
 
 
 namespace FluidSim {
@@ -97,10 +98,10 @@ void interpGridToParticles(
 		std::function < T (const Grid<T> &, const vec2 &) > interp
 ) {
 
-	uint32 particleIndex = 0;
+	uint32 index = 0;
 	for(const vec2 & position : positions) {
-		attributes[particleIndex] = interp(grid, position);
-		++particleIndex;
+		attributes[index] = interp(grid, position);
+		++index;
 	}
 
 }

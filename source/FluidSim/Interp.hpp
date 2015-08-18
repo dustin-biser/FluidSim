@@ -17,15 +17,32 @@ namespace FluidSim {
 
 namespace FluidSim {
 
-    template <typename T>
-    T bilinear(const Grid<T> & grid, const vec2 & worldPos);
+namespace GridInterp {
+
+	/// Returns interpolated grid value at given position.
+	template<typename T>
+	T linear (
+			const Grid<T> & grid,
+			const vec2 & position
+	);
 
 
-    template <typename T>
-    tvec2<T> bilinear(const StaggeredGrid<T> & grid, const vec2 & worldPos);
-
-
-	inline float32 linear(const vec2 & x, float32 h);
+	/// Returns interpolated grid value at given position.
+	template<typename T>
+	tvec2<T> bilinear (
+			const StaggeredGrid<T> & grid,
+			const vec2 & position
+	);
 }
+
+
+namespace InterpKernel {
+
+	/// Linear interpolation kernel, with support radius h.
+	inline float32 linear(const vec2 &x, float32 h);
+
+}
+
+} // end namespace FluidSim
 
 #include "Interp.inl"

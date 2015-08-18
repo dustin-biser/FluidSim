@@ -50,7 +50,7 @@ void interpParticlesToGrid(
 
 
 /**
-* Interpolate grid attributes onto particles
+* Interpolate grid attributes for each particle position given.
 *
 * @param[out] attributes  Grid attributes to be interpolated. Specifically,
 * attributes[i] is the value interpolated at positions[i] from grid.

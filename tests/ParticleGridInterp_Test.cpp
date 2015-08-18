@@ -4,11 +4,10 @@
 * @author Dustin Biser
 */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "FluidSim/ParticleGridInterp.hpp"
-#include "FluidSim/Utils.hpp"
 #include "FluidSim/Interp.hpp"
+#include "FluidSim/ParticleGridInterp.hpp"
 using namespace FluidSim;
 using namespace std;
 
@@ -16,6 +15,7 @@ using namespace std;
 namespace {  // limit class visibility to this file.
 
 const float32 epsilon = 1.0e-7f;
+const float32 half_eps = 0.5*epsilon;
 
 
 //----------------------------------------------------------------------------------------
@@ -74,16 +74,16 @@ const float32 ParticleGridInterp_Test::kCellLength = 1.0f;
 
 
 //----------------------------------------------------------------------------------------
-// Test grid2x2
+// Test interpParticlesToGrid
 //----------------------------------------------------------------------------------------
 // One particle at grid center.
-TEST_F(ParticleGridInterp_Test, grid2x2_test1) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test1) {
 	vector<vec2> positions = { vec2(0.5f,0.5f) };
 
 	vector<float32> attributes = { 1.0f };
 
 	interpParticlesToGrid(
-			grid2x2, weights2x2, positions, attributes, linear, kCellLength
+			grid2x2, weights2x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid2x2(0,0), 1.0f, epsilon);
@@ -94,13 +94,13 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test1) {
 
 //----------------------------------------------------------------------------------------
 // One particle at bottom middle of grid.
-TEST_F(ParticleGridInterp_Test, grid2x2_test2) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test2) {
 	vector<vec2> positions = { vec2(0.5f, 0.0f) };
 
 	vector<float32> attributes = { 1.0f };
 
 	interpParticlesToGrid(
-			grid2x2, weights2x2, positions, attributes, linear, kCellLength
+			grid2x2, weights2x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid2x2(0,0), 1.0f, epsilon);
@@ -111,13 +111,13 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test2) {
 
 //----------------------------------------------------------------------------------------
 // One particle at top middle of grid.
-TEST_F(ParticleGridInterp_Test, grid2x2_test3) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test3) {
 	vector<vec2> positions = { vec2(0.5f, 1.0f - epsilon) };
 
 	vector<float32> attributes = { 1.0f };
 
 	interpParticlesToGrid(
-			grid2x2, weights2x2, positions, attributes, linear, kCellLength
+			grid2x2, weights2x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid2x2(0,0), 0.0f, epsilon);
@@ -128,13 +128,13 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test3) {
 
 //----------------------------------------------------------------------------------------
 // One particle at left middle of grid.
-TEST_F(ParticleGridInterp_Test, grid2x2_test4) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test4) {
 	vector<vec2> positions = { vec2(0.0f, 0.5f) };
 
 	vector<float32> attributes = { 1.0f };
 
 	interpParticlesToGrid(
-			grid2x2, weights2x2, positions, attributes, linear, kCellLength
+			grid2x2, weights2x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid2x2(0,0), 1.0f, epsilon);
@@ -145,13 +145,13 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test4) {
 
 //----------------------------------------------------------------------------------------
 // One particle at right middle of grid.
-TEST_F(ParticleGridInterp_Test, grid2x2_test5) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test5) {
 	vector<vec2> positions = { vec2(1.0f - epsilon, 0.5f) };
 
 	vector<float32> attributes = { 1.0f };
 
 	interpParticlesToGrid(
-			grid2x2, weights2x2, positions, attributes, linear, kCellLength
+			grid2x2, weights2x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid2x2(0,0), 0.0f, epsilon);
@@ -162,7 +162,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test5) {
 
 //----------------------------------------------------------------------------------------
 // Two particles with different values.
-TEST_F(ParticleGridInterp_Test, grid2x2_test6) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test6) {
 	vector<vec2> positions = {
 			vec2(0.25f, 0.5f), // particle 1
 			vec2(0.75f, 0.5f), // particle 2
@@ -174,7 +174,7 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test6) {
 	};
 
 	interpParticlesToGrid(
-			grid2x2, weights2x2, positions, attributes, linear, kCellLength
+			grid2x2, weights2x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid2x2(0,0), 1.25f, epsilon);
@@ -183,12 +183,9 @@ TEST_F(ParticleGridInterp_Test, grid2x2_test6) {
 	EXPECT_NEAR(grid2x2(1,1), 1.75f, epsilon);
 }
 
-
-//----------------------------------------------------------------------------------------
-// Test grid3x2
 //----------------------------------------------------------------------------------------
 // Two particles, one at each grid cell center of non-symmetric grid.
-TEST_F(ParticleGridInterp_Test, grid3x2_test1) {
+TEST_F(ParticleGridInterp_Test, interpParticlesToGrid_test7) {
 	vector<vec2> positions = {
 			vec2(0.5f, 0.5f),  // particle 1
 			vec2(1.5f, 0.5f)   // particle 2
@@ -200,7 +197,7 @@ TEST_F(ParticleGridInterp_Test, grid3x2_test1) {
 	};
 
 	interpParticlesToGrid(
-			grid3x2, weights3x2, positions, attributes, linear, kCellLength
+			grid3x2, weights3x2, positions, attributes, InterpKernel::linear, kCellLength
 	);
 
 	EXPECT_NEAR(grid3x2(0,0), 1.0f, epsilon);
@@ -212,3 +209,135 @@ TEST_F(ParticleGridInterp_Test, grid3x2_test1) {
 	EXPECT_NEAR(grid3x2(2,1), 2.0f, epsilon);
 }
 
+//----------------------------------------------------------------------------------------
+// Test interpGridToParticles
+//----------------------------------------------------------------------------------------
+TEST_F(ParticleGridInterp_Test, interpGridToParticles_test1) {
+	grid2x2(0,0) = 1.0f;
+	grid2x2(1,0) = 1.0f;
+	grid2x2(0,1) = 2.0f;
+	grid2x2(1,1) = 2.0f;
+
+	vector<vec2> positions = {
+			vec2(0.5f, 0.5f)*kCellLength
+	};
+
+	vector<float32> attributes;
+	attributes.reserve(positions.size());
+
+	interpGridToParticles<float32> (
+			attributes,
+			positions,
+			grid2x2,
+			GridInterp::linear<float32>
+	);
+
+	EXPECT_NEAR(attributes[0], 1.5f, epsilon);
+}
+
+//---------------------------------------------------------------------------------------
+TEST_F(ParticleGridInterp_Test, interpGridToParticles_test2) {
+	grid2x2(0,0) = -1.0f;
+	grid2x2(1,0) = 1.0f;
+	grid2x2(0,1) = 1.0f;
+	grid2x2(1,1) = -1.0f;
+
+	vector<vec2> positions = {
+			vec2(0.5f, 0.5f)*kCellLength
+	};
+
+	vector<float32> attributes;
+	attributes.reserve(positions.size());
+
+	interpGridToParticles<float32> (
+			attributes,
+			positions,
+			grid2x2,
+			GridInterp::linear<float32>
+	);
+
+	EXPECT_NEAR(attributes[0], 0.0f, epsilon);
+}
+
+//---------------------------------------------------------------------------------------
+TEST_F(ParticleGridInterp_Test, interpGridToParticles_test3) {
+	grid2x2(0,0) = 1.0f;
+	grid2x2(1,0) = 2.0f;
+	grid2x2(0,1) = 3.0f;
+	grid2x2(1,1) = 4.0f;
+
+	vector<vec2> positions = {
+			vec2(0.5f, 0.0f)*kCellLength,
+			vec2(0.5f, 1.0f - half_eps)*kCellLength,
+	};
+
+	vector<float32> attributes;
+	attributes.reserve(positions.size());
+
+	interpGridToParticles<float32> (
+			attributes,
+			positions,
+			grid2x2,
+			GridInterp::linear<float32>
+	);
+
+	EXPECT_NEAR(attributes[0], 1.5f, epsilon);
+	EXPECT_NEAR(attributes[1], 3.5f, epsilon);
+}
+
+//---------------------------------------------------------------------------------------
+TEST_F(ParticleGridInterp_Test, interpGridToParticles_test4) {
+	grid2x2(0,0) = 1.0f;
+	grid2x2(1,0) = 2.0f;
+	grid2x2(0,1) = 3.0f;
+	grid2x2(1,1) = 4.0f;
+
+	vector<vec2> positions = {
+			vec2(0.0f, 0.5f)*kCellLength,
+			vec2(1.0f - half_eps, 0.5f)*kCellLength,
+	};
+
+	vector<float32> attributes;
+	attributes.reserve(positions.size());
+
+	interpGridToParticles<float32> (
+			attributes,
+			positions,
+			grid2x2,
+			GridInterp::linear<float32>
+	);
+
+	EXPECT_NEAR(attributes[0], 2.0f, epsilon);
+	EXPECT_NEAR(attributes[1], 3.0f, epsilon);
+}
+
+//---------------------------------------------------------------------------------------
+TEST_F(ParticleGridInterp_Test, interpGridToParticles_test5) {
+	grid3x2(0,0) = -1.0f;
+	grid3x2(1,0) = -1.0f;
+	grid3x2(2,0) = -1.0f;
+
+	grid3x2(0,1) = 1.0f;
+	grid3x2(1,1) = 1.0f;
+	grid3x2(2,1) = 1.0f;
+
+	vector<vec2> positions = {
+			vec2(0.5f, 0.5f)*kCellLength,
+			vec2(1.5f, 0.5f)*kCellLength,
+			vec2(2.5f, 0.5f)*kCellLength,
+	};
+
+	vector<float32> attributes;
+	attributes.reserve(positions.size());
+
+	interpGridToParticles<float32> (
+			attributes,
+			positions,
+			grid3x2,
+			GridInterp::linear<float32>
+	);
+
+	EXPECT_NEAR(attributes[0], 0.0f, epsilon);
+	EXPECT_NEAR(attributes[1], 0.0f, epsilon);
+	EXPECT_NEAR(attributes[2], 0.0f, epsilon);
+}

@@ -6,6 +6,8 @@
 
 #include "gtest/gtest.h"
 #include "FluidSim/Interp.hpp"
+using FluidSim::GridInterp::linear;
+using FluidSim::GridInterp::bilinear;
 
 using namespace FluidSim;
 
@@ -91,33 +93,33 @@ TEST_F(Interp_Test, test_setup) {
 // Test float_grid
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, bilinear_float_grid_cell_centers) {
-    EXPECT_FLOAT_EQ(1.5f, bilinear(float_grid, vec2(0.5f, 0.5f)) );
-    EXPECT_FLOAT_EQ(3.5f, bilinear(float_grid, vec2(0.5f, 1.5f)) );
+    EXPECT_FLOAT_EQ(1.5f, linear(float_grid, vec2(0.5f, 0.5f)) );
+    EXPECT_FLOAT_EQ(3.5f, linear(float_grid, vec2(0.5f, 1.5f)) );
 }
 
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, bilinear_float_grid_clamp_to_zero_zero) {
-    EXPECT_FLOAT_EQ(0.0f, bilinear(float_grid, vec2(-1.0f, 0.0f)) );
+    EXPECT_FLOAT_EQ(0.0f, linear(float_grid, vec2(-1.0f, 0.0f)) );
 }
 
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, bilinear_float_grid_clamp_to_one_one) {
-    EXPECT_FLOAT_EQ(1.0f, bilinear(float_grid, vec2(2.0f, 0.0f)) );
+    EXPECT_FLOAT_EQ(1.0f, linear(float_grid, vec2(2.0f, 0.0f)) );
 }
 
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, bilinear_float_grid_clamp_to_four_four) {
-    EXPECT_FLOAT_EQ(4.0f, bilinear(float_grid, vec2(-1.0f, 4.3f)) );
+    EXPECT_FLOAT_EQ(4.0f, linear(float_grid, vec2(-1.0f, 4.3f)) );
 }
 
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, bilinear_float_grid_clamp_to_five_five) {
-    EXPECT_FLOAT_EQ(5.0f, bilinear(float_grid, vec2(1.5f, 5.01f)) );
+    EXPECT_FLOAT_EQ(5.0f, linear(float_grid, vec2(1.5f, 5.01f)) );
 }
 
 //------------------------------------------------------------------------------
 TEST_F(Interp_Test, bilinear_float_grid_midpoint) {
-    EXPECT_FLOAT_EQ(2.5f, bilinear(float_grid, vec2(0.5f, 1.0f)) );
+    EXPECT_FLOAT_EQ(2.5f, linear(float_grid, vec2(0.5f, 1.0f)) );
 }
 
 //------------------------------------------------------------------------------
