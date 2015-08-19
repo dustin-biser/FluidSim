@@ -43,7 +43,7 @@ void adjustWeights(
 
 //---------------------------------------------------------------------------------------
 template<typename T>
-void interpParticlesToGrid(
+void splatParticlesToGrid(
 		Grid<T> & grid,
 		Grid<T> & weights,
 		const std::vector<vec2> & positions,
@@ -58,14 +58,14 @@ void interpParticlesToGrid(
 	weights.setAll(0.0f);
 
 	// Max index offset to grid node that a particle can contribute to.
-	uint32 maxNeighborOffset = uint32( ceil(h / grid.cellLength()) );
+	uint32 maxNeighborOffset( uint32(ceil(h / grid.cellLength())) );
 
 	uvec2 cellIndex;
 	uvec2 neighborIndex;
 	vec2 gridNodePos;
 	T attribute; // Particle attribute
 	float32 w;   // Interpolation weight
-	uint32 particleIndex = 0;
+	uint32 particleIndex(0);
 	for (const vec2 & particlePos : positions) {
 		cellIndex = grid.gridCoordOf(particlePos);
 

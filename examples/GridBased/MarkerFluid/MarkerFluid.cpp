@@ -51,6 +51,7 @@ void MarkerFluid::init() {
 
 	uint32 maxParticles = 4000;
 	distributeFluidParticles(maxParticles);
+
 	setInitialParticleVelocities();
 
 
@@ -159,10 +160,10 @@ void MarkerFluid::updateParticleVelocityCache() {
 void MarkerFluid::transferParticlesVelocitiesToGrid() {
 	updateParticleVelocityCache();
 
-	interpParticlesToGrid(velocityGrid.u, tmp_grid.u, particlePositions,
+	splatParticlesToGrid(velocityGrid.u, tmp_grid.u, particlePositions,
 			particle_u_velocity_cache, InterpKernel::linear, kGridCellLength);
 
-	interpParticlesToGrid(velocityGrid.v, tmp_grid.v, particlePositions,
+	splatParticlesToGrid(velocityGrid.v, tmp_grid.v, particlePositions,
 			particle_v_velocity_cache, InterpKernel::linear, kGridCellLength);
 }
 
@@ -209,7 +210,6 @@ void MarkerFluid::computeMaxVelocity() {
 
 //---------------------------------------------------------------------------------------
 void MarkerFluid::logic() {
-
 	advectVelocity();
 
 	transferParticlesVelocitiesToGrid();

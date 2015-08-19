@@ -234,8 +234,8 @@ template <typename T>
 glm::ivec2 Grid<T>::gridCoordOf(const glm::vec2 & p) const {
 	assert(m_cellLength > 0.0f);
 
-	vec2 relativePos = p - m_origin;
-	float32 inv_cellLength = 1.0f / m_cellLength;
+	vec2 relativePos(p - m_origin);
+	float32 inv_cellLength(1.0f / m_cellLength);
 	int32 i (int32(relativePos.x * inv_cellLength));
 	int32 j (int32(relativePos.y * inv_cellLength));
 
